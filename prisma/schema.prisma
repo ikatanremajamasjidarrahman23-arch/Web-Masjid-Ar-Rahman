@@ -1,0 +1,114 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  username  String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Settings {
+  id                 String   @id @default(cuid())
+  visi               String?
+  misi               String?
+  sejarah            String?
+  logoUrl            String? // URL logo masjid
+  strukturOrganisasi String? // URL gambar struktur organisasi
+  qrisImage          String? // URL gambar QRIS donasi
+  runningText        String? // Teks berjalan di header website
+  deskripsiSingkat   String? // Deskripsi singkat untuk footer
+  alamat             String?
+  telepon            String?
+  email              String?
+  popupImage         String? // URL gambar popup pengumuman
+  popupIsActive      Boolean  @default(false) // Status popup nyala/mati
+  popupDuration      Int      @default(10) // Durasi tayang popup dalam detik
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model PhbiEvent {
+  id          String      @id @default(cuid())
+  title       String      // cth: Isra Mi'raj 1445 H
+  description String?
+  date        DateTime
+  linkMore    String?     // Link eksternal untuk galeri tambahan
+  media       PhbiMedia[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model PhbiMedia {
+  id        String    @id @default(cuid())
+  type      String    // "IMAGE" atau "VIDEO"
+  url       String    // URL dari Cloudinary atau ID YouTube
+  eventId   String
+  event     PhbiEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+}
+
+model IrmasActivity {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  imageUrl  String?
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model IrmasMemberRegistration {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String
+  address   String
+  reason    String?
+  createdAt DateTime @default(now())
+}
+
+model Finance {
+  id          String        @id @default(cuid())
+  type        String        // "IN" atau "OUT"
+  amount      Float
+  description String
+  date        DateTime      @default(now())
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model StudySchedule {
+  id          String   @id @default(cuid())
+  title       String
+  speaker     String
+  schedule    String
+  location    String   @default("Ruang Utama Masjid")
+  description String?
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Gallery {
+  id        String   @id @default(cuid())
+  title     String
+  category  String
+  imageUrl  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+}
