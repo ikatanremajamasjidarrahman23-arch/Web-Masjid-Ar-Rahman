@@ -1,8 +1,9 @@
 import PrayerTimes from "@/components/PrayerTimes";
-import { ArrowRight, MapPin, CalendarDays, Megaphone, Clock, User, BookOpen, Image as ImageIcon } from "lucide-react";
+import { ArrowRight, MapPin, CalendarDays, Megaphone, Clock, User, BookOpen, Image as ImageIcon, Phone, Mail } from "lucide-react";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import KajianCard from "@/components/KajianCard";
+import BulletinBoard from "@/components/BulletinBoard";
 
 export const revalidate = 60;
 
@@ -17,6 +18,14 @@ export default async function Home() {
     take: 3
   });
 
+  const activeBulletins = await prisma.bulletin.findMany({
+    where: {
+      isActive: true,
+      expiryDate: { gt: new Date() }
+    },
+    orderBy: { createdAt: "desc" }
+  });
+
   const settings = await prisma.settings.findFirst();
   const runningText = settings?.runningText || "Selamat datang di Website Resmi Masjid Jami' Ar-Rahman Cempaka, Plumbon. | Mari ramaikan kajian bakda Subuh setiap hari Ahad. | Salurkan infaq dan shodaqoh terbaik Anda melalui QRIS resmi masjid.";
 
@@ -28,7 +37,10 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-4 w-full flex items-center gap-3">
           <Megaphone className="w-5 h-5 flex-shrink-0 text-primary-400" />
           <div className="relative flex overflow-x-hidden w-full whitespace-nowrap">
-            <div className="animate-marquee inline-block text-sm font-medium">
+            <div 
+              className="animate-marquee inline-block text-sm font-medium" 
+              style={{ animationDuration: `${settings?.runningTextSpeed || 25}s` }}
+            >
               {runningText}
             </div>
           </div>
@@ -62,9 +74,9 @@ export default async function Home() {
                 Kenali Kami
                 <ArrowRight className="w-5 h-5" />
               </Link>
-              <Link href="/phbi" className="px-8 py-3 rounded-xl bg-transparent hover:bg-primary-900/50 border border-primary-500 text-primary-200 font-semibold transition-colors flex items-center gap-2">
+              <Link href="/kajian" className="px-8 py-3 rounded-xl bg-transparent hover:bg-primary-900/50 border border-primary-500 text-primary-200 font-semibold transition-colors flex items-center gap-2">
                 <CalendarDays className="w-5 h-5" />
-                Agenda & Galeri
+                Agenda
               </Link>
             </div>
           </div>
@@ -80,6 +92,8 @@ export default async function Home() {
       {/* Quick Access Grid */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <BulletinBoard bulletins={activeBulletins} />
+          
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             
             {/* Card 1 */}
@@ -87,9 +101,9 @@ export default async function Home() {
               <div className="w-14 h-14 bg-primary-100 rounded-xl flex items-center justify-center text-primary-600 mb-6 group-hover:scale-110 transition-transform">
                 <CalendarDays className="w-7 h-7" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Kegiatan PHBI</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">Galeri PHBI</h3>
               <p className="text-gray-600 mb-6 line-clamp-3">
-                Dokumentasi foto dan video dari setiap Peringatan Hari Besar Islam (Isra Mi'raj, Maulid Nabi, Idul Adha, dll) yang diadakan.
+                Jelajahi momen berkesan dan dokumentasi visual seputar Peringatan Hari Besar Islam serta berbagai kegiatan keagamaan
               </p>
               <Link href="/phbi" className="text-primary-600 font-medium flex items-center gap-1 hover:text-primary-700 transition-colors">
                 Lihat Galeri <ArrowRight className="w-4 h-4" />
@@ -133,20 +147,20 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">Jadwal Kajian Rutin</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-3">Agenda Kegiatan</h2>
               <p className="text-gray-600 max-w-2xl">
-                Ikuti kajian rutin kami untuk memperdalam ilmu agama. Terbuka untuk umum, mari bersama-sama menuntut ilmu di taman syurga.
+                Informasi lengkap mengenai jadwal kajian, acara keagamaan, dan kegiatan rutin yang akan datang
               </p>
             </div>
             <Link href="/kajian" className="inline-flex items-center gap-2 text-primary-600 font-medium hover:text-primary-700 transition-colors">
-              Lihat Seluruh Jadwal <ArrowRight className="w-4 h-4" />
+              Lihat Seluruh Agenda <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {kajianList.length === 0 ? (
-              <div className="col-span-full text-center py-10 text-gray-500 bg-gray-50 rounded-2xl border border-gray-100">
-                Belum ada jadwal kajian rutin yang ditambahkan.
+              <div className="col-span-full py-12 text-center text-gray-500 bg-gray-50 rounded-2xl border border-gray-100">
+                Belum ada agenda kegiatan yang ditambahkan.
               </div>
             ) : (
               kajianList.map((kajian, index) => (
@@ -210,6 +224,68 @@ export default async function Home() {
             <Link href="/galeri" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-medium transition-colors border border-gray-700">
               Lihat Galeri Lengkap <ArrowRight className="w-5 h-5" />
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Hubungi Kami Section */}
+      <section className="py-16 bg-white relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row items-center justify-center gap-10 lg:gap-16">
+            {/* Informasi Kontak */}
+            <div className="w-full md:w-1/2 max-w-[450px] space-y-8">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-4">Hubungi Kami</h2>
+                <div className="w-20 h-1.5 bg-primary-600 rounded-full mb-6"></div>
+                <p className="text-gray-600 leading-relaxed">
+                  Punya pertanyaan, masukan, atau ingin mengetahui lebih lanjut mengenai kegiatan di Masjid Jami' Ar-Rahman? Jangan ragu untuk menghubungi kami.
+                </p>
+              </div>
+              
+              <ul className="space-y-6 text-gray-700 pt-2">
+                <li className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 flex-shrink-0 shadow-sm">
+                    <MapPin className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <strong className="block text-gray-900 font-semibold mb-1">Alamat</strong>
+                    <span>{settings?.alamat || "Perumahan Korpri Cempaka, Plumbon, Cirebon, Jawa Barat."}</span>
+                  </div>
+                </li>
+                <li className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 flex-shrink-0 shadow-sm">
+                    <Phone className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <strong className="block text-gray-900 font-semibold mb-1">Telepon / WhatsApp</strong>
+                    <span>{settings?.telepon || "+62 812-3456-7890 (Pengurus DKM)"}</span>
+                  </div>
+                </li>
+                <li className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 flex-shrink-0 shadow-sm">
+                    <Mail className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <strong className="block text-gray-900 font-semibold mb-1">Email</strong>
+                    <span>{settings?.email || "info@masjidarrahman.com"}</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            {/* Map */}
+            <div className="w-full md:w-1/2 max-w-[500px] aspect-square rounded-2xl overflow-hidden shadow-lg border border-gray-200 bg-gray-100 transform hover:scale-[1.02] transition-transform duration-300">
+              <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15847.606208696881!2d108.4693498!3d-6.7498364!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6f1fc3f29ff4a3%3A0x80c84beab885f352!2sMASJID%20AR-RAHMAN!5e0!3m2!1sid!2sid!4v1710000000000!5m2!1sid!2sid" 
+                width="100%" 
+                height="100%" 
+                style={{ border: 0 }} 
+                allowFullScreen 
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="w-full h-full"
+              ></iframe>
+            </div>
           </div>
         </div>
       </section>

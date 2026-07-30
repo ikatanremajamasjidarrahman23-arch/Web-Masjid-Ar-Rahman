@@ -2,15 +2,20 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X, Moon } from "lucide-react";
+import NavbarDateWidget from "./NavbarDateWidget";
 
-export default function Navbar({ logoUrl }: { logoUrl?: string | null }) {
+export default function Navbar({ logoUrl, logoSize = 48 }: { logoUrl?: string | null, logoSize?: number }) {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith("/admin");
 
   const navLinks = [
     { name: "Beranda", href: "/" },
+    { name: "Buletin", href: "/buletin" },
     { name: "Profil", href: "/profil" },
-    { name: "PHBI & Galeri", href: "/phbi" },
+    { name: "Galeri PHBI", href: "/phbi" },
     { name: "IRMAS", href: "/irmas" },
     { name: "Kas & Donasi", href: "/donasi" },
   ];
@@ -20,30 +25,46 @@ export default function Navbar({ logoUrl }: { logoUrl?: string | null }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <Link href="/" className="flex-shrink-0 flex items-center gap-2">
+            <Link href="/" className="flex-shrink-0 flex items-center">
               {logoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={logoUrl} alt="Logo Masjid" className="h-10 w-auto object-contain" />
+                <img 
+                  src={logoUrl} 
+                  alt="Logo Masjid" 
+                  className="w-auto object-contain transition-all" 
+                  style={{ 
+                    height: `${Math.max(logoSize || 48, 72)}px`,
+                    transform: 'scale(1.15) translateY(4px)',
+                    transformOrigin: 'left center'
+                  }} 
+                />
               ) : (
-                <Moon className="w-8 h-8 text-primary-200" />
+                <div className="flex items-center gap-3">
+                  <Moon className="w-8 h-8 text-primary-200" />
+                  <span className="font-bold text-xl md:text-2xl tracking-tight hidden sm:block drop-shadow-sm ml-2 md:ml-4">Masjid Ar-Rahman</span>
+                </div>
               )}
-              <span className="font-bold text-xl tracking-tight hidden sm:block">Masjid Ar-Rahman</span>
             </Link>
           </div>
           <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  className="hover:bg-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </div>
+            {isAdmin ? (
+              <NavbarDateWidget />
+            ) : (
+              <div className="ml-10 flex items-baseline space-x-4">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.name}
+                    href={link.href}
+                    className="hover:bg-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
-          <div className="-mr-2 flex md:hidden">
+          {!isAdmin && (
+            <div className="-mr-2 flex md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
               type="button"
@@ -59,10 +80,11 @@ export default function Navbar({ logoUrl }: { logoUrl?: string | null }) {
               )}
             </button>
           </div>
+          )}
         </div>
       </div>
 
-      {isOpen && (
+      {isOpen && !isAdmin && (
         <div className="md:hidden" id="mobile-menu">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-primary-800 shadow-inner">
             {navLinks.map((link) => (

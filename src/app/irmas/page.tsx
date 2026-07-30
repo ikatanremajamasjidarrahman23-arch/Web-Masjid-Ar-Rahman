@@ -7,6 +7,7 @@ import Link from "next/link";
 export const revalidate = 60;
 
 export default async function IrmasPage() {
+  const settings = await prisma.settings.findFirst();
   const activities = await prisma.irmasActivity.findMany({
     orderBy: {
       date: 'desc'
@@ -19,7 +20,11 @@ export default async function IrmasPage() {
         
         {/* Header Title */}
         <div className="text-center animate-fade-in flex flex-col items-center">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">Ikatan Remaja Masjid (IRMAS)</h1>
+          {settings?.irmasLogoUrl && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={settings.irmasLogoUrl} alt="Logo IRMAS" className="w-auto object-contain mb-6 drop-shadow-sm transition-all scale-125 md:scale-150" style={{ height: `${Math.max(settings.logoSizeIrmas || 160, 120)}px` }} />
+          )}
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mt-6">Ikatan Remaja Masjid (IRMAS)</h1>
           <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
             Wadah kegiatan positif pemuda dan pemudi di lingkungan Masjid Jami' Ar-Rahman.
           </p>

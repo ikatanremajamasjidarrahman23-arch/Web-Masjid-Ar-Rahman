@@ -1,16 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { FontProvider, getFontClassName } from "@/lib/fonts";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -26,6 +16,7 @@ import Footer from "@/components/Footer";
 import WelcomePopup from "@/components/WelcomePopup";
 import PushNotificationManager from "@/components/PushNotificationManager";
 import { prisma } from "@/lib/prisma";
+import { getThemeVariables } from "@/lib/themes";
 
 export default async function RootLayout({
   children,
@@ -33,19 +24,21 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const settings = await prisma.settings.findFirst();
+  const themeVars = getThemeVariables(settings?.themeColor);
 
   return (
-    <html lang="id">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
+    <html lang="id" style={themeVars as React.CSSProperties}>
+      <body 
+        className={`${getFontClassName(settings?.fontFamily)} font-sans antialiased min-h-screen flex flex-col`}
       >
+        <FontProvider />
         <WelcomePopup 
           imageUrl={settings?.popupImage || null} 
           isActive={settings?.popupIsActive || false} 
           duration={settings?.popupDuration || 10} 
         />
         <PushNotificationManager />
-        <Navbar logoUrl={settings?.logoUrl} />
+        <Navbar logoUrl={settings?.logoUrl} logoSize={settings?.logoSizeNavbar} />
         <main className="flex-grow">
           {children}
         </main>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { LayoutDashboard, LogOut, Settings, Calendar, Users, Wallet, BookOpen, Image as ImageIcon, Menu, X, ImagePlus } from "lucide-react";
+import { LayoutDashboard, LogOut, Settings, Calendar, Users, Wallet, BookOpen, Image as ImageIcon, Menu, X, ImagePlus, Megaphone, Network } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -16,10 +16,12 @@ export default function AdminSidebar({ logoutAction }: { logoutAction: (payload:
 
   const navLinks = [
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+    { name: "Papan Buletin", href: "/admin/buletin", icon: Megaphone },
     { name: "Profil & Pengaturan", href: "/admin/profil", icon: Settings },
+    { name: "Struktur Organisasi", href: "/admin/pengurus", icon: Network },
     { name: "Dokumentasi PHBI", href: "/admin/phbi", icon: Calendar },
     { name: "Kegiatan IRMAS", href: "/admin/irmas", icon: Users },
-    { name: "Jadwal Kajian", href: "/admin/kajian", icon: BookOpen },
+    { name: "Agenda Kegiatan", href: "/admin/kajian", icon: BookOpen },
     { name: "Galeri Foto", href: "/admin/gallery", icon: ImageIcon },
     { name: "Popup Banner", href: "/admin/popup", icon: ImagePlus },
     { name: "Kas & Donasi", href: "/admin/donasi", icon: Wallet },

@@ -1,0 +1,96 @@
+export type ThemeColor = "emerald" | "sapphire" | "teal" | "amber" | "bronze" | "beige";
+
+export const themeOptions = [
+  { value: "emerald", label: "Hijau Zamrud (Emerald) - Default" },
+  { value: "sapphire", label: "Biru Safir (Sapphire Blue)" },
+  { value: "teal", label: "Teal Laut (Ocean Teal)" },
+  { value: "amber", label: "Emas Klasik (Classic Amber)" },
+  { value: "bronze", label: "Cokelat Bumi (Earthy Bronze)" },
+  { value: "beige", label: "Krem (Soft Beige)" },
+];
+
+export const themes: Record<string, Record<string, string>> = {
+  emerald: {
+    "--color-primary-50": "#ecfdf5",
+    "--color-primary-100": "#d1fae5",
+    "--color-primary-200": "#a7f3d0",
+    "--color-primary-300": "#6ee7b7",
+    "--color-primary-400": "#34d399",
+    "--color-primary-500": "#10b981",
+    "--color-primary-600": "#059669",
+    "--color-primary-700": "#047857",
+    "--color-primary-800": "#065f46",
+    "--color-primary-900": "#064e3b",
+    "--color-primary-950": "#022c22",
+  },
+  sapphire: {
+    "--color-primary-50": "#eff6ff",
+    "--color-primary-100": "#dbeafe",
+    "--color-primary-200": "#bfdbfe",
+    "--color-primary-300": "#93c5fd",
+    "--color-primary-400": "#60a5fa",
+    "--color-primary-500": "#3b82f6",
+    "--color-primary-600": "#2563eb",
+    "--color-primary-700": "#1d4ed8",
+    "--color-primary-800": "#1e40af",
+    "--color-primary-900": "#1e3a8a",
+    "--color-primary-950": "#172554",
+  },
+  teal: {
+    "--color-primary-50": "#f0fdfa",
+    "--color-primary-100": "#ccfbf1",
+    "--color-primary-200": "#99f6e4",
+    "--color-primary-300": "#5eead4",
+    "--color-primary-400": "#2dd4bf",
+    "--color-primary-500": "#14b8a6",
+    "--color-primary-600": "#0d9488",
+    "--color-primary-700": "#0f766e",
+    "--color-primary-800": "#115e59",
+    "--color-primary-900": "#134e4a",
+    "--color-primary-950": "#042f2e",
+  },
+  amber: {
+    "--color-primary-50": "#fffbeb",
+    "--color-primary-100": "#fef3c7",
+    "--color-primary-200": "#fde68a",
+    "--color-primary-300": "#fcd34d",
+    "--color-primary-400": "#fbbf24",
+    "--color-primary-500": "#f59e0b",
+    "--color-primary-600": "#d97706",
+    "--color-primary-700": "#b45309",
+    "--color-primary-800": "#92400e",
+    "--color-primary-900": "#78350f",
+    "--color-primary-950": "#451a03",
+  },
+  bronze: {
+    "--color-primary-50": "#fafaf9",
+    "--color-primary-100": "#f5f5f4",
+    "--color-primary-200": "#e7e5e4",
+    "--color-primary-300": "#d6d3d1",
+    "--color-primary-400": "#a8a29e",
+    "--color-primary-500": "#78716c",
+    "--color-primary-600": "#57534e",
+    "--color-primary-700": "#44403c",
+    "--color-primary-800": "#292524",
+    "--color-primary-900": "#1c1917",
+    "--color-primary-950": "#0c0a09",
+  },
+  beige: {
+    "--color-primary-50": "#faf9f6",
+    "--color-primary-100": "#f5f0e6",
+    "--color-primary-200": "#eaddce",
+    "--color-primary-300": "#dfcab6",
+    "--color-primary-400": "#c8b09b",
+    "--color-primary-500": "#b59f8a",
+    "--color-primary-600": "#a28d7a",
+    "--color-primary-700": "#8f7c6b",
+    "--color-primary-800": "#7c6a5c",
+    "--color-primary-900": "#69594d",
+    "--color-primary-950": "#3d322c",
+  },
+};
+
+export function getThemeVariables(themeName?: string | null) {
+  const theme = themeName || "emerald";
+  return themes[theme] || themes.emerald;
+}

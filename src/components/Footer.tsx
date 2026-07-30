@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Moon, MapPin, Phone, Mail } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
+import HijriCalendarWidget from "./HijriCalendarWidget";
+
 export default async function Footer() {
   const settings = await prisma.settings.findFirst();
 
@@ -10,7 +12,7 @@ export default async function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           
-          <div className="space-y-4">
+          <div className="space-y-4 md:col-span-1">
             <Link href="/" className="flex items-center gap-2">
               {settings?.logoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -25,25 +27,7 @@ export default async function Footer() {
             </p>
           </div>
 
-          <div className="space-y-4">
-            <h3 className="font-semibold text-white text-lg border-b border-primary-800 pb-2 inline-block">Hubungi Kami</h3>
-            <ul className="space-y-3 text-sm">
-              <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-primary-400 flex-shrink-0" />
-                <span>{settings?.alamat || "Perumahan Korpri Cempaka, Plumbon, Cirebon, Jawa Barat."}</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-primary-400 flex-shrink-0" />
-                <span>{settings?.telepon || "+62 812-3456-7890 (Pengurus DKM)"}</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-primary-400 flex-shrink-0" />
-                <span>{settings?.email || "info@masjidarrahman.com"}</span>
-              </li>
-            </ul>
-          </div>
-
-          <div className="space-y-4">
+          <div className="space-y-4 md:col-span-1">
             <h3 className="font-semibold text-white text-lg border-b border-primary-800 pb-2 inline-block">Tautan Cepat</h3>
             <ul className="space-y-2 text-sm flex flex-col">
               <Link href="/profil" className="hover:text-white transition-colors hover:underline w-fit">Profil & Sejarah</Link>
@@ -52,6 +36,11 @@ export default async function Footer() {
               <Link href="/donasi" className="hover:text-white transition-colors hover:underline w-fit">Infaq & Shodaqoh</Link>
               <Link href="/admin" className="hover:text-primary-400 transition-colors hover:underline mt-4 w-fit text-xs opacity-70">Login Admin</Link>
             </ul>
+          </div>
+
+          <div className="space-y-4 md:col-span-1">
+            <h3 className="font-semibold text-white text-lg border-b border-primary-800 pb-2 inline-block">Tanggal Real-time</h3>
+            <HijriCalendarWidget />
           </div>
 
         </div>

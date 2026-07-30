@@ -31,6 +31,19 @@ model Settings {
   popupImage         String? // URL gambar popup pengumuman
   popupIsActive      Boolean  @default(false) // Status popup nyala/mati
   popupDuration      Int      @default(10) // Durasi tayang popup dalam detik
+  fontFamily         String?  @default("inter") // Pilihan font utama website
+  themeColor         String   @default("emerald") // Tema warna utama website
+  runningTextSpeed   Int      @default(25) // Kecepatan teks berjalan dalam detik
+  irmasLogoUrl       String?  // URL logo khusus IRMAS
+  logoSizeNavbar     Int      @default(48) // Tinggi logo Navbar dalam px
+  logoSizeProfil     Int      @default(80) // Tinggi logo Profil dalam px
+  logoSizeIrmas      Int      @default(80) // Tinggi logo IRMAS dalam px
+  
+  // Konfigurasi API Tambahan
+  cloudinaryCloudName String?
+  cloudinaryApiKey    String?
+  cloudinaryApiSecret String?
+
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 }
@@ -111,4 +124,27 @@ model PushSubscription {
   p256dh    String
   auth      String
   createdAt DateTime @default(now())
+}
+
+model Bulletin {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  imageUrl    String?
+  expiryDate  DateTime
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model OrganizationMember {
+  id        String   @id @default(cuid())
+  name      String
+  position  String
+  parentId  String?
+  parent    OrganizationMember?  @relation("MemberToMember", fields: [parentId], references: [id], onDelete: SetNull)
+  children  OrganizationMember[] @relation("MemberToMember")
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -14,6 +14,17 @@ export async function saveSettings(formData: FormData) {
   const telepon = formData.get("telepon") as string;
   const email = formData.get("email") as string;
   const logoUrl = formData.get("logoUrl") as string;
+  const fontFamily = formData.get("fontFamily") as string;
+  const themeColor = formData.get("themeColor") as string;
+  const runningTextSpeed = parseInt(formData.get("runningTextSpeed") as string) || 25;
+  const irmasLogoUrl = formData.get("irmasLogoUrl") as string;
+  const logoSizeNavbar = parseInt(formData.get("logoSizeNavbar") as string) || 48;
+  const logoSizeProfil = parseInt(formData.get("logoSizeProfil") as string) || 80;
+  const logoSizeIrmas = parseInt(formData.get("logoSizeIrmas") as string) || 80;
+  
+  const cloudinaryCloudName = formData.get("cloudinaryCloudName") as string;
+  const cloudinaryApiKey = formData.get("cloudinaryApiKey") as string;
+  const cloudinaryApiSecret = formData.get("cloudinaryApiSecret") as string;
 
   const settingsCount = await prisma.settings.count();
 
@@ -28,6 +39,16 @@ export async function saveSettings(formData: FormData) {
     telepon: telepon || null,
     email: email || null,
     logoUrl: logoUrl || null,
+    fontFamily: fontFamily || "inter",
+    themeColor: themeColor || "emerald",
+    runningTextSpeed: runningTextSpeed,
+    irmasLogoUrl: irmasLogoUrl || null,
+    logoSizeNavbar,
+    logoSizeProfil,
+    logoSizeIrmas,
+    cloudinaryCloudName: cloudinaryCloudName || null,
+    cloudinaryApiKey: cloudinaryApiKey || null,
+    cloudinaryApiSecret: cloudinaryApiSecret || null,
   };
 
   if (settingsCount === 0) {
@@ -42,7 +63,7 @@ export async function saveSettings(formData: FormData) {
     });
   }
 
-  revalidatePath("/");
+  revalidatePath("/", "layout");
   revalidatePath("/profil");
   revalidatePath("/donasi");
   revalidatePath("/admin/profil");

@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
@@ -16,13 +11,29 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Tidak ada file yang diunggah." }, { status: 400 });
     }
 
+    // Ambil konfigurasi dari database
+    const settings = await prisma.settings.findFirst();
+
+    // Gunakan konfigurasi dari database jika ada, jika tidak fallback ke .env
+    cloudinary.config({
+      cloud_name: settings?.cloudinaryCloudName || process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: settings?.cloudinaryApiKey || process.env.CLOUDINARY_API_KEY,
+      api_secret: settings?.cloudinaryApiSecret || process.env.CLOUDINARY_API_SECRET,
+    });
+
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Proses upload ke Cloudinary
+    // Proses upload ke Cloudinary dengan optimasi memori
     const result = await new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
-        { folder: "masjid-ar-rahman" },
+        { 
+          folder: "masjid-ar-rahman",
+          format: "webp", // Ubah ke WEBP agar ukurannya sangat kecil
+          quality: "auto", // Kompresi otomatis terbaik
+          width: 1200, // Batasi lebar maksimal untuk menghemat kuota
+          crop: "limit" // Jangan perbesar jika gambar aslinya kecil
+        },
         (error, result) => {
           if (error) reject(error);
           else resolve(result);

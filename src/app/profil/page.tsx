@@ -1,11 +1,15 @@
 import { prisma } from "@/lib/prisma";
 import { BookOpen, Target, Users } from "lucide-react";
+import OrganizationChart from "@/components/OrganizationChart";
 
 export const revalidate = 60; // Revalidate every 60 seconds
 
 export default async function ProfilPage() {
   // Ambil pengaturan profil dari database (jika belum ada, akan dirender teks dummy)
   const settings = await prisma.settings.findFirst();
+  const members = await prisma.organizationMember.findMany({
+    orderBy: { order: "asc" }
+  });
 
   const dummyVisi = "Menjadi pusat ibadah, pendidikan, dan peradaban umat yang ramah, modern, dan menebarkan rahmat bagi seluruh alam (Rahmatan Lil 'Alamin) di lingkungan Perumahan Korpri Cempaka.";
   
@@ -28,11 +32,11 @@ export default async function ProfilPage() {
         <div className="text-center animate-fade-in flex flex-col items-center">
           {settings?.logoUrl && (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={settings.logoUrl} alt="Logo Masjid" className="h-24 md:h-32 w-auto object-contain mb-6 drop-shadow-sm" />
+            <img src={settings.logoUrl} alt="Logo Masjid" className="w-auto object-contain mb-6 drop-shadow-sm transition-all scale-125 md:scale-150" style={{ height: `${Math.max(settings.logoSizeProfil || 160, 120)}px` }} />
           )}
-          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">Profil Masjid</h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight mt-6">Profil Masjid</h1>
           <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
-            Mengenal lebih dekat sejarah, visi, dan misi Masjid Jami' Ar-Rahman Cempaka.
+            Mengenal lebih dekat sejarah, visi, misi & Struktur Organisasi DKM Masjid Jami' Ar-Rahman Cempaka.
           </p>
         </div>
 
@@ -74,6 +78,15 @@ export default async function ProfilPage() {
           <p className="text-gray-700 leading-relaxed text-lg whitespace-pre-wrap">
             {sejarah}
           </p>
+        </div>
+
+        {/* Struktur Organisasi Section */}
+        <div className="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-gray-100 animate-fade-in" style={{ animationDelay: "0.4s" }}>
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold text-gray-900">Struktur Organisasi DKM</h2>
+            <div className="w-16 h-1.5 bg-primary-600 rounded-full mx-auto mt-4"></div>
+          </div>
+          <OrganizationChart members={members} />
         </div>
 
       </div>
