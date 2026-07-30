@@ -46,8 +46,8 @@ export default function GalleryDashboardClient({ initialGalleries }: { initialGa
       setFile(null);
       router.refresh();
       
-    } catch (error) {
-      alert("Gagal menambahkan foto galeri.");
+    } catch (error: any) {
+      alert("Gagal menambahkan foto galeri: " + (error.response?.data?.error || error.message));
     } finally {
       setLoading(false);
     }
