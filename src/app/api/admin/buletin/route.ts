@@ -51,8 +51,8 @@ export async function POST(request: Request) {
       },
     });
 
-    // Send push notification asynchronously
-    sendNotificationToAll(
+    // Send push notification asynchronously (await is required on Vercel so it doesn't get killed)
+    await sendNotificationToAll(
       "Buletin Baru: " + title,
       description.length > 50 ? description.substring(0, 50) + "..." : description,
       "/"
