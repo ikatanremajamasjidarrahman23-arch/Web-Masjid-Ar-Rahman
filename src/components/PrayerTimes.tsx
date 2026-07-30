@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { Clock } from "lucide-react";
 
@@ -21,13 +21,26 @@ export default function PrayerTimes() {
   const latitude = -6.6975;
   const longitude = 108.4735;
   
-  // Jam laptop lebih cepat 9 menit dari waktu sesungguhnya
-  const LAPTOP_OFFSET_MINUTES = 9; 
+  const timeOffsetRef = useRef<number>(0);
+
+  useEffect(() => {
+    const syncTime = async () => {
+      try {
+        const t1 = Date.now();
+        const res = await axios.get("/api/time");
+        const t2 = Date.now();
+        const serverTime = new Date(res.data.now).getTime();
+        const networkDelay = (t2 - t1) / 2;
+        timeOffsetRef.current = (serverTime + networkDelay) - Date.now();
+      } catch (err) {
+        console.error("Gagal sinkronisasi waktu:", err);
+      }
+    };
+    syncTime();
+  }, []);
 
   const getRealTime = () => {
-    const d = new Date();
-    d.setMinutes(d.getMinutes() - LAPTOP_OFFSET_MINUTES);
-    return d;
+    return new Date(Date.now() + timeOffsetRef.current);
   };
 
   useEffect(() => {
