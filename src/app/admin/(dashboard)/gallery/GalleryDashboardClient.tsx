@@ -27,6 +27,11 @@ export default function GalleryDashboardClient({ initialGalleries }: { initialGa
     e.preventDefault();
     if (!file) return alert("Pilih foto terlebih dahulu!");
     
+    // Validasi ukuran maksimal 4MB (Vercel limit)
+    if (file.size > 4 * 1024 * 1024) {
+      return alert("❌ Ukuran foto terlalu besar (Maksimal 4MB). Silakan perkecil ukuran foto Anda terlebih dahulu.");
+    }
+
     setLoading(true);
 
     try {

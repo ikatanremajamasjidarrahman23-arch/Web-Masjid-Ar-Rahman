@@ -14,11 +14,21 @@ export async function POST(request: Request) {
     // Ambil konfigurasi dari database
     const settings = await prisma.settings.findFirst();
 
+    const cloudName = settings?.cloudinaryCloudName || process.env.CLOUDINARY_CLOUD_NAME;
+    const apiKey = settings?.cloudinaryApiKey || process.env.CLOUDINARY_API_KEY;
+    const apiSecret = settings?.cloudinaryApiSecret || process.env.CLOUDINARY_API_SECRET;
+
+    if (!cloudName || !apiKey || !apiSecret) {
+      return NextResponse.json({ 
+        error: "Sistem belum siap: Kunci rahasia Cloudinary (CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET) belum disetting di Environment Variables Vercel." 
+      }, { status: 500 });
+    }
+
     // Gunakan konfigurasi dari database jika ada, jika tidak fallback ke .env
     cloudinary.config({
-      cloud_name: settings?.cloudinaryCloudName || process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: settings?.cloudinaryApiKey || process.env.CLOUDINARY_API_KEY,
-      api_secret: settings?.cloudinaryApiSecret || process.env.CLOUDINARY_API_SECRET,
+      cloud_name: cloudName,
+      api_key: apiKey,
+      api_secret: apiSecret,
     });
 
     const bytes = await file.arrayBuffer();
