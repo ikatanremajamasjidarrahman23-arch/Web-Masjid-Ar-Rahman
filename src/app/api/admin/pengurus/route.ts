@@ -6,7 +6,8 @@ import { jwtVerify } from "jose";
 const SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "rahasia-negara");
 
 async function verifyAuth() {
-  const token = cookies().get("admin_token")?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get("admin_token")?.value;
   if (!token) return false;
   try {
     await jwtVerify(token, SECRET);

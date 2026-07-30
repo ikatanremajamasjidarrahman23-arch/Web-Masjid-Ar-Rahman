@@ -6,7 +6,8 @@ import { jwtVerify } from "jose";
 const SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "rahasia-negara");
 
 async function verifyAuth() {
-  const token = cookies().get("admin_token")?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get("admin_token")?.value;
   if (!token) return false;
   try {
     await jwtVerify(token, SECRET);
@@ -16,17 +17,18 @@ async function verifyAuth() {
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!(await verifyAuth())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
+    const { id } = await params;
     const data = await request.json();
     const { name, position, parentId, order } = data;
 
     const member = await prisma.organizationMember.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         name,
         position,
@@ -41,14 +43,15 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!(await verifyAuth())) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
+    const { id } = await params;
     await prisma.organizationMember.delete({
-      where: { id: params.id }
+      where: { id }
     });
 
     return NextResponse.json({ success: true });
