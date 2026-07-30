@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
-import { Megaphone, Plus, Trash2, ImagePlus, Check, X, Calendar as CalendarIcon, Clock, ToggleLeft, ToggleRight } from "lucide-react";
+import { Megaphone, Plus, Trash2, ImagePlus, Check, X, Calendar as CalendarIcon, Clock, ToggleLeft, ToggleRight, Bell } from "lucide-react";
 
 type Bulletin = {
   id: string;
@@ -21,6 +21,7 @@ export default function BuletinDashboardClient() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [isTestingPush, setIsTestingPush] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -79,6 +80,18 @@ export default function BuletinDashboardClient() {
     }
   };
 
+  const handleTestPush = async () => {
+    setIsTestingPush(true);
+    try {
+      const res = await axios.post("/api/admin/test-push");
+      alert("✅ " + res.data.message);
+    } catch (error: any) {
+      alert("❌ Gagal mengirim notifikasi tes: " + (error.response?.data?.error || error.message));
+    } finally {
+      setIsTestingPush(false);
+    }
+  };
+
   const isExpired = (expiryStr: string) => {
     return new Date(expiryStr) < new Date();
   };
@@ -94,13 +107,23 @@ export default function BuletinDashboardClient() {
           <h2 className="text-2xl font-bold text-gray-900">Papan Buletin</h2>
           <p className="text-gray-600 mt-1">Kelola berita atau informasi penting untuk ditampilkan di halaman depan.</p>
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-xl hover:bg-primary-700 transition-all font-medium"
-        >
-          {showForm ? <X size={18} /> : <Plus size={18} />}
-          {showForm ? "Batal" : "Buat Buletin Baru"}
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={handleTestPush}
+            disabled={isTestingPush}
+            className="flex items-center gap-2 bg-amber-100 text-amber-700 px-4 py-2 rounded-xl hover:bg-amber-200 transition-all font-medium disabled:opacity-70"
+          >
+            <Bell size={18} />
+            {isTestingPush ? "Mengirim..." : "Cek Notifikasi"}
+          </button>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="flex items-center gap-2 bg-primary-600 text-white px-4 py-2 rounded-xl hover:bg-primary-700 transition-all font-medium"
+          >
+            {showForm ? <X size={18} /> : <Plus size={18} />}
+            {showForm ? "Batal" : "Buat Buletin Baru"}
+          </button>
+        </div>
       </div>
 
       {showForm && (

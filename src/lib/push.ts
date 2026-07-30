@@ -1,14 +1,14 @@
 import webpush from 'web-push'
 import { prisma } from './prisma'
 
-webpush.setVapidDetails(
-  'mailto:admin@example.com',
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY as string,
-  process.env.VAPID_PRIVATE_KEY as string
-)
-
 export async function sendNotificationToAll(title: string, body: string, url: string = '/') {
   try {
+    webpush.setVapidDetails(
+      'mailto:admin@example.com',
+      process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY as string,
+      process.env.VAPID_PRIVATE_KEY as string
+    )
+    
     const subscriptions = await prisma.pushSubscription.findMany()
     
     const notificationPayload = {
