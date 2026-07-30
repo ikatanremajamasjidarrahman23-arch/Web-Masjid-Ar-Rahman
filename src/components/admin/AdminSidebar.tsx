@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { LayoutDashboard, LogOut, Settings, Calendar, Users, Wallet, BookOpen, Image as ImageIcon, Menu, X, ImagePlus, Megaphone, Network } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import VercelStatusLight from "./VercelStatusLight";
 
 export default function AdminSidebar({ logoutAction }: { logoutAction: (payload: FormData) => void }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -79,6 +80,7 @@ export default function AdminSidebar({ logoutAction }: { logoutAction: (payload:
           })}
 
           <div className="pt-4 mt-4 border-t border-gray-100">
+            <VercelStatusLight />
             <form action={logoutAction}>
               <button type="submit" className="flex items-center gap-3 px-3 py-2 w-full text-red-600 rounded-lg hover:bg-red-50 transition-colors text-left">
                 <LogOut className="w-5 h-5" />
