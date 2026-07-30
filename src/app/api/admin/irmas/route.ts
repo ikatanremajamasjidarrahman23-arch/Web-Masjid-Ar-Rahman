@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendNotificationToAll } from "@/lib/push";
 
@@ -23,12 +23,14 @@ export async function POST(request: Request) {
       },
     });
 
-    // Send push notification asynchronously (await is required on Vercel so it doesn't get killed)
-    await sendNotificationToAll(
-      "Info IRMAS Baru: " + title,
-      "Cek info terbaru dari Ikatan Remaja Masjid",
-      "/irmas"
-    ).catch(console.error);
+    // Gunakan fungsi after() agar tidak membebani loading website
+    after(() => {
+      sendNotificationToAll(
+        "Info IRMAS Baru: " + title,
+        "Cek info terbaru dari Ikatan Remaja Masjid",
+        "/irmas"
+      ).catch(console.error);
+    });
 
     return NextResponse.json({ success: true, data: activity });
   } catch (error) {

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextResponse, after } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendNotificationToAll } from "@/lib/push";
 import { cookies } from "next/headers";
@@ -51,12 +51,15 @@ export async function POST(request: Request) {
       },
     });
 
-    // Send push notification asynchronously (await is required on Vercel so it doesn't get killed)
-    await sendNotificationToAll(
-      "Buletin Baru: " + title,
-      description.length > 50 ? description.substring(0, 50) + "..." : description,
-      "/"
-    ).catch(console.error);
+    // Gunakan fungsi after() dari Next.js agar notifikasi dikirim di latar belakang
+    // tanpa membuat loading website menjadi lambat (Vercel akan menunggu ini selesai).
+    after(() => {
+      sendNotificationToAll(
+        "Buletin Baru: " + title,
+        description.length > 50 ? description.substring(0, 50) + "..." : description,
+        "/"
+      ).catch(console.error);
+    });
 
     return NextResponse.json({ success: true, data: newBulletin });
   } catch (error) {
