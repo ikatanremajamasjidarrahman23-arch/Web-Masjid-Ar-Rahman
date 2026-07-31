@@ -37,30 +37,30 @@ export default function HijriCalendarWidget() {
       try {
         const hijriFormatter = new Intl.DateTimeFormat("en-US-u-ca-islamic-umalqura", {
           day: "numeric",
-          month: "long",
+          month: "numeric",
           year: "numeric"
         });
         const parts = hijriFormatter.formatToParts(hijriDateObj);
         const day = parts.find(p => p.type === 'day')?.value || "1";
-        const monthEng = parts.find(p => p.type === 'month')?.value || "";
+        const monthNum = parts.find(p => p.type === 'month')?.value || "1";
         const year = parts.find(p => p.type === 'year')?.value || "1445";
 
-        const monthMap: Record<string, string> = {
-          "Muharram": "Muharram",
-          "Safar": "Safar",
-          "Rabiʻ I": "Rabiul Awal",
-          "Rabiʻ II": "Rabiul Akhir",
-          "Jumada I": "Jumadil Awal",
-          "Jumada II": "Jumadil Akhir",
-          "Rajab": "Rajab",
-          "Shaʻban": "Syaban",
-          "Ramadan": "Ramadhan",
-          "Shawwal": "Syawal",
-          "Dhuʻl-Qiʻdah": "Dzulqa'dah",
-          "Dhuʻl-Hijjah": "Dzulhijjah"
-        };
+        const islamicMonths = [
+          "Muharram",
+          "Safar",
+          "Rabiul Awal",
+          "Rabiul Akhir",
+          "Jumadil Awal",
+          "Jumadil Akhir",
+          "Rajab",
+          "Syaban",
+          "Ramadhan",
+          "Syawal",
+          "Dzulqa'dah",
+          "Dzulhijjah"
+        ];
 
-        const monthId = monthMap[monthEng] || monthEng;
+        const monthId = islamicMonths[parseInt(monthNum) - 1] || "Muharram";
         setHijriDate(`${day} ${monthId} ${year} H`);
       } catch (e) {
         setHijriDate("");
