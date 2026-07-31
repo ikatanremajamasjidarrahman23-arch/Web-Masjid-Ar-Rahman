@@ -46,7 +46,7 @@ export default async function Footer() {
         </div>
 
         <div className="border-t border-primary-900 mt-12 pt-8 text-center text-sm text-primary-300/60">
-          <p>&copy; {new Date().getFullYear()} DKM Masjid Jami&apos; Ar-Rahman Cempaka. Hak Cipta Dilindungi.</p>
+          <p>&copy; {new Date().getFullYear()} Support By Tim IT - DKM Masjid Jami&apos; Ar-Rahman. Hak Cipta Dilindungi.</p>
         </div>
       </div>
     </footer>
