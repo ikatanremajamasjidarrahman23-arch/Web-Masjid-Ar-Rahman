@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import FooterWrapper from "@/components/FooterWrapper";
 import WelcomePopup from "@/components/WelcomePopup";
 import PushNotificationManager from "@/components/PushNotificationManager";
 import { prisma } from "@/lib/prisma";
@@ -42,7 +43,9 @@ export default async function RootLayout({
         <main className="flex-grow">
           {children}
         </main>
-        <Footer />
+        <FooterWrapper>
+          <Footer />
+        </FooterWrapper>
       </body>
     </html>
   );

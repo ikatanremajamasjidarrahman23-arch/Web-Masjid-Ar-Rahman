@@ -1,28 +1,61 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Calendar } from "lucide-react";
+import axios from "axios";
 
 export default function NavbarDateWidget() {
   const [hijriDate, setHijriDate] = useState("");
   const [masehiDate, setMasehiDate] = useState("");
   const [currentTime, setCurrentTime] = useState("");
 
+  const timeOffsetRef = useRef<number>(0);
+
+  useEffect(() => {
+    const syncTime = async () => {
+      try {
+        const t1 = Date.now();
+        const res = await axios.get("/api/time");
+        const t2 = Date.now();
+        const serverTime = res.data.time || Date.now();
+        const networkDelay = (t2 - t1) / 2;
+        timeOffsetRef.current = (serverTime + networkDelay) - Date.now();
+      } catch (err) {
+        console.error("Gagal sinkronisasi waktu:", err);
+      }
+    };
+    syncTime();
+  }, []);
+
   useEffect(() => {
     const updateTime = () => {
-      const today = new Date();
-      // Koreksi waktu: dikurangi 10 menit
-      today.setMinutes(today.getMinutes() - 10);
+      const today = new Date(Date.now() + timeOffsetRef.current);
+      
+      const hijriDateObj = new Date(today);
+      if (hijriDateObj.getHours() >= 18) {
+        hijriDateObj.setDate(hijriDateObj.getDate() + 1);
+      }
     
     // Format Hijri Date
     try {
-      const hijriFormatter = new Intl.DateTimeFormat("id-ID-u-ca-islamic-umalqura", {
+      const hijriFormatter = new Intl.DateTimeFormat("en-US-u-ca-islamic-umalqura", {
         day: "numeric",
-        month: "long",
+        month: "numeric",
         year: "numeric"
       });
-      const formattedHijri = hijriFormatter.format(today);
-      setHijriDate(formattedHijri.endsWith("H") || formattedHijri.endsWith("AH") ? formattedHijri : formattedHijri + " H");
+      const parts = hijriFormatter.formatToParts(hijriDateObj);
+      const day = parts.find(p => p.type === 'day')?.value || "1";
+      const monthNum = parts.find(p => p.type === 'month')?.value || "1";
+      const year = parts.find(p => p.type === 'year')?.value || "1445";
+
+      const islamicMonths = [
+        "Muharram", "Safar", "Rabiul Awal", "Rabiul Akhir",
+        "Jumadil Awal", "Jumadil Akhir", "Rajab", "Syaban",
+        "Ramadhan", "Syawal", "Dzulqa'dah", "Dzulhijjah"
+      ];
+
+      const monthId = islamicMonths[parseInt(monthNum) - 1] || "Muharram";
+      setHijriDate(`${day} ${monthId} ${year} H`);
     } catch (e) {
       setHijriDate("");
     }
