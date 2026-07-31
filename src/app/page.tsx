@@ -2,7 +2,6 @@ import PrayerTimes from "@/components/PrayerTimes";
 import { ArrowRight, MapPin, CalendarDays, Megaphone, Clock, User, BookOpen, Image as ImageIcon, Phone, Mail } from "lucide-react";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import KajianCard from "@/components/KajianCard";
 import BulletinBoard from "@/components/BulletinBoard";
 import FiturCepat from "@/components/FiturCepat";
 
@@ -10,11 +9,6 @@ export const revalidate = 60;
 
 export default async function Home() {
 
-
-  const kajianList = await prisma.studySchedule.findMany({
-    orderBy: { createdAt: "asc" },
-    take: 3
-  });
 
   const activeBulletins = await prisma.bulletin.findMany({
     where: {
@@ -98,34 +92,6 @@ export default async function Home() {
       {/* Fitur Cepat Section */}
       <FiturCepat />
 
-      {/* Jadwal Kajian / Kegiatan Terdekat */}
-      <section className="py-16 bg-white border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-3">Agenda Kegiatan</h2>
-              <p className="text-gray-600 max-w-2xl">
-                Informasi lengkap mengenai jadwal kajian, acara keagamaan, dan kegiatan rutin yang akan datang
-              </p>
-            </div>
-            <Link href="/kajian" className="inline-flex items-center gap-2 text-primary-600 font-medium hover:text-primary-700 transition-colors">
-              Lihat Seluruh Agenda <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {kajianList.length === 0 ? (
-              <div className="col-span-full py-12 text-center text-gray-500 bg-gray-50 rounded-2xl border border-gray-100">
-                Belum ada agenda kegiatan yang ditambahkan.
-              </div>
-            ) : (
-              kajianList.map((kajian, index) => (
-                <KajianCard key={kajian.id} kajian={kajian} variant="home" index={index} />
-              ))
-            )}
-          </div>
-        </div>
-      </section>
 
 
       {/* Hubungi Kami Section */}
