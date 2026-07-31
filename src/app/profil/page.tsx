@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { BookOpen, Target, Users } from "lucide-react";
 import OrganizationChart from "@/components/OrganizationChart";
+import AdArtButton from "@/components/AdArtButton";
 
 export const revalidate = 60; // Revalidate every 60 seconds
 
@@ -82,9 +83,12 @@ export default async function ProfilPage() {
 
         {/* Struktur Organisasi Section */}
         <div className="bg-white p-8 md:p-12 rounded-2xl shadow-sm border border-gray-100 animate-fade-in" style={{ animationDelay: "0.4s" }}>
-          <div className="text-center mb-10">
+          <div className="text-center mb-10 flex flex-col items-center">
             <h2 className="text-3xl font-bold text-gray-900">Struktur Organisasi DKM</h2>
-            <div className="w-16 h-1.5 bg-primary-600 rounded-full mx-auto mt-4"></div>
+            <div className="w-16 h-1.5 bg-primary-600 rounded-full mt-4 mb-2"></div>
+            
+            {/* AD/ART Button rendering */}
+            <AdArtButton content={settings?.adArtContent} fileUrl={settings?.adArtFileUrl} />
           </div>
           <OrganizationChart members={members} />
         </div>

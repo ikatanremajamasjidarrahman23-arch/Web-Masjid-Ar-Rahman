@@ -44,6 +44,10 @@ model Settings {
   cloudinaryApiKey    String?
   cloudinaryApiSecret String?
 
+  // AD/ART Kepengurusan
+  adArtContent       String? @db.Text // Teks manual
+  adArtFileUrl       String? // URL file PDF atau Gambar
+
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
 }

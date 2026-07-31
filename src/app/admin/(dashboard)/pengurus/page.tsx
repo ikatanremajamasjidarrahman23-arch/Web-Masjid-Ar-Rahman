@@ -1,4 +1,5 @@
 import OrganizationClient from "./OrganizationClient";
+import AdArtClientForm from "@/components/admin/AdArtClientForm";
 import { prisma } from "@/lib/prisma";
 
 export const revalidate = 0;
@@ -7,6 +8,7 @@ export default async function PengurusPage() {
   const members = await prisma.organizationMember.findMany({
     orderBy: { order: "asc" }
   });
+  const settings = await prisma.settings.findFirst();
 
   return (
     <div className="space-y-6">
@@ -18,6 +20,10 @@ export default async function PengurusPage() {
       </div>
 
       <OrganizationClient initialMembers={members} />
+      
+      <div className="pt-6">
+        <AdArtClientForm settings={settings} />
+      </div>
     </div>
   );
 }

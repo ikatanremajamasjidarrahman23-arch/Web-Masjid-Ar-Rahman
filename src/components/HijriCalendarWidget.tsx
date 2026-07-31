@@ -7,22 +7,61 @@ export default function HijriCalendarWidget() {
   const [hijriDate, setHijriDate] = useState("");
   const [masehiDate, setMasehiDate] = useState("");
   const [currentTime, setCurrentTime] = useState("");
+  const [timeOffset, setTimeOffset] = useState(0);
+
+  // Sync with BMKG
+  useEffect(() => {
+    fetch('/api/time')
+      .then(res => res.json())
+      .then(data => {
+        if (data.time) {
+          const localTime = Date.now();
+          setTimeOffset(data.time - localTime);
+        }
+      })
+      .catch(err => console.error("Failed to sync BMKG time:", err));
+  }, []);
 
   useEffect(() => {
     const updateTime = () => {
-      const today = new Date();
-      // Koreksi waktu: dikurangi 10 menit
-      today.setMinutes(today.getMinutes() - 10);
+      // Use local time + offset from BMKG
+      const today = new Date(Date.now() + timeOffset);
+      
+      // Pergantian hari Hijriah (setelah Maghrib, perkiraan pukul 18:00)
+      const hijriDateObj = new Date(today);
+      if (hijriDateObj.getHours() >= 18) {
+        hijriDateObj.setDate(hijriDateObj.getDate() + 1);
+      }
       
       // Format Hijri Date
       try {
-        const hijriFormatter = new Intl.DateTimeFormat("id-ID-u-ca-islamic-umalqura", {
+        const hijriFormatter = new Intl.DateTimeFormat("en-US-u-ca-islamic-umalqura", {
           day: "numeric",
           month: "long",
           year: "numeric"
         });
-        const formattedHijri = hijriFormatter.format(today);
-        setHijriDate(formattedHijri.endsWith("H") || formattedHijri.endsWith("AH") ? formattedHijri : formattedHijri + " H");
+        const parts = hijriFormatter.formatToParts(hijriDateObj);
+        const day = parts.find(p => p.type === 'day')?.value || "1";
+        const monthEng = parts.find(p => p.type === 'month')?.value || "";
+        const year = parts.find(p => p.type === 'year')?.value || "1445";
+
+        const monthMap: Record<string, string> = {
+          "Muharram": "Muharram",
+          "Safar": "Safar",
+          "Rabiʻ I": "Rabiul Awal",
+          "Rabiʻ II": "Rabiul Akhir",
+          "Jumada I": "Jumadil Awal",
+          "Jumada II": "Jumadil Akhir",
+          "Rajab": "Rajab",
+          "Shaʻban": "Syaban",
+          "Ramadan": "Ramadhan",
+          "Shawwal": "Syawal",
+          "Dhuʻl-Qiʻdah": "Dzulqa'dah",
+          "Dhuʻl-Hijjah": "Dzulhijjah"
+        };
+
+        const monthId = monthMap[monthEng] || monthEng;
+        setHijriDate(`${day} ${monthId} ${year} H`);
       } catch (e) {
         setHijriDate("");
       }
@@ -48,7 +87,7 @@ export default function HijriCalendarWidget() {
     updateTime();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [timeOffset]);
 
   if (!hijriDate || !masehiDate) {
     return <div className="animate-pulse h-16 bg-primary-900 rounded-xl"></div>;

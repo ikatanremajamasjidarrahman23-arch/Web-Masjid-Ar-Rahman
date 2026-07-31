@@ -29,7 +29,7 @@ export default function PrayerTimes() {
         const t1 = Date.now();
         const res = await axios.get("/api/time");
         const t2 = Date.now();
-        const serverTime = new Date(res.data.now).getTime();
+        const serverTime = res.data.time || Date.now();
         const networkDelay = (t2 - t1) / 2;
         timeOffsetRef.current = (serverTime + networkDelay) - Date.now();
       } catch (err) {

@@ -25,6 +25,9 @@ export async function saveSettings(formData: FormData) {
   const cloudinaryCloudName = formData.get("cloudinaryCloudName") as string;
   const cloudinaryApiKey = formData.get("cloudinaryApiKey") as string;
   const cloudinaryApiSecret = formData.get("cloudinaryApiSecret") as string;
+  
+  const adArtContent = formData.get("adArtContent") as string;
+  const adArtFileUrl = formData.get("adArtFileUrl") as string;
 
   const settingsCount = await prisma.settings.count();
 
@@ -49,6 +52,8 @@ export async function saveSettings(formData: FormData) {
     cloudinaryCloudName: cloudinaryCloudName || null,
     cloudinaryApiKey: cloudinaryApiKey || null,
     cloudinaryApiSecret: cloudinaryApiSecret || null,
+    adArtContent: adArtContent || null,
+    adArtFileUrl: adArtFileUrl || null,
   };
 
   if (settingsCount === 0) {
