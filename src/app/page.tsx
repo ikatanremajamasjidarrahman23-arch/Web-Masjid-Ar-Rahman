@@ -86,58 +86,14 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Quick Access Grid */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <BulletinBoard bulletins={activeBulletins} />
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            
-            {/* Card 1 */}
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group">
-              <div className="w-14 h-14 bg-primary-100 rounded-xl flex items-center justify-center text-primary-600 mb-6 group-hover:scale-110 transition-transform">
-                <CalendarDays className="w-7 h-7" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Galeri PHBI</h3>
-              <p className="text-gray-600 mb-6 line-clamp-3">
-                Jelajahi momen berkesan dan dokumentasi visual seputar Peringatan Hari Besar Islam serta berbagai kegiatan keagamaan
-              </p>
-              <Link href="/phbi" className="text-primary-600 font-medium flex items-center gap-1 hover:text-primary-700 transition-colors">
-                Lihat Galeri <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-
-            {/* Card 2 */}
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group">
-              <div className="w-14 h-14 bg-primary-100 rounded-xl flex items-center justify-center text-primary-600 mb-6 group-hover:scale-110 transition-transform">
-                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Ikatan Remaja Masjid</h3>
-              <p className="text-gray-600 mb-6 line-clamp-3">
-                Berita kegiatan IRMAS, dari kajian rutin, kerja bakti, hingga formulir pendaftaran anggota baru untuk pemuda-pemudi.
-              </p>
-              <Link href="/irmas" className="text-primary-600 font-medium flex items-center gap-1 hover:text-primary-700 transition-colors">
-                Info IRMAS <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-
-            {/* Card 3 */}
-            <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow group">
-              <div className="w-14 h-14 bg-primary-100 rounded-xl flex items-center justify-center text-primary-600 mb-6 group-hover:scale-110 transition-transform">
-                <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-3">Kas & Donasi</h3>
-              <p className="text-gray-600 mb-6 line-clamp-3">
-                Laporan keuangan yang transparan untuk kas masuk dan keluar. Mari salurkan infaq terbaik Anda dengan mudah.
-              </p>
-              <Link href="/donasi" className="text-primary-600 font-medium flex items-center gap-1 hover:text-primary-700 transition-colors">
-                Laporan & QRIS <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-
+      {/* Quick Access Grid / Bulletin */}
+      {activeBulletins.length > 0 && (
+        <section className="py-16 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <BulletinBoard bulletins={activeBulletins} />
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Jadwal Kajian / Kegiatan Terdekat */}
       <section className="py-16 bg-white border-t border-gray-100">
