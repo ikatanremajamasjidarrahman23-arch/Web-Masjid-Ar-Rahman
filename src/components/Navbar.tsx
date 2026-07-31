@@ -3,11 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Moon } from "lucide-react";
+import { Menu, X, Moon, ChevronDown } from "lucide-react";
 import NavbarDateWidget from "./NavbarDateWidget";
 
 export default function Navbar({ logoUrl, logoSize = 48 }: { logoUrl?: string | null, logoSize?: number }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false);
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
 
@@ -15,7 +17,14 @@ export default function Navbar({ logoUrl, logoSize = 48 }: { logoUrl?: string | 
     { name: "Beranda", href: "/" },
     { name: "Buletin", href: "/buletin" },
     { name: "Profil", href: "/profil" },
-    { name: "Galeri PHBI", href: "/phbi" },
+    { 
+      name: "Galeri", 
+      isDropdown: true,
+      sublinks: [
+        { name: "Galeri Kegiatan", href: "/galeri" },
+        { name: "Galeri PHBI", href: "/phbi" }
+      ]
+    },
     { name: "IRMAS", href: "/irmas" },
     { name: "Kas & Donasi", href: "/donasi" },
   ];
@@ -51,15 +60,52 @@ export default function Navbar({ logoUrl, logoSize = 48 }: { logoUrl?: string | 
               <NavbarDateWidget />
             ) : (
               <div className="ml-10 flex items-baseline space-x-4">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    className="hover:bg-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                ))}
+                {navLinks.map((link) => {
+                  if (link.isDropdown) {
+                    return (
+                      <div 
+                        key={link.name} 
+                        className="relative group"
+                        onMouseEnter={() => setIsDropdownOpen(true)}
+                        onMouseLeave={() => setIsDropdownOpen(false)}
+                      >
+                        <button
+                          className="flex items-center gap-1 hover:bg-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                        >
+                          {link.name}
+                          <ChevronDown className="w-4 h-4 opacity-70" />
+                        </button>
+                        
+                        {/* Dropdown Menu */}
+                        {isDropdownOpen && (
+                          <div className="absolute left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 overflow-hidden z-50">
+                            <div className="py-1">
+                              {link.sublinks?.map((sublink) => (
+                                <Link
+                                  key={sublink.name}
+                                  href={sublink.href}
+                                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-700 transition-colors"
+                                >
+                                  {sublink.name}
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      key={link.name}
+                      href={link.href!}
+                      className="hover:bg-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                    >
+                      {link.name}
+                    </Link>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -87,16 +133,46 @@ export default function Navbar({ logoUrl, logoSize = 48 }: { logoUrl?: string | 
       {isOpen && !isAdmin && (
         <div className="md:hidden" id="mobile-menu">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-primary-800 shadow-inner">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className="hover:bg-primary-600 block px-3 py-2 rounded-md text-base font-medium transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                {link.name}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              if (link.isDropdown) {
+                return (
+                  <div key={link.name}>
+                    <button
+                      onClick={() => setIsMobileDropdownOpen(!isMobileDropdownOpen)}
+                      className="flex items-center justify-between w-full hover:bg-primary-600 px-3 py-2 rounded-md text-base font-medium transition-colors"
+                    >
+                      {link.name}
+                      <ChevronDown className={`w-5 h-5 transition-transform ${isMobileDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {isMobileDropdownOpen && (
+                      <div className="pl-6 space-y-1 mt-1">
+                        {link.sublinks?.map((sublink) => (
+                          <Link
+                            key={sublink.name}
+                            href={sublink.href}
+                            className="block px-3 py-2 rounded-md text-sm font-medium text-primary-200 hover:text-white hover:bg-primary-600 transition-colors"
+                            onClick={() => setIsOpen(false)}
+                          >
+                            {sublink.name}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href!}
+                  className="hover:bg-primary-600 block px-3 py-2 rounded-md text-base font-medium transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              );
+            })}
           </div>
         </div>
       )}

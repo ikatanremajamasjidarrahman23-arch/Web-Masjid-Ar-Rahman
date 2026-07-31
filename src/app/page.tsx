@@ -8,10 +8,7 @@ import BulletinBoard from "@/components/BulletinBoard";
 export const revalidate = 60;
 
 export default async function Home() {
-  const galleries = await prisma.gallery.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 4
-  });
+
 
   const kajianList = await prisma.studySchedule.findMany({
     orderBy: { createdAt: "asc" },
@@ -171,62 +168,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Cuplikan Galeri Terbaru */}
-      <section className="py-16 bg-gray-900 text-white relative overflow-hidden">
-        {/* Decorative background element */}
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-primary-800/30 blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 rounded-full bg-primary-900/40 blur-3xl"></div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <div className="inline-flex items-center justify-center w-12 h-12 bg-gray-800 rounded-xl mb-4 text-primary-400">
-              <ImageIcon className="w-6 h-6" />
-            </div>
-            <h2 className="text-3xl font-bold mb-4">Galeri Kegiatan</h2>
-            <p className="text-gray-400">
-              Momen-momen berharga dari berbagai kegiatan ibadah, sosial, dan perayaan hari besar Islam di Masjid Jami' Ar-Rahman.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-            {galleries.length === 0 ? (
-              <div className="col-span-4 text-center py-10 text-gray-400">Belum ada foto galeri.</div>
-            ) : (
-              galleries.map((item, index) => {
-                const isLarge = index === 0;
-                const isWide = index === 3;
-                const isSmall = index === 1 || index === 2;
-
-                let containerClass = "relative group rounded-2xl overflow-hidden ";
-                if (isLarge) containerClass += "col-span-2 row-span-2 aspect-[4/3] md:aspect-auto";
-                else if (isWide) containerClass += "col-span-2 aspect-[2/1] md:aspect-auto";
-                else containerClass += "aspect-square";
-
-                let gradientClass = "absolute inset-0 flex flex-col justify-end ";
-                if (isLarge || isWide) gradientClass += "bg-gradient-to-t from-gray-900/90 via-gray-900/20 to-transparent p-" + (isLarge ? "6" : "5");
-                else gradientClass += "bg-gradient-to-t from-gray-900/90 via-transparent to-transparent p-4";
-
-                return (
-                  <div key={item.id} className={containerClass}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                    <div className={gradientClass}>
-                      {isLarge && <span className="text-primary-400 text-sm font-semibold mb-1">{item.category}</span>}
-                      <h3 className={`${isLarge ? 'text-xl' : isWide ? 'text-lg' : 'text-sm'} font-bold text-white`}>{item.title}</h3>
-                    </div>
-                  </div>
-                );
-              })
-            )}
-          </div>
-
-          <div className="text-center">
-            <Link href="/galeri" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gray-800 hover:bg-gray-700 text-white font-medium transition-colors border border-gray-700">
-              Lihat Galeri Lengkap <ArrowRight className="w-5 h-5" />
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* Hubungi Kami Section */}
       <section className="py-16 bg-white relative">

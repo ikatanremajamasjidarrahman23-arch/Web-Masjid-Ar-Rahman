@@ -31,6 +31,7 @@ export default async function Footer() {
             <h3 className="font-semibold text-white text-lg border-b border-primary-800 pb-2 inline-block">Tautan Cepat</h3>
             <ul className="space-y-2 text-sm flex flex-col">
               <Link href="/profil" className="hover:text-white transition-colors hover:underline w-fit">Profil & Sejarah</Link>
+              <Link href="/galeri" className="hover:text-white transition-colors hover:underline w-fit">Galeri Kegiatan</Link>
               <Link href="/phbi" className="hover:text-white transition-colors hover:underline w-fit">Galeri PHBI</Link>
               <Link href="/irmas" className="hover:text-white transition-colors hover:underline w-fit">Kegiatan Remaja</Link>
               <Link href="/donasi" className="hover:text-white transition-colors hover:underline w-fit">Infaq & Shodaqoh</Link>
