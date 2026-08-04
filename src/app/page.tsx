@@ -4,6 +4,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import BulletinBoard from "@/components/BulletinBoard";
 import FiturCepat from "@/components/FiturCepat";
+import SelayangPandang from "@/components/SelayangPandang";
 
 export const revalidate = 60;
 
@@ -92,7 +93,8 @@ export default async function Home() {
       {/* Fitur Cepat Section */}
       <FiturCepat />
 
-
+      {/* Selayang Pandang Section */}
+      <SelayangPandang />
 
       {/* Hubungi Kami Section */}
       <section className="py-16 bg-white relative">
