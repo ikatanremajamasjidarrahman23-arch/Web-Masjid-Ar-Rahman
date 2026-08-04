@@ -1,33 +1,38 @@
 import Image from "next/image";
 
-export default function SelayangPandang() {
-  const photos = [
+type Photo = { id: string, title: string, imageUrl: string };
+
+export default function SelayangPandang({ photos: dbPhotos }: { photos?: Photo[] }) {
+  // Use DB photos if available, otherwise use placeholders so UI doesn't look broken
+  const defaultPhotos = [
     {
       src: "/masjid-bg.jpg",
-      alt: "Masjid Ar-Rahman Tampak Depan",
       className: "col-span-2 row-span-2 md:col-span-1 md:row-span-2",
     },
     {
-      src: "https://images.unsplash.com/photo-1564683214964-15de16ce9b1f?q=80&w=800&auto=format&fit=crop", // Placeholder interior
-      alt: "Interior Masjid",
+      src: "https://images.unsplash.com/photo-1564683214964-15de16ce9b1f?q=80&w=800&auto=format&fit=crop",
       className: "col-span-1 row-span-1",
     },
     {
-      src: "https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?q=80&w=800&auto=format&fit=crop", // Placeholder kegiatan
-      alt: "Kegiatan Masjid",
+      src: "https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?q=80&w=800&auto=format&fit=crop",
       className: "col-span-1 row-span-1",
     },
     {
-      src: "https://images.unsplash.com/photo-1591462002166-51f7bb0d2919?q=80&w=800&auto=format&fit=crop", // Placeholder arsitektur
-      alt: "Detail Arsitektur",
+      src: "https://images.unsplash.com/photo-1591462002166-51f7bb0d2919?q=80&w=800&auto=format&fit=crop",
       className: "col-span-2 md:col-span-1 row-span-1",
     },
     {
-      src: "https://images.unsplash.com/photo-1542816417-0983c9c9ad53?q=80&w=800&auto=format&fit=crop", // Placeholder jamaah
-      alt: "Area Jamaah",
+      src: "https://images.unsplash.com/photo-1542816417-0983c9c9ad53?q=80&w=800&auto=format&fit=crop",
       className: "col-span-2 md:col-span-1 row-span-1",
     }
   ];
+
+  const photos = dbPhotos && dbPhotos.length > 0 
+    ? dbPhotos.map((p, i) => ({
+        src: p.imageUrl,
+        className: defaultPhotos[i % defaultPhotos.length].className
+      }))
+    : defaultPhotos;
 
   return (
     <section className="py-20 bg-white">
@@ -55,15 +60,10 @@ export default function SelayangPandang() {
               */}
               <img
                 src={photo.src}
-                alt={photo.alt}
+                alt="Galeri Masjid"
                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                 loading="lazy"
               />
-              <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent z-20 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                <span className="text-white font-medium text-sm md:text-base">
-                  {photo.alt}
-                </span>
-              </div>
             </div>
           ))}
         </div>

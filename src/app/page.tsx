@@ -11,6 +11,12 @@ export const revalidate = 60;
 export default async function Home() {
 
 
+  const selayangPandangPhotos = await prisma.gallery.findMany({
+    where: { category: "Selayang Pandang" },
+    orderBy: { createdAt: "desc" },
+    take: 5
+  });
+
   const activeBulletins = await prisma.bulletin.findMany({
     where: {
       isActive: true,
@@ -94,7 +100,7 @@ export default async function Home() {
       <FiturCepat />
 
       {/* Selayang Pandang Section */}
-      <SelayangPandang />
+      <SelayangPandang photos={selayangPandangPhotos} />
 
       {/* Hubungi Kami Section */}
       <section className="py-16 bg-white relative">

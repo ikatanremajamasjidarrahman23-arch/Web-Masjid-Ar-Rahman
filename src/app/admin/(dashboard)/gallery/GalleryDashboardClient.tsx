@@ -155,6 +155,7 @@ export default function GalleryDashboardClient({ initialGalleries }: { initialGa
                   <option value="PHBI">PHBI (Peringatan Hari Besar)</option>
                   <option value="Kegiatan Sosial">Kegiatan Sosial</option>
                   <option value="Kajian & Edukasi">Kajian & Edukasi</option>
+                  <option value="Selayang Pandang">Selayang Pandang (Halaman Utama)</option>
                   <option value="Lainnya">Lainnya</option>
                 </select>
               </div>
