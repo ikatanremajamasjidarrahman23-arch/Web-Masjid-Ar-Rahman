@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
@@ -49,6 +50,8 @@ export async function POST(request: Request) {
         order: order || 0
       }
     });
+
+    revalidatePath("/profil");
 
     return NextResponse.json(member, { status: 201 });
   } catch (error: any) {

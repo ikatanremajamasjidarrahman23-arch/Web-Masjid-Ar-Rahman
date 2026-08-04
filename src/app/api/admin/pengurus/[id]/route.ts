@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
@@ -37,6 +38,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
       }
     });
 
+    revalidatePath("/profil");
+
     return NextResponse.json(member);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -53,6 +56,8 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     await prisma.organizationMember.delete({
       where: { id }
     });
+
+    revalidatePath("/profil");
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
