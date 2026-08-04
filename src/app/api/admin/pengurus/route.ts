@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 
-const SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "rahasia-negara");
+const SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "rahasia_masjid_cempaka_2026");
 
 async function verifyAuth() {
   const cookieStore = await cookies();
