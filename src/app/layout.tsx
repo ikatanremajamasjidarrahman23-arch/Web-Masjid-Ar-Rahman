@@ -5,7 +5,7 @@ import "./globals.css";
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await prisma.settings.findFirst();
   return {
-    title: "Masjid Ar-Rahman",
+    title: "Website Resmi Masjid Ar-Rahman",
     description: settings?.deskripsiSingkat || "Website Resmi Masjid Ar-Rahman",
     manifest: "/manifest.json",
     icons: {
