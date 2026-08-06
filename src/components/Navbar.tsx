@@ -26,6 +26,7 @@ export default function Navbar({ logoUrl, logoSize = 48 }: { logoUrl?: string | 
       ]
     },
     { name: "IRMAS", href: "/irmas" },
+    { name: "Lembaga & Otonom", href: "/otonom" },
     { name: "Kas & Donasi", href: "/donasi" },
   ];
 

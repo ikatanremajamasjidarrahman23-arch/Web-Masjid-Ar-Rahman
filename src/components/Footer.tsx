@@ -34,6 +34,7 @@ export default async function Footer() {
               <Link href="/galeri" className="hover:text-white transition-colors hover:underline w-fit">Galeri Kegiatan</Link>
               <Link href="/phbi" className="hover:text-white transition-colors hover:underline w-fit">Galeri PHBI</Link>
               <Link href="/irmas" className="hover:text-white transition-colors hover:underline w-fit">Kegiatan Remaja</Link>
+              <Link href="/otonom" className="hover:text-white transition-colors hover:underline w-fit">Lembaga & Otonom</Link>
               <Link href="/donasi" className="hover:text-white transition-colors hover:underline w-fit">Infaq & Shodaqoh</Link>
               <Link href="/admin" className="hover:text-primary-400 transition-colors hover:underline mt-4 w-fit text-xs opacity-70">Login Admin</Link>
             </ul>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { LayoutDashboard, LogOut, Settings, Calendar, Users, Wallet, BookOpen, Image as ImageIcon, Menu, X, ImagePlus, Megaphone, Network, Globe, StickyNote } from "lucide-react";
+import { LayoutDashboard, LogOut, Settings, Calendar, Users, Wallet, BookOpen, Image as ImageIcon, Menu, X, ImagePlus, Megaphone, Network, Globe, StickyNote, Library } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import VercelStatusLight from "./VercelStatusLight";
@@ -21,6 +21,7 @@ export default function AdminSidebar({ logoutAction }: { logoutAction: (payload:
     { name: "Catatan Admin", href: "/admin/notepad", icon: StickyNote },
     { name: "Profil & Pengaturan", href: "/admin/profil", icon: Settings },
     { name: "Struktur Organisasi", href: "/admin/pengurus", icon: Network },
+    { name: "Lembaga & Otonom", href: "/admin/otonom", icon: Library },
     { name: "Dokumentasi PHBI", href: "/admin/phbi", icon: Calendar },
     { name: "Kegiatan IRMAS", href: "/admin/irmas", icon: Users },
     { name: "Agenda Kegiatan", href: "/admin/kajian", icon: BookOpen },

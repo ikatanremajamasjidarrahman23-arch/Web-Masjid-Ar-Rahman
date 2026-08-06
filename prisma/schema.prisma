@@ -160,3 +160,17 @@ model AdminNote {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Otonom {
+  id              String   @id @default(cuid())
+  namaOrganisasi  String
+  kategori        String
+  deskripsi       String   @db.Text
+  jadwalKegiatan  String?
+  pembina         String?
+  kontakWa        String?
+  imageUrl        String?
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
