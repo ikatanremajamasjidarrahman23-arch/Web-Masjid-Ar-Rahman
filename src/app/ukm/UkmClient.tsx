@@ -12,6 +12,7 @@ type Ukm = {
   pembina: string | null;
   kontakWa: string | null;
   imageUrl: string | null;
+  galleryImages: string[];
   createdAt: Date;
 };
 
@@ -44,9 +45,10 @@ export default function UkmClient({ initialData, variant = "default" }: { initia
   }
 
   const getMasonryClass = (index: number) => {
-    if (index === 0) return "col-span-2 row-span-2 md:col-span-1 md:row-span-2";
-    if (index === 1) return "col-span-1 row-span-1 md:col-span-2 md:row-span-1";
-    if (index === 2) return "col-span-1 row-span-1 md:col-span-2 md:row-span-1";
+    const cycle = index % 3;
+    if (cycle === 0) return "col-span-2 row-span-2 md:col-span-1 md:row-span-2";
+    if (cycle === 1) return "col-span-1 row-span-1 md:col-span-2 md:row-span-1";
+    if (cycle === 2) return "col-span-1 row-span-1 md:col-span-2 md:row-span-1";
     return "col-span-1 row-span-1";
   };
 
@@ -178,33 +180,23 @@ export default function UkmClient({ initialData, variant = "default" }: { initia
                 </div>
               </div>
 
-              <div className="bg-gray-50 rounded-2xl p-6 mb-8 border border-gray-100">
-                <h4 className="font-semibold text-gray-900 mb-4">Informasi Kegiatan</h4>
-                <div className="space-y-4">
-                  {selectedItem.jadwalKegiatan && (
-                    <div className="flex items-start gap-3">
-                      <div className="bg-white p-2 rounded-lg shadow-sm shrink-0">
-                        <Calendar className="w-5 h-5 text-primary-600" />
+              {selectedItem.galleryImages && selectedItem.galleryImages.length > 0 && (
+                <div className="mb-8">
+                  <h4 className="font-semibold text-gray-900 mb-4">Galeri Kegiatan</h4>
+                  <div className="grid grid-cols-2 gap-3">
+                    {selectedItem.galleryImages.map((img, idx) => (
+                      <div key={idx} className="relative aspect-square overflow-hidden rounded-xl shadow-sm bg-gray-100 group">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img 
+                          src={img} 
+                          alt={`Galeri ${idx + 1}`} 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
                       </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">Jadwal Rutin</p>
-                        <p className="text-sm text-gray-600">{selectedItem.jadwalKegiatan}</p>
-                      </div>
-                    </div>
-                  )}
-                  {selectedItem.pembina && (
-                    <div className="flex items-start gap-3">
-                      <div className="bg-white p-2 rounded-lg shadow-sm shrink-0">
-                        <Users className="w-5 h-5 text-primary-600" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">Pembina / Ketua</p>
-                        <p className="text-sm text-gray-600">{selectedItem.pembina}</p>
-                      </div>
-                    </div>
-                  )}
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               {selectedItem.kontakWa ? (
                 <button

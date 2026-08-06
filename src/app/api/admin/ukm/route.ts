@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     if (!checkAuth(token)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const data = await request.json();
-    const { namaUkm, kategori, deskripsi, jadwalKegiatan, pembina, kontakWa, imageUrl } = data;
+    const { namaUkm, kategori, deskripsi, jadwalKegiatan, pembina, kontakWa, imageUrl, galleryImages } = data;
 
     if (!namaUkm || !kategori || !deskripsi) {
       return NextResponse.json({ error: "Nama UKM, Kategori, dan Deskripsi wajib diisi" }, { status: 400 });
@@ -53,6 +53,7 @@ export async function POST(request: Request) {
         pembina: pembina || null,
         kontakWa: kontakWa || null,
         imageUrl: imageUrl || null,
+        galleryImages: galleryImages || [],
         isActive: true,
       },
     });
@@ -90,7 +91,7 @@ export async function PUT(request: Request) {
     }
 
     // Full update
-    const { namaUkm, kategori, deskripsi, jadwalKegiatan, pembina, kontakWa, imageUrl } = data;
+    const { namaUkm, kategori, deskripsi, jadwalKegiatan, pembina, kontakWa, imageUrl, galleryImages } = data;
     
     if (!namaUkm || !kategori || !deskripsi) {
       return NextResponse.json({ error: "Nama UKM, Kategori, dan Deskripsi wajib diisi" }, { status: 400 });
@@ -106,6 +107,7 @@ export async function PUT(request: Request) {
         pembina: pembina || null,
         kontakWa: kontakWa || null,
         imageUrl: imageUrl || null,
+        galleryImages: galleryImages || [],
       }
     });
 

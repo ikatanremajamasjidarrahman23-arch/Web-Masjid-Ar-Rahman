@@ -15,6 +15,7 @@ type Ukm = {
   pembina: string | null;
   kontakWa: string | null;
   imageUrl: string | null;
+  galleryImages: string[];
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
@@ -39,8 +40,10 @@ export default function UkmDashboardClient() {
     pembina: "",
     kontakWa: "",
     imageUrl: "",
+    galleryImages: [] as string[],
   });
   const [file, setFile] = useState<File | null>(null);
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([]);
 
   const fetchData = async () => {
     try {
@@ -91,7 +94,25 @@ export default function UkmDashboardClient() {
         }
       }
 
-      const payload = { ...formData, imageUrl: finalImageUrl };
+      // Upload gallery files if any
+      let finalGalleryImages = [...formData.galleryImages];
+      if (galleryFiles.length > 0) {
+        for (const gFile of galleryFiles) {
+          const uploadData = new FormData();
+          uploadData.append("file", gFile);
+          const uploadRes = await axios.post("/api/upload", uploadData);
+          if (uploadRes.data.success) {
+            finalGalleryImages.push(uploadRes.data.data.secure_url);
+          }
+        }
+      }
+      
+      // Limit to 4 images
+      if (finalGalleryImages.length > 4) {
+        finalGalleryImages = finalGalleryImages.slice(finalGalleryImages.length - 4);
+      }
+
+      const payload = { ...formData, imageUrl: finalImageUrl, galleryImages: finalGalleryImages };
 
       if (editingId) {
         await axios.put(`/api/admin/ukm?id=${editingId}`, payload);
@@ -100,9 +121,10 @@ export default function UkmDashboardClient() {
       }
       
       setFormData({
-        namaUkm: "", kategori: "", deskripsi: "", jadwalKegiatan: "", pembina: "", kontakWa: "", imageUrl: ""
+        namaUkm: "", kategori: "", deskripsi: "", jadwalKegiatan: "", pembina: "", kontakWa: "", imageUrl: "", galleryImages: []
       });
       setFile(null);
+      setGalleryFiles([]);
       setShowForm(false);
       setEditingId(null);
       fetchData();
@@ -143,9 +165,11 @@ export default function UkmDashboardClient() {
       pembina: item.pembina || "",
       kontakWa: item.kontakWa || "",
       imageUrl: item.imageUrl || "",
+      galleryImages: item.galleryImages || [],
     });
     setEditingId(item.id);
     setFile(null);
+    setGalleryFiles([]);
     setShowForm(true);
   };
 
@@ -162,9 +186,10 @@ export default function UkmDashboardClient() {
         </div>
         <button
           onClick={() => {
-            setFormData({ namaUkm: "", kategori: "", deskripsi: "", jadwalKegiatan: "", pembina: "", kontakWa: "", imageUrl: "" });
+            setFormData({ namaUkm: "", kategori: "", deskripsi: "", jadwalKegiatan: "", pembina: "", kontakWa: "", imageUrl: "", galleryImages: [] });
             setEditingId(null);
             setFile(null);
+            setGalleryFiles([]);
             setShowForm(true);
           }}
           className="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-xl font-medium transition-colors flex items-center gap-2 flex-shrink-0"
@@ -293,6 +318,48 @@ export default function UkmDashboardClient() {
                   />
                   <p className="text-xs text-gray-500 mt-1">Gunakan awalan 08... atau 628...</p>
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">4 Foto Galeri Terbaik (Gantikan Info Kegiatan)</label>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  onChange={(e) => {
+                    const files = Array.from(e.target.files || []);
+                    if (files.length > 4) {
+                      alert("Maksimal 4 foto");
+                      setGalleryFiles(files.slice(0, 4));
+                    } else {
+                      setGalleryFiles(files);
+                    }
+                  }}
+                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 transition-colors mb-2"
+                />
+                
+                {/* Preview existing images */}
+                {formData.galleryImages.length > 0 && (
+                  <div className="flex gap-2 mt-2">
+                    {formData.galleryImages.map((url, i) => (
+                      <div key={i} className="relative group">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={url} alt="Gallery" className="w-16 h-16 object-cover rounded-lg border border-gray-200" />
+                        <button 
+                          type="button" 
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => setFormData({
+                            ...formData, 
+                            galleryImages: formData.galleryImages.filter((_, idx) => idx !== i)
+                          })}
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <p className="text-xs text-gray-500 mt-1">Foto-foto ini akan ditampilkan di popup saat UKM diklik (maks 4).</p>
               </div>
 
               <div>

@@ -176,6 +176,7 @@ model Ukm {
   pembina         String?
   kontakWa        String?
   imageUrl        String?
+  galleryImages   String[] @default([])
   isActive        Boolean  @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt

@@ -29,7 +29,7 @@ export default async function Home() {
   const ukms = await prisma.ukm.findMany({
     where: { isActive: true },
     orderBy: { createdAt: "desc" },
-    take: 3
+    take: 6
   });
 
   const settings = await prisma.settings.findFirst();
