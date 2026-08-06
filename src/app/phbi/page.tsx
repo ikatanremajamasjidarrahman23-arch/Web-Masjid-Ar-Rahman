@@ -21,7 +21,7 @@ export default async function PhbiPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         <div className="text-center animate-fade-in">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">Galeri PHBI Masjid Jami' Ar-Rahman</h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight">Galeri PHBI</h1>
           <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
             Jelajahi momen berkesan dan dokumentasi visual seputar Peringatan Hari Besar Islam serta berbagai kegiatan keagamaan di Masjid Jami' Ar-Rahman
           </p>
