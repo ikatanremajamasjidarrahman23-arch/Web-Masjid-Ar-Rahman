@@ -5,7 +5,7 @@ export async function POST(request: Request) {
   try {
     // We await it here because we want to know immediately if it succeeded
     await sendNotificationToAll(
-      "Test dari Admin Vercel",
+      "Test dari Admin Masjid",
       "Jika Anda menerima ini, berarti fitur Push Notification berjalan dengan sempurna! 🎉",
       "/"
     );

@@ -9,13 +9,16 @@ export async function sendNotificationToAll(title: string, body: string, url: st
       process.env.VAPID_PRIVATE_KEY as string
     )
     
+    const settings = await prisma.settings.findFirst()
+    const iconUrl = settings?.logoUrl || '/globe.svg'
+
     const subscriptions = await prisma.pushSubscription.findMany()
     
     const notificationPayload = {
       title,
       body,
       url,
-      icon: '/icon.png'
+      icon: iconUrl
     }
     
     const promises = subscriptions.map(sub => {
