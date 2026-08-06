@@ -22,6 +22,7 @@ export default function AdminSidebar({ logoutAction }: { logoutAction: (payload:
     { name: "Profil & Pengaturan", href: "/admin/profil", icon: Settings },
     { name: "Struktur Organisasi", href: "/admin/pengurus", icon: Network },
     { name: "Unit Kegiatan Masjid", href: "/admin/ukm", icon: Library },
+    { name: "Selayang Pandang", href: "/admin/selayang-pandang", icon: ImageIcon },
     { name: "Dokumentasi PHBI", href: "/admin/phbi", icon: Calendar },
     { name: "Kegiatan IRMAS", href: "/admin/irmas", icon: Users },
     { name: "Agenda Kegiatan", href: "/admin/kajian", icon: BookOpen },

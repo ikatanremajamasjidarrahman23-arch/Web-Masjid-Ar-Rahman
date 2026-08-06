@@ -316,16 +316,7 @@ export default function SettingsClientForm({ settings }: { settings: any }) {
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Judul Selayang Pandang</label>
-              <input 
-                type="text"
-                name="selayangPandangTitle"
-                defaultValue={settings?.selayangPandangTitle || "Selayang Pandang"}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
-                placeholder="Contoh: Selayang Pandang"
-              />
-            </div>
-            <div>
+              <input type="hidden" name="selayangPandangTitle" value={settings?.selayangPandangTitle || "Selayang Pandang"} />
               <label className="block text-sm font-semibold text-gray-700 mb-2">Judul Unit Kegiatan Masjid (UKM)</label>
               <input 
                 type="text"
@@ -339,16 +330,7 @@ export default function SettingsClientForm({ settings }: { settings: any }) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Deskripsi Singkat Selayang Pandang</label>
-              <textarea 
-                name="selayangPandangDescription"
-                rows={3}
-                defaultValue={settings?.selayangPandangDescription || ""}
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
-                placeholder="Deskripsi singkat yang tampil di bawah judul Selayang Pandang..."
-              ></textarea>
-            </div>
-            <div>
+              <input type="hidden" name="selayangPandangDescription" value={settings?.selayangPandangDescription || ""} />
               <label className="block text-sm font-semibold text-gray-700 mb-2">Deskripsi Singkat UKM</label>
               <textarea 
                 name="ukmDescription"
