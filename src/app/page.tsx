@@ -29,7 +29,7 @@ export default async function Home() {
   const ukms = await prisma.ukm.findMany({
     where: { isActive: true },
     orderBy: { createdAt: "desc" },
-    take: 6
+    take: 3
   });
 
   const settings = await prisma.settings.findFirst();
@@ -127,7 +127,7 @@ export default async function Home() {
               </p>
             </div>
             
-            <UkmClient initialData={ukms} />
+            <UkmClient initialData={ukms} variant="masonry" />
             
             <div className="text-center mt-12">
               <Link href="/ukm" className="inline-flex items-center gap-2 bg-white border border-gray-200 text-gray-700 hover:text-primary-600 hover:border-primary-200 px-8 py-3 rounded-xl font-medium transition-all shadow-sm hover:shadow">

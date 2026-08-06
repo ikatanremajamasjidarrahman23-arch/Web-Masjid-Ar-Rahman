@@ -15,7 +15,7 @@ type Ukm = {
   createdAt: Date;
 };
 
-export default function UkmClient({ initialData }: { initialData: Ukm[] }) {
+export default function UkmClient({ initialData, variant = "default" }: { initialData: Ukm[], variant?: "default" | "masonry" }) {
   const [selectedItem, setSelectedItem] = useState<Ukm | null>(null);
 
   const formatWhatsAppNumber = (number: string) => {
@@ -44,59 +44,101 @@ export default function UkmClient({ initialData }: { initialData: Ukm[] }) {
   }
 
   return (
+  const getMasonryClass = (index: number) => {
+    if (index === 0) return "col-span-2 row-span-2 md:col-span-1 md:row-span-2";
+    if (index === 1) return "col-span-1 row-span-1 md:col-span-2 md:row-span-1";
+    if (index === 2) return "col-span-1 row-span-1 md:col-span-2 md:row-span-1";
+    return "col-span-1 row-span-1";
+  };
+
+  return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {initialData.map((item) => (
-          <div key={item.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all group flex flex-col h-full">
-            <div className="h-48 relative overflow-hidden bg-primary-50 flex items-center justify-center shrink-0">
+      {variant === "masonry" ? (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 auto-rows-[150px] md:auto-rows-[200px]">
+          {initialData.map((item, index) => (
+            <div 
+              key={item.id}
+              onClick={() => setSelectedItem(item)}
+              className={`relative overflow-hidden rounded-2xl shadow-md group cursor-pointer ${getMasonryClass(index)} bg-primary-50`}
+            >
+              <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300 z-10"></div>
               {item.imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img 
                   src={item.imageUrl} 
                   alt={item.namaUkm} 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
                 />
               ) : (
-                <div className="text-primary-200">
+                <div className="w-full h-full flex items-center justify-center text-primary-200">
                   <ImageIcon className="w-16 h-16 opacity-50" />
                 </div>
               )}
-              <div className="absolute top-4 left-4">
-                <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-primary-700 text-xs font-bold rounded-full shadow-sm">
+              
+              <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 z-20 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+                <span className="inline-block px-2 py-1 bg-primary-500/90 backdrop-blur-sm text-white text-[10px] md:text-xs font-bold rounded mb-2 shadow-sm">
                   {item.kategori}
                 </span>
+                <h3 className="text-white font-bold text-lg md:text-2xl line-clamp-2 drop-shadow-md">{item.namaUkm}</h3>
               </div>
             </div>
-            
-            <div className="p-6 flex flex-col flex-grow">
-              <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">{item.namaUkm}</h3>
-              <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">{item.deskripsi}</p>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {initialData.map((item) => (
+            <div key={item.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all group flex flex-col h-full">
+              <div className="h-48 relative overflow-hidden bg-primary-50 flex items-center justify-center shrink-0">
+                {item.imageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img 
+                    src={item.imageUrl} 
+                    alt={item.namaUkm} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                ) : (
+                  <div className="text-primary-200">
+                    <ImageIcon className="w-16 h-16 opacity-50" />
+                  </div>
+                )}
+                <div className="absolute top-4 left-4">
+                  <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-primary-700 text-xs font-bold rounded-full shadow-sm">
+                    {item.kategori}
+                  </span>
+                </div>
+              </div>
               
-              <div className="space-y-2 mb-6 text-sm text-gray-500">
-                {item.pembina && (
-                  <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-primary-500 shrink-0" />
-                    <span className="truncate">Pembina: {item.pembina}</span>
-                  </div>
-                )}
-                {item.jadwalKegiatan && (
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-primary-500 shrink-0" />
-                    <span className="truncate">Jadwal: {item.jadwalKegiatan}</span>
-                  </div>
-                )}
-              </div>
+              <div className="p-6 flex flex-col flex-grow">
+                <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">{item.namaUkm}</h3>
+                <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">{item.deskripsi}</p>
+                
+                <div className="space-y-2 mb-6 text-sm text-gray-500">
+                  {item.pembina && (
+                    <div className="flex items-center gap-2">
+                      <Users className="w-4 h-4 text-primary-500 shrink-0" />
+                      <span className="truncate">Pembina: {item.pembina}</span>
+                    </div>
+                  )}
+                  {item.jadwalKegiatan && (
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-primary-500 shrink-0" />
+                      <span className="truncate">Jadwal: {item.jadwalKegiatan}</span>
+                    </div>
+                  )}
+                </div>
 
-              <button
-                onClick={() => setSelectedItem(item)}
-                className="w-full py-2.5 bg-primary-50 hover:bg-primary-100 text-primary-700 font-semibold rounded-xl transition-colors mt-auto"
-              >
-                Detail & Kontak
-              </button>
+                <button
+                  onClick={() => setSelectedItem(item)}
+                  className="w-full py-2.5 bg-primary-50 hover:bg-primary-100 text-primary-700 font-semibold rounded-xl transition-colors mt-auto"
+                >
+                  Detail & Kontak
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Detail Modal */}
       {selectedItem && (
