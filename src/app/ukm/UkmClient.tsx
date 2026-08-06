@@ -45,10 +45,12 @@ export default function UkmClient({ initialData, variant = "default" }: { initia
   }
 
   const getMasonryClass = (index: number) => {
-    const cycle = index % 3;
+    const cycle = index % 5;
     if (cycle === 0) return "col-span-2 row-span-2 md:col-span-1 md:row-span-2";
-    if (cycle === 1) return "col-span-1 row-span-1 md:col-span-2 md:row-span-1";
-    if (cycle === 2) return "col-span-1 row-span-1 md:col-span-2 md:row-span-1";
+    if (cycle === 1) return "col-span-1 row-span-1";
+    if (cycle === 2) return "col-span-1 row-span-1";
+    if (cycle === 3) return "col-span-2 md:col-span-1 row-span-1";
+    if (cycle === 4) return "col-span-2 md:col-span-1 row-span-1";
     return "col-span-1 row-span-1";
   };
 
