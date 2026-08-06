@@ -43,7 +43,6 @@ export default function UkmClient({ initialData, variant = "default" }: { initia
     );
   }
 
-  return (
   const getMasonryClass = (index: number) => {
     if (index === 0) return "col-span-2 row-span-2 md:col-span-1 md:row-span-2";
     if (index === 1) return "col-span-1 row-span-1 md:col-span-2 md:row-span-1";
