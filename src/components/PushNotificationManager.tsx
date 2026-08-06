@@ -20,18 +20,33 @@ const urlBase64ToUint8Array = (base64String: string) => {
 
 export default function PushNotificationManager() {
   const [showPrompt, setShowPrompt] = useState(false)
+  const [isIosPrompt, setIsIosPrompt] = useState(false)
 
   useEffect(() => {
-    // Only run on client side and if supported
-    if (typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window) {
+    if (typeof window === 'undefined') return
+
+    const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+    
+    // Check if user has dismissed prompts before
+    const hasDismissed = localStorage.getItem('pushPromptDismissed') === 'true'
+    if (hasDismissed) return
+
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+      // Browser supports Push API (Android, Desktop, or iOS PWA)
       if (Notification.permission === 'default') {
-        // Show our custom UI prompt after a small delay
         const timer = setTimeout(() => setShowPrompt(true), 2000)
         return () => clearTimeout(timer)
       } else if (Notification.permission === 'granted') {
-        // Already granted, make sure we are subscribed in the background
         subscribeToPush()
       }
+    } else if (isIos && !isStandalone) {
+      // iOS Safari but not added to home screen yet
+      const timer = setTimeout(() => {
+        setIsIosPrompt(true)
+        setShowPrompt(true)
+      }, 2000)
+      return () => clearTimeout(timer)
     }
   }, [])
 
@@ -67,14 +82,29 @@ export default function PushNotificationManager() {
   }
 
   const handleAllowClick = async () => {
-    // Request permission (This is now tied to a user gesture, so Android won't block it!)
-    const permission = await Notification.requestPermission()
-    if (permission === 'granted') {
-      await subscribeToPush()
-      setShowPrompt(false)
-    } else {
-      setShowPrompt(false)
+    if (isIosPrompt) {
+      // We can't actually request permission here, they need to add to home screen first.
+      // We just close it for now.
+      handleDismiss()
+      return
     }
+    
+    // Request permission (This is now tied to a user gesture, so Android won't block it!)
+    try {
+      const permission = await Notification.requestPermission()
+      if (permission === 'granted') {
+        await subscribeToPush()
+      }
+    } catch (e) {
+      console.error(e)
+    } finally {
+      handleDismiss()
+    }
+  }
+
+  const handleDismiss = () => {
+    localStorage.setItem('pushPromptDismissed', 'true')
+    setShowPrompt(false)
   }
 
   if (!showPrompt) return null
@@ -85,26 +115,32 @@ export default function PushNotificationManager() {
         <BellRing className="w-6 h-6" />
       </div>
       <div className="flex-grow">
-        <h3 className="font-semibold text-gray-800">Dapatkan Notifikasi Kajian</h3>
+        <h3 className="font-semibold text-gray-800">
+          {isIosPrompt ? 'Notifikasi di iPhone' : 'Dapatkan Notifikasi Kajian'}
+        </h3>
         <p className="text-sm text-gray-500 mt-1 mb-3 leading-relaxed">
-          Izinkan notifikasi agar tidak ketinggalan info kajian dan buletin terbaru dari kami.
+          {isIosPrompt 
+            ? 'Untuk menerima notifikasi di iPhone, tap tombol Share (Bagikan) di bawah lalu pilih "Add to Home Screen" (Tambahkan ke Layar Utama).'
+            : 'Izinkan notifikasi agar tidak ketinggalan info kajian dan buletin terbaru dari kami.'}
         </p>
         <div className="flex gap-2">
+          {!isIosPrompt && (
+            <button 
+              onClick={handleAllowClick}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium py-2 px-4 rounded-xl transition-colors flex-grow"
+            >
+              Izinkan
+            </button>
+          )}
           <button 
-            onClick={handleAllowClick}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium py-2 px-4 rounded-xl transition-colors flex-grow"
+            onClick={handleDismiss}
+            className="bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-medium py-2 px-4 rounded-xl transition-colors w-full"
           >
-            Izinkan
-          </button>
-          <button 
-            onClick={() => setShowPrompt(false)}
-            className="bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-medium py-2 px-4 rounded-xl transition-colors"
-          >
-            Nanti
+            {isIosPrompt ? 'Mengerti' : 'Nanti'}
           </button>
         </div>
       </div>
-      <button onClick={() => setShowPrompt(false)} className="text-gray-400 hover:text-gray-600 absolute top-3 right-3">
+      <button onClick={handleDismiss} className="text-gray-400 hover:text-gray-600 absolute top-3 right-3">
         <X className="w-4 h-4" />
       </button>
     </div>
