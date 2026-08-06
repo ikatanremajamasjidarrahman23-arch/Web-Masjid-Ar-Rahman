@@ -66,6 +66,10 @@ export default function SettingsClientForm({ settings }: { settings: any }) {
       if (settings.alamat) formData.append("alamat", settings.alamat);
       if (settings.telepon) formData.append("telepon", settings.telepon);
       if (settings.email) formData.append("email", settings.email);
+      if (settings.selayangPandangTitle) formData.append("selayangPandangTitle", settings.selayangPandangTitle);
+      if (settings.selayangPandangDescription) formData.append("selayangPandangDescription", settings.selayangPandangDescription);
+      if (settings.ukmTitle) formData.append("ukmTitle", settings.ukmTitle);
+      if (settings.ukmDescription) formData.append("ukmDescription", settings.ukmDescription);
       if (settings.runningTextSpeed) formData.append("runningTextSpeed", settings.runningTextSpeed.toString());
       if (settings.irmasLogoUrl) formData.append("irmasLogoUrl", settings.irmasLogoUrl);
       if (settings.logoSizeNavbar) formData.append("logoSizeNavbar", settings.logoSizeNavbar.toString());
@@ -305,6 +309,57 @@ export default function SettingsClientForm({ settings }: { settings: any }) {
           className="w-full md:w-1/3 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
         <p className="text-xs text-gray-500 mt-1">Normal = 25 detik. Semakin kecil angkanya, semakin cepat bergeraknya.</p>
+      </div>
+
+      <div className="pt-4 border-t border-gray-200">
+        <h3 className="text-lg font-bold text-gray-900 mb-4">Teks Dinamis Beranda (Homepage)</h3>
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Judul Selayang Pandang</label>
+              <input 
+                type="text"
+                name="selayangPandangTitle"
+                defaultValue={settings?.selayangPandangTitle || "Selayang Pandang"}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
+                placeholder="Contoh: Selayang Pandang"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Judul Unit Kegiatan Masjid (UKM)</label>
+              <input 
+                type="text"
+                name="ukmTitle"
+                defaultValue={settings?.ukmTitle || "Unit Kegiatan Masjid"}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
+                placeholder="Contoh: Unit Kegiatan Masjid (UKM)"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Deskripsi Singkat Selayang Pandang</label>
+              <textarea 
+                name="selayangPandangDescription"
+                rows={3}
+                defaultValue={settings?.selayangPandangDescription || ""}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
+                placeholder="Deskripsi singkat yang tampil di bawah judul Selayang Pandang..."
+              ></textarea>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Deskripsi Singkat UKM</label>
+              <textarea 
+                name="ukmDescription"
+                rows={3}
+                defaultValue={settings?.ukmDescription || ""}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
+                placeholder="Deskripsi singkat yang tampil di bawah judul UKM..."
+              ></textarea>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="pt-4 border-t border-gray-200">

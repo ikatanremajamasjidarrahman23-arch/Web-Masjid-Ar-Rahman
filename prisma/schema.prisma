@@ -39,6 +39,12 @@ model Settings {
   logoSizeProfil     Int      @default(80) // Tinggi logo Profil dalam px
   logoSizeIrmas      Int      @default(80) // Tinggi logo IRMAS dalam px
   
+  // Teks Dinamis Beranda
+  selayangPandangTitle       String?  @default("Selayang Pandang")
+  selayangPandangDescription String?  @db.Text
+  ukmTitle                   String?  @default("Unit Kegiatan Masjid")
+  ukmDescription             String?  @db.Text
+  
   // Konfigurasi API Tambahan
   cloudinaryCloudName String?
   cloudinaryApiKey    String?

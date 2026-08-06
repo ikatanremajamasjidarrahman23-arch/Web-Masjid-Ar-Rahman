@@ -107,17 +107,23 @@ export default async function Home() {
       <FiturCepat />
 
       {/* Selayang Pandang Section */}
-      <SelayangPandang photos={selayangPandangPhotos} />
+      <SelayangPandang 
+        photos={selayangPandangPhotos} 
+        title={settings?.selayangPandangTitle || "Selayang Pandang"}
+        description={settings?.selayangPandangDescription || "Menengok sekilas keindahan arsitektur dan suasana nyaman di Masjid Jami' Ar-Rahman. Tempat ibadah yang menenangkan jiwa."}
+      />
 
       {/* UKM Section */}
       {ukms.length > 0 && (
         <section className="py-16 bg-gray-50 border-t border-gray-200">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-4">Unit Kegiatan Masjid</h2>
+              <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-4">
+                {settings?.ukmTitle || "Unit Kegiatan Masjid (UKM)"}
+              </h2>
               <div className="w-20 h-1.5 bg-primary-600 rounded-full mb-6 mx-auto"></div>
-              <p className="text-gray-600 max-w-2xl mx-auto text-lg">
-                Mengenal lebih dekat unit kegiatan dan organisasi yang bernaung di bawah Masjid Ar-Rahman.
+              <p className="text-gray-600 max-w-2xl mx-auto text-lg whitespace-pre-wrap">
+                {settings?.ukmDescription || "Mengenal lebih dekat unit kegiatan dan organisasi yang bernaung di bawah Masjid Ar-Rahman."}
               </p>
             </div>
             

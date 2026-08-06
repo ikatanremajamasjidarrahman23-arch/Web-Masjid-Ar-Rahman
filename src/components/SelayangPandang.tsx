@@ -2,7 +2,13 @@ import Image from "next/image";
 
 type Photo = { id: string, title: string, imageUrl: string };
 
-export default function SelayangPandang({ photos: dbPhotos }: { photos?: Photo[] }) {
+type Props = {
+  photos?: Photo[];
+  title?: string;
+  description?: string;
+};
+
+export default function SelayangPandang({ photos: dbPhotos, title, description }: Props) {
   // Use DB photos if available, otherwise use placeholders so UI doesn't look broken
   const defaultPhotos = [
     {
@@ -39,11 +45,11 @@ export default function SelayangPandang({ photos: dbPhotos }: { photos?: Photo[]
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-4">
-            Selayang Pandang
+            {title || "Selayang Pandang"}
           </h2>
           <div className="w-20 h-1.5 bg-primary-600 rounded-full mx-auto mb-6"></div>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Menengok sekilas keindahan arsitektur dan suasana nyaman di Masjid Jami' Ar-Rahman. Tempat ibadah yang menenangkan jiwa.
+            {description || "Menengok sekilas keindahan arsitektur dan suasana nyaman di Masjid Jami' Ar-Rahman. Tempat ibadah yang menenangkan jiwa."}
           </p>
         </div>
 

@@ -22,6 +22,11 @@ export async function saveSettings(formData: FormData) {
   const logoSizeProfil = parseInt(formData.get("logoSizeProfil") as string) || 80;
   const logoSizeIrmas = parseInt(formData.get("logoSizeIrmas") as string) || 80;
   
+  const selayangPandangTitle = formData.get("selayangPandangTitle") as string;
+  const selayangPandangDescription = formData.get("selayangPandangDescription") as string;
+  const ukmTitle = formData.get("ukmTitle") as string;
+  const ukmDescription = formData.get("ukmDescription") as string;
+  
   const cloudinaryCloudName = formData.get("cloudinaryCloudName") as string;
   const cloudinaryApiKey = formData.get("cloudinaryApiKey") as string;
   const cloudinaryApiSecret = formData.get("cloudinaryApiSecret") as string;
@@ -49,6 +54,10 @@ export async function saveSettings(formData: FormData) {
     logoSizeNavbar,
     logoSizeProfil,
     logoSizeIrmas,
+    selayangPandangTitle: selayangPandangTitle || null,
+    selayangPandangDescription: selayangPandangDescription || null,
+    ukmTitle: ukmTitle || null,
+    ukmDescription: ukmDescription || null,
     cloudinaryCloudName: cloudinaryCloudName || null,
     cloudinaryApiKey: cloudinaryApiKey || null,
     cloudinaryApiSecret: cloudinaryApiSecret || null,
