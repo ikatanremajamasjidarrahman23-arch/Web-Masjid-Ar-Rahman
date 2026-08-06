@@ -6,9 +6,9 @@ import { Plus, Trash2, Edit, X, ImagePlus, Check, Search, Filter } from "lucide-
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 
-type Otonom = {
+type Ukm = {
   id: string;
-  namaOrganisasi: string;
+  namaUkm: string;
   kategori: string;
   deskripsi: string;
   jadwalKegiatan: string | null;
@@ -20,9 +20,9 @@ type Otonom = {
   updatedAt: string;
 };
 
-export default function OtonomDashboardClient() {
-  const [data, setData] = useState<Otonom[]>([]);
-  const [filteredData, setFilteredData] = useState<Otonom[]>([]);
+export default function UkmDashboardClient() {
+  const [data, setData] = useState<Ukm[]>([]);
+  const [filteredData, setFilteredData] = useState<Ukm[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -32,7 +32,7 @@ export default function OtonomDashboardClient() {
   const [categories, setCategories] = useState<string[]>([]);
 
   const [formData, setFormData] = useState({
-    namaOrganisasi: "",
+    namaUkm: "",
     kategori: "",
     deskripsi: "",
     jadwalKegiatan: "",
@@ -44,14 +44,14 @@ export default function OtonomDashboardClient() {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get("/api/admin/otonom");
+      const res = await axios.get("/api/admin/ukm");
       setData(res.data.data);
       
       // Extract unique categories
-      const uniqueCats = Array.from(new Set(res.data.data.map((item: Otonom) => item.kategori))) as string[];
+      const uniqueCats = Array.from(new Set(res.data.data.map((item: Ukm) => item.kategori))) as string[];
       setCategories(uniqueCats);
     } catch (error) {
-      console.error("Gagal mengambil data otonom", error);
+      console.error("Gagal mengambil data UKM", error);
     } finally {
       setIsLoading(false);
     }
@@ -65,7 +65,7 @@ export default function OtonomDashboardClient() {
     let result = data;
     if (searchQuery) {
       result = result.filter(item => 
-        item.namaOrganisasi.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.namaUkm.toLowerCase().includes(searchQuery.toLowerCase()) ||
         item.deskripsi.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
@@ -94,13 +94,13 @@ export default function OtonomDashboardClient() {
       const payload = { ...formData, imageUrl: finalImageUrl };
 
       if (editingId) {
-        await axios.put(`/api/admin/otonom?id=${editingId}`, payload);
+        await axios.put(`/api/admin/ukm?id=${editingId}`, payload);
       } else {
-        await axios.post("/api/admin/otonom", payload);
+        await axios.post("/api/admin/ukm", payload);
       }
       
       setFormData({
-        namaOrganisasi: "", kategori: "", deskripsi: "", jadwalKegiatan: "", pembina: "", kontakWa: "", imageUrl: ""
+        namaUkm: "", kategori: "", deskripsi: "", jadwalKegiatan: "", pembina: "", kontakWa: "", imageUrl: ""
       });
       setFile(null);
       setShowForm(false);
@@ -117,7 +117,7 @@ export default function OtonomDashboardClient() {
   const handleDelete = async (id: string) => {
     if (!confirm("Apakah Anda yakin ingin menghapus data ini?")) return;
     try {
-      await axios.delete(`/api/admin/otonom?id=${id}`);
+      await axios.delete(`/api/admin/ukm?id=${id}`);
       fetchData();
     } catch (error) {
       console.error("Gagal menghapus data", error);
@@ -127,16 +127,16 @@ export default function OtonomDashboardClient() {
 
   const handleToggle = async (id: string) => {
     try {
-      await axios.put(`/api/admin/otonom?id=${id}`, { toggleActive: true });
+      await axios.put(`/api/admin/ukm?id=${id}`, { toggleActive: true });
       fetchData();
     } catch (error) {
       console.error("Gagal mengubah status data", error);
     }
   };
 
-  const handleEdit = (item: Otonom) => {
+  const handleEdit = (item: Ukm) => {
     setFormData({
-      namaOrganisasi: item.namaOrganisasi,
+      namaUkm: item.namaUkm,
       kategori: item.kategori,
       deskripsi: item.deskripsi,
       jadwalKegiatan: item.jadwalKegiatan || "",
@@ -157,12 +157,12 @@ export default function OtonomDashboardClient() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-2xl shadow-sm border border-gray-100 gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Lembaga & Otonom</h1>
-          <p className="text-gray-500 text-sm">Kelola daftar lembaga, majelis, dan organisasi di bawah naungan masjid.</p>
+          <h1 className="text-2xl font-bold text-gray-800">Unit Kegiatan Masjid (UKM)</h1>
+          <p className="text-gray-500 text-sm">Kelola daftar unit kegiatan, majelis, dan organisasi di bawah naungan masjid.</p>
         </div>
         <button
           onClick={() => {
-            setFormData({ namaOrganisasi: "", kategori: "", deskripsi: "", jadwalKegiatan: "", pembina: "", kontakWa: "", imageUrl: "" });
+            setFormData({ namaUkm: "", kategori: "", deskripsi: "", jadwalKegiatan: "", pembina: "", kontakWa: "", imageUrl: "" });
             setEditingId(null);
             setFile(null);
             setShowForm(true);
@@ -170,7 +170,7 @@ export default function OtonomDashboardClient() {
           className="bg-primary-600 hover:bg-primary-700 text-white px-5 py-2.5 rounded-xl font-medium transition-colors flex items-center gap-2 flex-shrink-0"
         >
           <Plus className="w-5 h-5" />
-          Tambah Otonom
+          Tambah UKM
         </button>
       </div>
 
@@ -181,7 +181,7 @@ export default function OtonomDashboardClient() {
           </div>
           <input
             type="text"
-            placeholder="Cari nama organisasi..."
+            placeholder="Cari nama UKM..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500"
@@ -209,7 +209,7 @@ export default function OtonomDashboardClient() {
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl my-8">
             <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gray-50 rounded-t-2xl sticky top-0 z-10">
               <h2 className="text-xl font-bold text-gray-800">
-                {editingId ? "Edit Otonom" : "Tambah Otonom Baru"}
+                {editingId ? "Edit UKM" : "Tambah UKM Baru"}
               </h2>
               <button onClick={() => setShowForm(false)} className="text-gray-400 hover:text-gray-600 bg-white p-2 rounded-full shadow-sm">
                 <X className="w-5 h-5" />
@@ -219,12 +219,12 @@ export default function OtonomDashboardClient() {
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Nama Organisasi *</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Nama UKM *</label>
                   <input
                     type="text"
                     required
-                    value={formData.namaOrganisasi}
-                    onChange={(e) => setFormData({ ...formData, namaOrganisasi: e.target.value })}
+                    value={formData.namaUkm}
+                    onChange={(e) => setFormData({ ...formData, namaUkm: e.target.value })}
                     className="w-full border-gray-300 rounded-xl shadow-sm focus:ring-primary-500 focus:border-primary-500 px-4 py-2.5"
                     placeholder="Contoh: Majelis Ta'lim Ar-Rahman"
                   />
@@ -345,7 +345,7 @@ export default function OtonomDashboardClient() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-gray-50 text-gray-600 text-sm border-b border-gray-200">
-                <th className="py-4 px-6 font-semibold">Organisasi</th>
+                <th className="py-4 px-6 font-semibold">Nama UKM</th>
                 <th className="py-4 px-6 font-semibold">Kategori</th>
                 <th className="py-4 px-6 font-semibold">Pembina</th>
                 <th className="py-4 px-6 font-semibold text-center">Status</th>
@@ -366,14 +366,14 @@ export default function OtonomDashboardClient() {
                       <div className="flex items-center gap-3">
                         {item.imageUrl ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={item.imageUrl} alt={item.namaOrganisasi} className="w-10 h-10 rounded-lg object-cover bg-gray-100" />
+                          <img src={item.imageUrl} alt={item.namaUkm} className="w-10 h-10 rounded-lg object-cover bg-gray-100" />
                         ) : (
                           <div className="w-10 h-10 rounded-lg bg-primary-50 flex items-center justify-center text-primary-600">
                             <ImagePlus className="w-5 h-5" />
                           </div>
                         )}
                         <div>
-                          <p className="font-semibold text-gray-900">{item.namaOrganisasi}</p>
+                          <p className="font-semibold text-gray-900">{item.namaUkm}</p>
                           {item.jadwalKegiatan && <p className="text-xs text-gray-500">{item.jadwalKegiatan}</p>}
                         </div>
                       </div>

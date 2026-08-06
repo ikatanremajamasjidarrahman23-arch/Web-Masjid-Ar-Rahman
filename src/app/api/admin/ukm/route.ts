@@ -21,12 +21,12 @@ export async function GET() {
     const token = cookieStore.get("admin_token")?.value;
     if (!checkAuth(token)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const otonom = await prisma.otonom.findMany({
+    const ukm = await prisma.ukm.findMany({
       orderBy: { createdAt: "desc" },
     });
-    return NextResponse.json({ success: true, data: otonom });
+    return NextResponse.json({ success: true, data: ukm });
   } catch (error) {
-    console.error("GET Otonom Error:", error);
+    console.error("GET UKM Error:", error);
     return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 });
   }
 }
@@ -38,15 +38,15 @@ export async function POST(request: Request) {
     if (!checkAuth(token)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const data = await request.json();
-    const { namaOrganisasi, kategori, deskripsi, jadwalKegiatan, pembina, kontakWa, imageUrl } = data;
+    const { namaUkm, kategori, deskripsi, jadwalKegiatan, pembina, kontakWa, imageUrl } = data;
 
-    if (!namaOrganisasi || !kategori || !deskripsi) {
-      return NextResponse.json({ error: "Nama Organisasi, Kategori, dan Deskripsi wajib diisi" }, { status: 400 });
+    if (!namaUkm || !kategori || !deskripsi) {
+      return NextResponse.json({ error: "Nama UKM, Kategori, dan Deskripsi wajib diisi" }, { status: 400 });
     }
 
-    const newOtonom = await prisma.otonom.create({
+    const newUkm = await prisma.ukm.create({
       data: {
-        namaOrganisasi,
+        namaUkm,
         kategori,
         deskripsi,
         jadwalKegiatan: jadwalKegiatan || null,
@@ -57,9 +57,9 @@ export async function POST(request: Request) {
       },
     });
 
-    return NextResponse.json({ success: true, data: newOtonom });
+    return NextResponse.json({ success: true, data: newUkm });
   } catch (error) {
-    console.error("POST Otonom Error:", error);
+    console.error("POST UKM Error:", error);
     return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 });
   }
 }
@@ -79,27 +79,27 @@ export async function PUT(request: Request) {
     
     // Check if it's a toggle active request
     if (data.toggleActive) {
-      const otonom = await prisma.otonom.findUnique({ where: { id } });
-      if (!otonom) return NextResponse.json({ error: "Data tidak ditemukan" }, { status: 404 });
+      const ukm = await prisma.ukm.findUnique({ where: { id } });
+      if (!ukm) return NextResponse.json({ error: "Data tidak ditemukan" }, { status: 404 });
       
-      const updated = await prisma.otonom.update({
+      const updated = await prisma.ukm.update({
         where: { id },
-        data: { isActive: !otonom.isActive }
+        data: { isActive: !ukm.isActive }
       });
       return NextResponse.json({ success: true, data: updated });
     }
 
     // Full update
-    const { namaOrganisasi, kategori, deskripsi, jadwalKegiatan, pembina, kontakWa, imageUrl } = data;
+    const { namaUkm, kategori, deskripsi, jadwalKegiatan, pembina, kontakWa, imageUrl } = data;
     
-    if (!namaOrganisasi || !kategori || !deskripsi) {
-      return NextResponse.json({ error: "Nama Organisasi, Kategori, dan Deskripsi wajib diisi" }, { status: 400 });
+    if (!namaUkm || !kategori || !deskripsi) {
+      return NextResponse.json({ error: "Nama UKM, Kategori, dan Deskripsi wajib diisi" }, { status: 400 });
     }
 
-    const updated = await prisma.otonom.update({
+    const updated = await prisma.ukm.update({
       where: { id },
       data: { 
-        namaOrganisasi, 
+        namaUkm, 
         kategori, 
         deskripsi,
         jadwalKegiatan: jadwalKegiatan || null,
@@ -111,7 +111,7 @@ export async function PUT(request: Request) {
 
     return NextResponse.json({ success: true, data: updated });
   } catch (error) {
-    console.error("PUT Otonom Error:", error);
+    console.error("PUT UKM Error:", error);
     return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 });
   }
 }
@@ -127,11 +127,11 @@ export async function DELETE(request: Request) {
 
     if (!id) return NextResponse.json({ error: "ID tidak ditemukan" }, { status: 400 });
 
-    await prisma.otonom.delete({ where: { id } });
+    await prisma.ukm.delete({ where: { id } });
 
     return NextResponse.json({ success: true, message: "Berhasil dihapus" });
   } catch (error) {
-    console.error("DELETE Otonom Error:", error);
+    console.error("DELETE UKM Error:", error);
     return NextResponse.json({ error: "Terjadi kesalahan server" }, { status: 500 });
   }
 }

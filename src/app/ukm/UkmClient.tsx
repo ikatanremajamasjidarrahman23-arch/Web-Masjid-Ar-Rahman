@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { MessageCircle, X, Users, Calendar, MapPin, Image as ImageIcon } from "lucide-react";
 
-type Otonom = {
+type Ukm = {
   id: string;
-  namaOrganisasi: string;
+  namaUkm: string;
   kategori: string;
   deskripsi: string;
   jadwalKegiatan: string | null;
@@ -15,8 +15,8 @@ type Otonom = {
   createdAt: Date;
 };
 
-export default function OtonomClient({ initialData }: { initialData: Otonom[] }) {
-  const [selectedItem, setSelectedItem] = useState<Otonom | null>(null);
+export default function UkmClient({ initialData }: { initialData: Ukm[] }) {
+  const [selectedItem, setSelectedItem] = useState<Ukm | null>(null);
 
   const formatWhatsAppNumber = (number: string) => {
     // Remove non-numeric characters
@@ -53,7 +53,7 @@ export default function OtonomClient({ initialData }: { initialData: Otonom[] })
                 // eslint-disable-next-line @next/next/no-img-element
                 <img 
                   src={item.imageUrl} 
-                  alt={item.namaOrganisasi} 
+                  alt={item.namaUkm} 
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
               ) : (
@@ -69,7 +69,7 @@ export default function OtonomClient({ initialData }: { initialData: Otonom[] })
             </div>
             
             <div className="p-6 flex flex-col flex-grow">
-              <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">{item.namaOrganisasi}</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-2">{item.namaUkm}</h3>
               <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">{item.deskripsi}</p>
               
               <div className="space-y-2 mb-6 text-sm text-gray-500">
@@ -110,7 +110,7 @@ export default function OtonomClient({ initialData }: { initialData: Otonom[] })
                 // eslint-disable-next-line @next/next/no-img-element
                 <img 
                   src={selectedItem.imageUrl} 
-                  alt={selectedItem.namaOrganisasi} 
+                  alt={selectedItem.namaUkm} 
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -131,7 +131,7 @@ export default function OtonomClient({ initialData }: { initialData: Otonom[] })
                 <span className="inline-block px-3 py-1 bg-primary-100 text-primary-700 text-xs font-bold rounded-full mb-3">
                   {selectedItem.kategori}
                 </span>
-                <h2 className="text-3xl font-bold text-gray-900 mb-4">{selectedItem.namaOrganisasi}</h2>
+                <h2 className="text-3xl font-bold text-gray-900 mb-4">{selectedItem.namaUkm}</h2>
                 <div className="prose prose-sm max-w-none text-gray-600 whitespace-pre-wrap">
                   {selectedItem.deskripsi}
                 </div>

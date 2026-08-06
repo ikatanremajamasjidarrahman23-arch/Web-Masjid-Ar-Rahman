@@ -161,9 +161,9 @@ model AdminNote {
   updatedAt DateTime @updatedAt
 }
 
-model Otonom {
+model Ukm {
   id              String   @id @default(cuid())
-  namaOrganisasi  String
+  namaUkm         String
   kategori        String
   deskripsi       String   @db.Text
   jadwalKegiatan  String?
