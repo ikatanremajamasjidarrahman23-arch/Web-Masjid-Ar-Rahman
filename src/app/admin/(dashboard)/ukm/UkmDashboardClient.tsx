@@ -87,19 +87,24 @@ export default function UkmDashboardClient() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, target: 'logo' | 'gallery') => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
-      const imageUrl = URL.createObjectURL(selectedFile);
-      setImageToCrop(imageUrl);
-      setCropTarget(target);
-      setCropperOpen(true);
-      e.target.value = '';
+      
+      if (target === 'logo') {
+        // Logo/banner is uploaded fully without cropping
+        setFile(selectedFile);
+        setFormData({ ...formData, imageUrl: URL.createObjectURL(selectedFile) });
+      } else {
+        // Gallery images get cropped
+        const imageUrl = URL.createObjectURL(selectedFile);
+        setImageToCrop(imageUrl);
+        setCropTarget(target);
+        setCropperOpen(true);
+        e.target.value = '';
+      }
     }
   };
 
   const handleCropComplete = (croppedFile: File) => {
-    if (cropTarget === 'logo') {
-      setFile(croppedFile);
-      setFormData({ ...formData, imageUrl: URL.createObjectURL(croppedFile) });
-    } else {
+    if (cropTarget === 'gallery') {
       setGalleryFiles([...galleryFiles, croppedFile]);
     }
     setCropperOpen(false);
@@ -423,7 +428,7 @@ export default function UkmDashboardClient() {
         </div>
       )}
 
-      {/* Image Cropper Modal */}
+      {/* Image Cropper Modal (Only for Gallery now) */}
       {cropperOpen && imageToCrop && (
         <ImageCropper
           imageSrc={imageToCrop}
@@ -432,7 +437,7 @@ export default function UkmDashboardClient() {
             setCropperOpen(false);
             setImageToCrop(null);
           }}
-          aspect={cropTarget === 'logo' ? 16 / 9 : 1}
+          aspect={1}
         />
       )}
 
