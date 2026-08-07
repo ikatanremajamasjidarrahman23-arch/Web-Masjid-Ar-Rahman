@@ -60,7 +60,7 @@ export default function UkmClient({ initialData, variant = "default" }: { initia
                 <img 
                   src={item.imageUrl} 
                   alt={item.namaUkm} 
-                  className="w-full h-full object-cover md:object-contain transform group-hover:scale-105 transition-transform duration-500 md:bg-white"
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                 />
               ) : (
@@ -88,7 +88,7 @@ export default function UkmClient({ initialData, variant = "default" }: { initia
                   <img 
                     src={item.imageUrl} 
                     alt={item.namaUkm} 
-                    className="w-full h-full object-cover md:object-contain group-hover:scale-105 transition-transform duration-500 md:bg-white"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                 ) : (
                   <div className="text-primary-200">
@@ -134,13 +134,13 @@ export default function UkmClient({ initialData, variant = "default" }: { initia
             className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative h-64 shrink-0 bg-gray-100">
+            <div className="relative h-64 md:h-80 shrink-0 bg-gray-100">
               {selectedItem.imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img 
                   src={selectedItem.imageUrl} 
                   alt={selectedItem.namaUkm} 
-                  className="w-full h-full object-cover md:object-contain md:bg-white"
+                  className="w-full h-full object-cover object-center"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-primary-50 text-primary-200">
