@@ -437,7 +437,7 @@ export default function UkmDashboardClient() {
             setCropperOpen(false);
             setImageToCrop(null);
           }}
-          aspect={1}
+          aspect={3 / 2}
         />
       )}
 
