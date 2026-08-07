@@ -10,7 +10,7 @@ type Ukm = {
   deskripsi: string;
   jadwalKegiatan: string | null;
   pembina: string | null;
-  kontakWa: string | null;
+  linkSelengkapnya: string | null;
   imageUrl: string | null;
   galleryImages: string[];
   createdAt: Date;
@@ -19,19 +19,9 @@ type Ukm = {
 export default function UkmClient({ initialData, variant = "default" }: { initialData: Ukm[], variant?: "default" | "masonry" }) {
   const [selectedItem, setSelectedItem] = useState<Ukm | null>(null);
 
-  const formatWhatsAppNumber = (number: string) => {
-    // Remove non-numeric characters
-    let cleaned = number.replace(/\D/g, "");
-    // Auto-convert 08 to 628
-    if (cleaned.startsWith("0")) {
-      cleaned = "62" + cleaned.substring(1);
-    }
-    return cleaned;
-  };
-
-  const handleWhatsAppClick = (number: string) => {
-    const formatted = formatWhatsAppNumber(number);
-    window.open(`https://wa.me/${formatted}`, "_blank");
+  const handleLinkClick = (url: string) => {
+    const finalUrl = url.startsWith('http') ? url : `https://${url}`;
+    window.open(finalUrl, "_blank");
   };
 
   if (!initialData || initialData.length === 0) {
@@ -70,7 +60,7 @@ export default function UkmClient({ initialData, variant = "default" }: { initia
                 <img 
                   src={item.imageUrl} 
                   alt={item.namaUkm} 
-                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-contain transform group-hover:scale-105 transition-transform duration-500 bg-white"
                   loading="lazy"
                 />
               ) : (
@@ -98,7 +88,7 @@ export default function UkmClient({ initialData, variant = "default" }: { initia
                   <img 
                     src={item.imageUrl} 
                     alt={item.namaUkm} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 bg-white"
                   />
                 ) : (
                   <div className="text-primary-200">
@@ -121,12 +111,6 @@ export default function UkmClient({ initialData, variant = "default" }: { initia
                     <div className="flex items-center gap-2">
                       <Users className="w-4 h-4 text-primary-500 shrink-0" />
                       <span className="truncate">Pembina: {item.pembina}</span>
-                    </div>
-                  )}
-                  {item.jadwalKegiatan && (
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-primary-500 shrink-0" />
-                      <span className="truncate">Jadwal: {item.jadwalKegiatan}</span>
                     </div>
                   )}
                 </div>
@@ -156,7 +140,7 @@ export default function UkmClient({ initialData, variant = "default" }: { initia
                 <img 
                   src={selectedItem.imageUrl} 
                   alt={selectedItem.namaUkm} 
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain bg-white"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-primary-50 text-primary-200">
@@ -177,40 +161,35 @@ export default function UkmClient({ initialData, variant = "default" }: { initia
                   {selectedItem.kategori}
                 </span>
                 <h2 className="text-3xl font-bold text-gray-900 mb-4">{selectedItem.namaUkm}</h2>
-                <div className="prose prose-sm max-w-none text-gray-600 whitespace-pre-wrap">
+                <div className="prose prose-sm max-w-none text-gray-600 whitespace-pre-wrap mb-6">
                   {selectedItem.deskripsi}
                 </div>
+
+                {selectedItem.pembina && (
+                  <div className="mb-8 bg-gray-50 border border-gray-100 p-5 rounded-2xl">
+                    <div className="flex items-center gap-3">
+                      <Users className="w-5 h-5 text-primary-500 shrink-0" />
+                      <div>
+                        <p className="text-xs text-gray-500 font-medium">Pembina / Ketua</p>
+                        <p className="text-sm font-semibold text-gray-900">{selectedItem.pembina}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {selectedItem.galleryImages && selectedItem.galleryImages.length > 0 && (
-                <div className="mb-8">
-                  <h4 className="font-semibold text-gray-900 mb-4">Galeri Kegiatan</h4>
-                  <div className="grid grid-cols-2 gap-3">
-                    {selectedItem.galleryImages.map((img, idx) => (
-                      <div key={idx} className="relative aspect-square overflow-hidden rounded-xl shadow-sm bg-gray-100 group">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img 
-                          src={img} 
-                          alt={`Galeri ${idx + 1}`} 
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
 
-              {selectedItem.kontakWa ? (
+
+              {selectedItem.linkSelengkapnya ? (
                 <button
-                  onClick={() => handleWhatsAppClick(selectedItem.kontakWa!)}
-                  className="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#128C7E] text-white py-3.5 rounded-xl font-bold transition-colors shadow-sm"
+                  onClick={() => handleLinkClick(selectedItem.linkSelengkapnya!)}
+                  className="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white py-3.5 rounded-xl font-bold transition-colors shadow-sm"
                 >
-                  <MessageCircle className="w-5 h-5" />
-                  Hubungi via WhatsApp
+                  Klik Selengkapnya
                 </button>
               ) : (
                 <div className="w-full py-3.5 rounded-xl bg-gray-100 text-center text-gray-500 font-medium border border-dashed border-gray-300">
-                  Kontak WhatsApp belum tersedia
+                  Tautan belum tersedia
                 </div>
               )}
             </div>

@@ -13,7 +13,7 @@ type Ukm = {
   deskripsi: string;
   jadwalKegiatan: string | null;
   pembina: string | null;
-  kontakWa: string | null;
+  linkSelengkapnya: string | null;
   imageUrl: string | null;
   galleryImages: string[];
   isActive: boolean;
@@ -38,7 +38,7 @@ export default function UkmDashboardClient() {
     deskripsi: "",
     jadwalKegiatan: "",
     pembina: "",
-    kontakWa: "",
+    linkSelengkapnya: "",
     imageUrl: "",
     galleryImages: [] as string[],
   });
@@ -121,7 +121,7 @@ export default function UkmDashboardClient() {
       }
       
       setFormData({
-        namaUkm: "", kategori: "", deskripsi: "", jadwalKegiatan: "", pembina: "", kontakWa: "", imageUrl: "", galleryImages: []
+        namaUkm: "", kategori: "", deskripsi: "", jadwalKegiatan: "", pembina: "", linkSelengkapnya: "", imageUrl: "", galleryImages: []
       });
       setFile(null);
       setGalleryFiles([]);
@@ -163,7 +163,7 @@ export default function UkmDashboardClient() {
       deskripsi: item.deskripsi,
       jadwalKegiatan: item.jadwalKegiatan || "",
       pembina: item.pembina || "",
-      kontakWa: item.kontakWa || "",
+      linkSelengkapnya: item.linkSelengkapnya || "",
       imageUrl: item.imageUrl || "",
       galleryImages: item.galleryImages || [],
     });
@@ -186,7 +186,7 @@ export default function UkmDashboardClient() {
         </div>
         <button
           onClick={() => {
-            setFormData({ namaUkm: "", kategori: "", deskripsi: "", jadwalKegiatan: "", pembina: "", kontakWa: "", imageUrl: "", galleryImages: [] });
+            setFormData({ namaUkm: "", kategori: "", deskripsi: "", jadwalKegiatan: "", pembina: "", linkSelengkapnya: "", imageUrl: "", galleryImages: [] });
             setEditingId(null);
             setFile(null);
             setGalleryFiles([]);
@@ -286,17 +286,7 @@ export default function UkmDashboardClient() {
                 ></textarea>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Jadwal Rutin</label>
-                  <input
-                    type="text"
-                    value={formData.jadwalKegiatan}
-                    onChange={(e) => setFormData({ ...formData, jadwalKegiatan: e.target.value })}
-                    className="w-full border-gray-300 rounded-xl shadow-sm focus:ring-primary-500 focus:border-primary-500 px-4 py-2.5"
-                    placeholder="Contoh: Setiap Malam Jumat"
-                  />
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">Nama Pembina/Ketua</label>
                   <input
@@ -308,59 +298,19 @@ export default function UkmDashboardClient() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Kontak WhatsApp</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Tautan Selengkapnya / GDrive</label>
                   <input
-                    type="text"
-                    value={formData.kontakWa}
-                    onChange={(e) => setFormData({ ...formData, kontakWa: e.target.value })}
+                    type="url"
+                    value={formData.linkSelengkapnya}
+                    onChange={(e) => setFormData({ ...formData, linkSelengkapnya: e.target.value })}
                     className="w-full border-gray-300 rounded-xl shadow-sm focus:ring-primary-500 focus:border-primary-500 px-4 py-2.5"
-                    placeholder="08123456789"
+                    placeholder="https://drive.google.com/..."
                   />
-                  <p className="text-xs text-gray-500 mt-1">Gunakan awalan 08... atau 628...</p>
+                  <p className="text-xs text-gray-500 mt-1">URL folder Google Drive atau website eksternal</p>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">4 Foto Galeri Terbaik (Gantikan Info Kegiatan)</label>
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*"
-                  onChange={(e) => {
-                    const files = Array.from(e.target.files || []);
-                    if (files.length > 4) {
-                      alert("Maksimal 4 foto");
-                      setGalleryFiles(files.slice(0, 4));
-                    } else {
-                      setGalleryFiles(files);
-                    }
-                  }}
-                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 transition-colors mb-2"
-                />
-                
-                {/* Preview existing images */}
-                {formData.galleryImages.length > 0 && (
-                  <div className="flex gap-2 mt-2">
-                    {formData.galleryImages.map((url, i) => (
-                      <div key={i} className="relative group">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={url} alt="Gallery" className="w-16 h-16 object-cover rounded-lg border border-gray-200" />
-                        <button 
-                          type="button" 
-                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => setFormData({
-                            ...formData, 
-                            galleryImages: formData.galleryImages.filter((_, idx) => idx !== i)
-                          })}
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                <p className="text-xs text-gray-500 mt-1">Foto-foto ini akan ditampilkan di popup saat UKM diklik (maks 4).</p>
-              </div>
+
 
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">Logo/Banner/Foto (Opsional)</label>
@@ -441,7 +391,6 @@ export default function UkmDashboardClient() {
                         )}
                         <div>
                           <p className="font-semibold text-gray-900">{item.namaUkm}</p>
-                          {item.jadwalKegiatan && <p className="text-xs text-gray-500">{item.jadwalKegiatan}</p>}
                         </div>
                       </div>
                     </td>

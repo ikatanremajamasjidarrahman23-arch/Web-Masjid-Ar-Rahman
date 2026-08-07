@@ -174,7 +174,7 @@ model Ukm {
   deskripsi       String   @db.Text
   jadwalKegiatan  String?
   pembina         String?
-  kontakWa        String?
+  linkSelengkapnya String?
   imageUrl        String?
   galleryImages   String[] @default([])
   isActive        Boolean  @default(true)
