@@ -131,10 +131,17 @@ export default function UkmClient({ initialData, variant = "default" }: { initia
       {selectedItem && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div 
-            className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
+            className="bg-white rounded-3xl w-full max-w-2xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] relative"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative h-64 md:h-80 shrink-0 bg-gray-100">
+            <button 
+              onClick={() => setSelectedItem(null)}
+              className="absolute top-4 right-4 bg-white/80 backdrop-blur text-gray-800 p-2 rounded-full hover:bg-white transition-colors shadow-sm z-20"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="overflow-y-auto w-full">
+              <div className="relative h-64 md:h-80 shrink-0 bg-gray-100">
               {selectedItem.imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img 
@@ -147,16 +154,9 @@ export default function UkmClient({ initialData, variant = "default" }: { initia
                   <ImageIcon className="w-20 h-20 opacity-50" />
                 </div>
               )}
-              <button 
-                onClick={() => setSelectedItem(null)}
-                className="absolute top-4 right-4 bg-white/80 backdrop-blur text-gray-800 p-2 rounded-full hover:bg-white transition-colors shadow-sm"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="p-8 overflow-y-auto">
-              <div className="mb-6">
+              </div>
+              
+              <div className="p-8">
                 <span className="inline-block px-3 py-1 bg-primary-100 text-primary-700 text-xs font-bold rounded-full mb-3">
                   {selectedItem.kategori}
                 </span>
