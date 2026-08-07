@@ -60,7 +60,7 @@ export default function UkmClient({ initialData, variant = "default" }: { initia
                 <img 
                   src={item.imageUrl} 
                   alt={item.namaUkm} 
-                  className="w-full h-full object-contain transform group-hover:scale-105 transition-transform duration-500 bg-white"
+                  className="w-full h-full object-cover md:object-contain transform group-hover:scale-105 transition-transform duration-500 md:bg-white"
                   loading="lazy"
                 />
               ) : (
@@ -88,7 +88,7 @@ export default function UkmClient({ initialData, variant = "default" }: { initia
                   <img 
                     src={item.imageUrl} 
                     alt={item.namaUkm} 
-                    className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 bg-white"
+                    className="w-full h-full object-cover md:object-contain group-hover:scale-105 transition-transform duration-500 md:bg-white"
                   />
                 ) : (
                   <div className="text-primary-200">
@@ -140,7 +140,7 @@ export default function UkmClient({ initialData, variant = "default" }: { initia
                 <img 
                   src={selectedItem.imageUrl} 
                   alt={selectedItem.namaUkm} 
-                  className="w-full h-full object-contain bg-white"
+                  className="w-full h-full object-cover md:object-contain md:bg-white"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-primary-50 text-primary-200">
