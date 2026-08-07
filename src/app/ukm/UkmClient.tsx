@@ -141,16 +141,16 @@ export default function UkmClient({ initialData, variant = "default" }: { initia
               <X className="w-5 h-5" />
             </button>
             <div className="overflow-y-auto w-full">
-              <div className="relative h-64 md:h-80 shrink-0 bg-gray-100">
+              <div className="relative w-full bg-gray-100 border-b border-gray-100 flex justify-center shrink-0">
               {selectedItem.imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img 
                   src={selectedItem.imageUrl} 
                   alt={selectedItem.namaUkm} 
-                  className="w-full h-full object-cover object-top"
+                  className="w-full max-h-[60vh] object-contain object-top"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-primary-50 text-primary-200">
+                <div className="w-full h-64 flex items-center justify-center bg-primary-50 text-primary-200">
                   <ImageIcon className="w-20 h-20 opacity-50" />
                 </div>
               )}
