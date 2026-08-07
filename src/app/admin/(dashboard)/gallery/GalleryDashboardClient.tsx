@@ -10,6 +10,7 @@ type Gallery = {
   title: string;
   category: string;
   imageUrl: string;
+  imagePosition?: string;
 };
 
 export default function GalleryDashboardClient({ initialGalleries }: { initialGalleries: Gallery[] }) {
@@ -19,6 +20,7 @@ export default function GalleryDashboardClient({ initialGalleries }: { initialGa
   // Form State
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Ibadah");
+  const [imagePosition, setImagePosition] = useState("center");
   const [file, setFile] = useState<File | null>(null);
 
   const router = useRouter();
@@ -43,11 +45,12 @@ export default function GalleryDashboardClient({ initialGalleries }: { initialGa
       
       const imageUrl = uploadRes.data.data.secure_url;
 
-      await axios.post("/api/admin/gallery", { title, category, imageUrl });
+      await axios.post("/api/admin/gallery", { title, category, imageUrl, imagePosition });
       
       setIsModalOpen(false);
       setTitle("");
       setCategory("Ibadah");
+      setImagePosition("center");
       setFile(null);
       router.refresh();
       
@@ -93,7 +96,7 @@ export default function GalleryDashboardClient({ initialGalleries }: { initialGa
             <div key={item.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col group">
               <div className="relative aspect-square overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" style={{ objectPosition: item.imagePosition || 'center' }} />
                 <div className="absolute top-2 left-2 px-2 py-1 bg-black/60 backdrop-blur-sm rounded text-xs font-semibold text-white">
                   {item.category}
                 </div>
@@ -157,6 +160,19 @@ export default function GalleryDashboardClient({ initialGalleries }: { initialGa
                   <option value="Kajian & Edukasi">Kajian & Edukasi</option>
                   <option value="Selayang Pandang">Selayang Pandang (Halaman Utama)</option>
                   <option value="Lainnya">Lainnya</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Fokus Potongan Foto *</label>
+                <select
+                  required
+                  value={imagePosition} onChange={e => setImagePosition(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 outline-none"
+                >
+                  <option value="center">Tengah (Default)</option>
+                  <option value="top">Atas (Fokus Wajah/Kepala)</option>
+                  <option value="bottom">Bawah</option>
                 </select>
               </div>
 

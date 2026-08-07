@@ -120,12 +120,13 @@ model StudySchedule {
 }
 
 model Gallery {
-  id        String   @id @default(cuid())
-  title     String
-  category  String
-  imageUrl  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  title         String
+  category      String
+  imageUrl      String
+  imagePosition String   @default("center")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model PushSubscription {
@@ -137,14 +138,15 @@ model PushSubscription {
 }
 
 model Bulletin {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  imageUrl    String?
-  expiryDate  DateTime
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String   @id @default(cuid())
+  title         String
+  description   String
+  imageUrl      String?
+  imagePosition String   @default("center")
+  expiryDate    DateTime
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model OrganizationMember {

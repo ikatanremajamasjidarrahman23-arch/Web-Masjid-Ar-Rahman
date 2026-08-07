@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 export async function POST(request: Request) {
   try {
     const data = await request.json();
-    const { title, category, imageUrl } = data;
+    const { title, category, imageUrl, imagePosition = "center" } = data;
 
     if (!title || !category || !imageUrl) {
       return NextResponse.json(
@@ -18,6 +18,7 @@ export async function POST(request: Request) {
         title,
         category,
         imageUrl,
+        imagePosition,
       },
     });
 

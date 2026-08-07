@@ -39,7 +39,7 @@ export default async function GalleryPublicPage() {
               {galleries.map((item) => (
                 <div key={item.id} className="relative group rounded-2xl overflow-hidden aspect-square bg-gray-800 shadow-lg border border-gray-700/50">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" style={{ objectPosition: item.imagePosition || 'center' }} />
                   <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/20 to-transparent flex flex-col justify-end p-5">
                     <span className="text-primary-400 text-xs font-semibold mb-1 uppercase tracking-wider">{item.category}</span>
                     <h3 className="text-lg font-bold text-white leading-tight">{item.title}</h3>

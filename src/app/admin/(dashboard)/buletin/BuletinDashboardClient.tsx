@@ -14,6 +14,7 @@ type Bulletin = {
   expiryDate: string;
   isActive: boolean;
   createdAt: string;
+  imagePosition?: string;
 };
 
 export default function BuletinDashboardClient() {
@@ -28,6 +29,7 @@ export default function BuletinDashboardClient() {
     description: "",
     imageUrl: "",
     expiryDate: "",
+    imagePosition: "center",
   });
 
   const fetchBulletins = async () => {
@@ -50,7 +52,7 @@ export default function BuletinDashboardClient() {
     setIsSubmitting(true);
     try {
       await axios.post("/api/admin/buletin", formData);
-      setFormData({ title: "", description: "", imageUrl: "", expiryDate: "" });
+      setFormData({ title: "", description: "", imageUrl: "", expiryDate: "", imagePosition: "center" });
       setShowForm(false);
       fetchBulletins();
     } catch (error) {
@@ -182,6 +184,19 @@ export default function BuletinDashboardClient() {
                   className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500"
                 />
               </div>
+
+              <div className="col-span-1 md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Fokus Potongan Foto *</label>
+                <select
+                  required
+                  value={formData.imagePosition} onChange={e => setFormData({ ...formData, imagePosition: e.target.value })}
+                  className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500"
+                >
+                  <option value="center">Tengah (Default)</option>
+                  <option value="top">Atas (Fokus Wajah/Kepala)</option>
+                  <option value="bottom">Bawah</option>
+                </select>
+              </div>
             </div>
 
             <div className="flex justify-end pt-4">
@@ -214,7 +229,7 @@ export default function BuletinDashboardClient() {
                 {bulletin.imageUrl && (
                   <div className="h-40 w-full relative overflow-hidden bg-gray-100">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={bulletin.imageUrl} alt={bulletin.title} className="w-full h-full object-cover" />
+                    <img src={bulletin.imageUrl} alt={bulletin.title} className="w-full h-full object-cover" style={{ objectPosition: bulletin.imagePosition || 'center' }} />
                   </div>
                 )}
                 

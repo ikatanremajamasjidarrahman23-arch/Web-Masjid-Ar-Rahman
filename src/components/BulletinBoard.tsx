@@ -12,6 +12,7 @@ type Bulletin = {
   imageUrl: string | null;
   expiryDate: Date;
   createdAt: Date;
+  imagePosition?: string;
 };
 
 export default function BulletinBoard({ bulletins }: { bulletins: Bulletin[] }) {
@@ -47,6 +48,7 @@ export default function BulletinBoard({ bulletins }: { bulletins: Bulletin[] }) 
                       src={bulletin.imageUrl} 
                       alt={bulletin.title} 
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      style={{ objectPosition: bulletin.imagePosition || 'center' }}
                     />
                   </div>
                 )}
@@ -88,9 +90,9 @@ export default function BulletinBoard({ bulletins }: { bulletins: Bulletin[] }) 
 
             <div className="overflow-y-auto overflow-x-hidden flex-1 p-0">
               {activeBulletin.imageUrl && (
-                <div className="w-full h-64 sm:h-80 relative bg-gray-100">
+                <div className="w-full relative bg-gray-100 border-b border-gray-200">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={activeBulletin.imageUrl} alt={activeBulletin.title} className="w-full h-full object-cover" />
+                  <img src={activeBulletin.imageUrl} alt={activeBulletin.title} className="w-full max-h-[60vh] object-contain mx-auto bg-gray-900/5" />
                 </div>
               )}
               

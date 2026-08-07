@@ -35,7 +35,7 @@ export async function POST(request: Request) {
     if (!checkAuth(token)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const data = await request.json();
-    const { title, description, imageUrl, expiryDate } = data;
+    const { title, description, imageUrl, expiryDate, imagePosition = "center" } = data;
 
     if (!title || !description || !expiryDate) {
       return NextResponse.json({ error: "Judul, Deskripsi, dan Tanggal Berakhir wajib diisi" }, { status: 400 });
@@ -46,6 +46,7 @@ export async function POST(request: Request) {
         title,
         description,
         imageUrl: imageUrl || null,
+        imagePosition,
         expiryDate: new Date(expiryDate),
         isActive: true,
       },

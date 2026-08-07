@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-type Photo = { id: string, title: string, imageUrl: string };
+type Photo = { id: string, title: string, imageUrl: string, imagePosition?: string };
 
 type Props = {
   photos?: Photo[];
@@ -36,6 +36,7 @@ export default function SelayangPandang({ photos: dbPhotos, title, description }
   const photos = dbPhotos && dbPhotos.length > 0 
     ? dbPhotos.map((p, i) => ({
         src: p.imageUrl,
+        imagePosition: p.imagePosition,
         className: defaultPhotos[i % defaultPhotos.length].className
       }))
     : defaultPhotos;
@@ -68,6 +69,7 @@ export default function SelayangPandang({ photos: dbPhotos, title, description }
                 src={photo.src}
                 alt="Galeri Masjid"
                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                style={{ objectPosition: (photo as any).imagePosition || 'center' }}
                 loading="lazy"
               />
             </div>
