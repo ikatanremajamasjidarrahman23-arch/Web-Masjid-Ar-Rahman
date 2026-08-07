@@ -5,6 +5,7 @@ import axios from "axios";
 import { Plus, Trash2, Edit, X, ImagePlus, Check, Search, Filter } from "lucide-react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
+import ImageCropper from "@/components/admin/ImageCropper";
 
 type Ukm = {
   id: string;
@@ -31,6 +32,11 @@ export default function UkmDashboardClient() {
   const [searchQuery, setSearchQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [categories, setCategories] = useState<string[]>([]);
+
+  // Cropper States
+  const [cropperOpen, setCropperOpen] = useState(false);
+  const [imageToCrop, setImageToCrop] = useState<string | null>(null);
+  const [cropTarget, setCropTarget] = useState<'logo' | 'gallery'>('logo');
 
   const [formData, setFormData] = useState({
     namaUkm: "",
@@ -77,6 +83,28 @@ export default function UkmDashboardClient() {
     }
     setFilteredData(result);
   }, [data, searchQuery, categoryFilter]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, target: 'logo' | 'gallery') => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedFile = e.target.files[0];
+      const imageUrl = URL.createObjectURL(selectedFile);
+      setImageToCrop(imageUrl);
+      setCropTarget(target);
+      setCropperOpen(true);
+      e.target.value = '';
+    }
+  };
+
+  const handleCropComplete = (croppedFile: File) => {
+    if (cropTarget === 'logo') {
+      setFile(croppedFile);
+      setFormData({ ...formData, imageUrl: URL.createObjectURL(croppedFile) });
+    } else {
+      setGalleryFiles([...galleryFiles, croppedFile]);
+    }
+    setCropperOpen(false);
+    setImageToCrop(null);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -319,7 +347,7 @@ export default function UkmDashboardClient() {
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={(e) => setFile(e.target.files?.[0] || null)}
+                      onChange={(e) => handleFileChange(e, 'logo')}
                       className="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 transition-colors"
                     />
                   </div>
@@ -333,6 +361,44 @@ export default function UkmDashboardClient() {
                       placeholder="Tempel URL gambar..."
                     />
                   </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Foto Bagian Dalam (Galeri UKM)</label>
+                <div className="space-y-3">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => handleFileChange(e, 'gallery')}
+                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 transition-colors"
+                  />
+                  {(formData.galleryImages.length > 0 || galleryFiles.length > 0) && (
+                    <div className="flex flex-wrap gap-3">
+                      {formData.galleryImages.map((url, idx) => (
+                        <div key={idx} className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200 group">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={url} alt={`Gallery ${idx}`} className="w-full h-full object-cover" />
+                          <button type="button" onClick={() => {
+                            const newUrls = [...formData.galleryImages];
+                            newUrls.splice(idx, 1);
+                            setFormData({...formData, galleryImages: newUrls});
+                          }} className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-4 h-4" /></button>
+                        </div>
+                      ))}
+                      {galleryFiles.map((gf, idx) => (
+                        <div key={`file-${idx}`} className="relative w-24 h-24 rounded-lg overflow-hidden border border-gray-200 group">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={URL.createObjectURL(gf)} alt={`New Gallery ${idx}`} className="w-full h-full object-cover" />
+                          <button type="button" onClick={() => {
+                            const newFiles = [...galleryFiles];
+                            newFiles.splice(idx, 1);
+                            setGalleryFiles(newFiles);
+                          }} className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-4 h-4" /></button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -355,6 +421,19 @@ export default function UkmDashboardClient() {
             </form>
           </div>
         </div>
+      )}
+
+      {/* Image Cropper Modal */}
+      {cropperOpen && imageToCrop && (
+        <ImageCropper
+          imageSrc={imageToCrop}
+          onCropComplete={handleCropComplete}
+          onCancel={() => {
+            setCropperOpen(false);
+            setImageToCrop(null);
+          }}
+          aspect={cropTarget === 'logo' ? 16 / 9 : 1}
+        />
       )}
 
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
