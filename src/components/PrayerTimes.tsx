@@ -16,6 +16,8 @@ export default function PrayerTimes() {
   const [timings, setTimings] = useState<Timings | null>(null);
   const [nextPrayer, setNextPrayer] = useState<{ name: string; time: string; diffMs: number } | null>(null);
   const [countdown, setCountdown] = useState<string>("Memuat...");
+  const [hijriDate, setHijriDate] = useState<string>("");
+  const [masehiDate, setMasehiDate] = useState<string>("");
 
   // Coordinate for Plumbon, Cirebon
   const latitude = -6.6975;
@@ -51,15 +53,24 @@ export default function PrayerTimes() {
         const response = await axios.get(
           `https://api.aladhan.com/v1/timings/${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}?latitude=${latitude}&longitude=${longitude}&method=20`
         );
-        const data = response.data.data.timings;
+        const data = response.data.data;
+        const timingsData = data.timings;
+        const hijri = data.date.hijri;
 
         setTimings({
-          Fajr: data.Fajr,
-          Dhuhr: data.Dhuhr,
-          Asr: data.Asr,
-          Maghrib: data.Maghrib,
-          Isha: data.Isha,
+          Fajr: timingsData.Fajr,
+          Dhuhr: timingsData.Dhuhr,
+          Asr: timingsData.Asr,
+          Maghrib: timingsData.Maghrib,
+          Isha: timingsData.Isha,
         });
+
+        // Format Hijri
+        setHijriDate(`${hijri.day} ${hijri.month.en} ${hijri.year} H`);
+        
+        // Format Masehi
+        const masehiOptions: Intl.DateTimeFormatOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        setMasehiDate(date.toLocaleDateString('id-ID', masehiOptions));
       } catch (error) {
         console.error("Gagal mengambil jadwal sholat", error);
       }
@@ -148,9 +159,16 @@ export default function PrayerTimes() {
     <div className="bg-white shadow-xl rounded-2xl overflow-hidden animate-fade-in border border-gray-100">
       <div className="bg-primary-600 text-white p-6 text-center">
         <h2 className="text-xl font-semibold mb-2">Jadwal Sholat Hari Ini</h2>
-        <p className="text-primary-100 text-sm">Plumbon, Cirebon & Sekitarnya</p>
+        <p className="text-primary-100 text-sm mb-3">Plumbon, Cirebon & Sekitarnya</p>
         
-        <div className="mt-6 flex flex-col items-center justify-center bg-primary-700 rounded-xl p-4 shadow-inner">
+        {masehiDate && hijriDate && (
+          <div className="inline-flex flex-col items-center bg-primary-700/50 rounded-lg px-4 py-2 border border-primary-500/30">
+            <span className="text-sm font-medium">{masehiDate}</span>
+            <span className="text-xs text-primary-200">{hijriDate}</span>
+          </div>
+        )}
+        
+        <div className="mt-5 flex flex-col items-center justify-center bg-primary-700 rounded-xl p-4 shadow-inner">
           <span className="text-sm text-primary-200 mb-1">Menuju {nextPrayer?.name || "Sholat"}</span>
           <div className="flex items-center gap-2">
             <Clock className="w-6 h-6 text-primary-300" />
