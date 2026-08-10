@@ -32,8 +32,21 @@ export default function SelayangPandangDashboardClient({
   // Form State
   const [title, setTitle] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [editId, setEditId] = useState<string | null>(null);
 
   const router = useRouter();
+
+  const handleOpenModal = (id?: string, defaultTitle?: string) => {
+    if (id) {
+      setEditId(id);
+      setTitle(defaultTitle || "");
+    } else {
+      setEditId(null);
+      setTitle("");
+    }
+    setFile(null);
+    setIsModalOpen(true);
+  };
 
   const handleSaveText = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -52,37 +65,53 @@ export default function SelayangPandangDashboardClient({
 
   const handleCreatePhoto = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!file) return alert("Pilih foto terlebih dahulu!");
     
-    // Validasi ukuran maksimal 4MB (Vercel limit)
-    if (file.size > 4 * 1024 * 1024) {
+    // For new uploads, file is required. For edits, it is optional.
+    if (!editId && !file) return alert("Pilih foto terlebih dahulu!");
+    
+    // Validate file size if file exists
+    if (file && file.size > 4 * 1024 * 1024) {
       return alert("❌ Ukuran foto terlalu besar (Maksimal 4MB). Silakan perkecil ukuran foto Anda terlebih dahulu.");
     }
 
     setLoading(true);
 
     try {
-      const fileData = new FormData();
-      fileData.append("file", file);
-      const uploadRes = await axios.post("/api/upload", fileData);
+      let imageUrl = "";
       
-      if (!uploadRes.data.success) throw new Error("Gagal upload gambar");
-      
-      const imageUrl = uploadRes.data.data.secure_url;
+      // Upload file if selected
+      if (file) {
+        const fileData = new FormData();
+        fileData.append("file", file);
+        const uploadRes = await axios.post("/api/upload", fileData);
+        
+        if (!uploadRes.data.success) throw new Error("Gagal upload gambar");
+        imageUrl = uploadRes.data.data.secure_url;
+      }
 
-      await axios.post("/api/admin/gallery", { 
-        title, 
-        category: "Selayang Pandang", 
-        imageUrl 
-      });
+      if (editId) {
+        await axios.put("/api/admin/gallery", { 
+          id: editId,
+          ...(title && { title }), 
+          ...(imageUrl && { imageUrl }),
+        });
+      } else {
+        if (!imageUrl) throw new Error("Gagal mendapatkan URL gambar.");
+        await axios.post("/api/admin/gallery", { 
+          title, 
+          category: "Selayang Pandang", 
+          imageUrl 
+        });
+      }
       
       setIsModalOpen(false);
       setTitle("");
       setFile(null);
+      setEditId(null);
       router.refresh();
       
     } catch (error: any) {
-      alert("Gagal menambahkan foto galeri: " + (error.response?.data?.error || error.message));
+      alert("Gagal memproses foto galeri: " + (error.response?.data?.error || error.message));
     } finally {
       setLoading(false);
     }
@@ -150,43 +179,74 @@ export default function SelayangPandangDashboardClient({
       {/* Foto Section */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-            <ImageIcon className="w-5 h-5 text-primary-500" /> Galeri Foto
-          </h3>
-          <button 
-            onClick={() => setIsModalOpen(true)}
-            className="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg flex items-center gap-2 font-medium transition-colors text-sm"
-          >
-            <Plus className="w-4 h-4" /> Unggah Foto
-          </button>
+          <div>
+            <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+              <ImageIcon className="w-5 h-5 text-primary-500" /> Galeri Foto
+            </h3>
+            <p className="text-sm text-gray-500 mt-1">Terdapat 5 slot foto yang akan tampil pada layout utama. Atur sesuai keinginan Anda agar tepat sasaran.</p>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 animate-fade-in">
-          {initialGalleries.length === 0 ? (
-            <div className="col-span-full bg-gray-50 p-8 text-center rounded-xl border border-gray-200 border-dashed">
-              <p className="text-gray-500">Belum ada foto galeri yang diunggah.</p>
-            </div>
-          ) : (
-            initialGalleries.map((item) => (
-              <div key={item.id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col group">
-                <div className="relative aspect-square overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                </div>
-                
-                <div className="p-4 flex flex-col flex-1">
-                  <h3 className="font-bold text-sm text-gray-900 mb-4 line-clamp-2">{item.title}</h3>
-                  
-                  <button 
-                    onClick={() => handleDeletePhoto(item.id)}
-                    className="w-full py-1.5 flex items-center justify-center gap-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors font-medium text-xs mt-auto"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" /> Hapus
-                  </button>
-                </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 auto-rows-[150px] md:auto-rows-[200px] animate-fade-in bg-gray-50 p-4 md:p-6 rounded-xl border border-gray-200">
+          {[
+            { label: "Foto Utama (Kiri)", className: "col-span-2 row-span-2 md:col-span-1 md:row-span-2" },
+            { label: "Tengah Atas", className: "col-span-1 row-span-1" },
+            { label: "Tengah Bawah", className: "col-span-1 row-span-1" },
+            { label: "Kanan Atas", className: "col-span-2 md:col-span-1 row-span-1" },
+            { label: "Kanan Bawah", className: "col-span-2 md:col-span-1 row-span-1" }
+          ].map((slot, index) => {
+            const item = initialGalleries[index];
+            return (
+              <div 
+                key={index} 
+                className={`relative bg-white rounded-xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center overflow-hidden group ${slot.className}`}
+              >
+                {item ? (
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={item.imageUrl} alt={item.title} className="absolute inset-0 w-full h-full object-cover" />
+                    
+                    {/* Overlay Action */}
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 gap-3 z-20">
+                      <p className="text-white font-semibold text-sm text-center bg-black/50 px-3 py-1 rounded-lg backdrop-blur-sm shadow-sm">{slot.label}</p>
+                      <div className="flex gap-2 w-full max-w-[200px]">
+                        <button 
+                          onClick={() => handleOpenModal(item.id, item.title)} 
+                          className="flex-1 py-2 bg-primary-600 hover:bg-primary-500 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
+                        >
+                          Ubah
+                        </button>
+                        <button 
+                          onClick={() => handleDeletePhoto(item.id)} 
+                          className="flex-1 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm font-medium transition-colors shadow-sm"
+                        >
+                          Hapus
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {/* Position Label - Shown when not hovering */}
+                    <div className="absolute top-2 left-2 bg-black/60 text-white text-xs px-2.5 py-1 rounded-md backdrop-blur-sm pointer-events-none group-hover:opacity-0 transition-opacity z-10 font-medium">
+                      {index + 1}. {slot.label}
+                    </div>
+                  </>
+                ) : (
+                  <div className="p-4 flex flex-col items-center justify-center text-center h-full w-full">
+                    <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mb-3">
+                      <ImageIcon className="w-5 h-5 text-gray-400" />
+                    </div>
+                    <p className="text-gray-500 font-medium text-sm mb-4">{index + 1}. {slot.label}</p>
+                    <button 
+                      onClick={() => handleOpenModal()} 
+                      className="px-4 py-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300 rounded-lg text-xs font-medium flex items-center gap-2 shadow-sm transition-all"
+                    >
+                      <Plus className="w-4 h-4"/> Isi Slot Ini
+                    </button>
+                  </div>
+                )}
               </div>
-            ))
-          )}
+            );
+          })}
         </div>
       </div>
 
@@ -202,9 +262,11 @@ export default function SelayangPandangDashboardClient({
 
             <form onSubmit={handleCreatePhoto} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Pilih Foto *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {editId ? "Ganti Foto (Kosongkan jika hanya ingin ubah judul)" : "Pilih Foto *"}
+                </label>
                 <input 
-                  type="file" accept="image/*" required
+                  type="file" accept="image/*" required={!editId}
                   onChange={e => setFile(e.target.files?.[0] || null)}
                   className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100"
                 />

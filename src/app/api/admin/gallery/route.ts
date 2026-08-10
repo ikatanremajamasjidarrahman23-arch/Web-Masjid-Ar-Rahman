@@ -57,3 +57,35 @@ export async function DELETE(request: Request) {
     );
   }
 }
+
+export async function PUT(request: Request) {
+  try {
+    const data = await request.json();
+    const { id, title, category, imageUrl, imagePosition } = data;
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "ID Galeri wajib diisi." },
+        { status: 400 }
+      );
+    }
+
+    const updatedGallery = await prisma.gallery.update({
+      where: { id },
+      data: {
+        ...(title && { title }),
+        ...(category && { category }),
+        ...(imageUrl && { imageUrl }),
+        ...(imagePosition && { imagePosition }),
+      },
+    });
+
+    return NextResponse.json({ success: true, data: updatedGallery });
+  } catch (error) {
+    console.error("Update Gallery Error:", error);
+    return NextResponse.json(
+      { error: "Terjadi kesalahan pada server saat memperbarui galeri." },
+      { status: 500 }
+    );
+  }
+}

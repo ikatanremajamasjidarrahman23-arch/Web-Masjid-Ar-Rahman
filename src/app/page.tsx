@@ -14,7 +14,7 @@ export default async function Home() {
 
   const selayangPandangPhotos = await prisma.gallery.findMany({
     where: { category: "Selayang Pandang" },
-    orderBy: { createdAt: "desc" },
+    orderBy: { createdAt: "asc" },
     take: 5
   });
 

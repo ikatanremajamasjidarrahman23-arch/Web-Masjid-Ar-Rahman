@@ -25,7 +25,7 @@ export default async function SelayangPandangDashboardPage() {
   const settings = await prisma.settings.findFirst();
   const galleries = await prisma.gallery.findMany({
     where: { category: "Selayang Pandang" },
-    orderBy: { createdAt: "desc" }
+    orderBy: { createdAt: "asc" }
   });
 
   return <SelayangPandangDashboardClient 
