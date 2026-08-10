@@ -22,6 +22,7 @@ import WelcomePopup from "@/components/WelcomePopup";
 import PushNotificationManager from "@/components/PushNotificationManager";
 import { prisma } from "@/lib/prisma";
 import { getThemeVariables } from "@/lib/themes";
+import WhatsAppFloatingButton from "@/components/WhatsAppFloatingButton";
 
 export default async function RootLayout({
   children,
@@ -47,6 +48,7 @@ export default async function RootLayout({
         <main className="flex-grow">
           {children}
         </main>
+        <WhatsAppFloatingButton />
         <FooterWrapper>
           <Footer />
         </FooterWrapper>
