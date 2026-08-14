@@ -5,6 +5,11 @@ export const revalidate = 0;
 
 export default async function AdminGalleryPage() {
   const galleries = await prisma.gallery.findMany({
+    where: {
+      category: {
+        not: "Selayang Pandang"
+      }
+    },
     orderBy: { createdAt: "desc" },
   });
 

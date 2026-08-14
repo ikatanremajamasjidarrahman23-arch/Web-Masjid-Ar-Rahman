@@ -5,6 +5,11 @@ export const revalidate = 60; // Cache for 60 seconds
 
 export default async function GalleryPublicPage() {
   const galleries = await prisma.gallery.findMany({
+    where: {
+      category: {
+        not: "Selayang Pandang"
+      }
+    },
     orderBy: { createdAt: "desc" },
   });
 
