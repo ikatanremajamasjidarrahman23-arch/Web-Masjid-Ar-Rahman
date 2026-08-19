@@ -69,7 +69,7 @@ export default function WelcomePopup({ imageUrl, isActive, duration }: WelcomePo
         <img 
           src={imageUrl!} 
           alt="Pengumuman Masjid" 
-          className="w-full max-h-[80vh] object-contain rounded-2xl shadow-2xl ring-1 ring-white/10"
+          className="max-w-full w-auto max-h-[80vh] object-contain rounded-2xl shadow-2xl ring-1 ring-white/10"
         />
       </div>
     </div>

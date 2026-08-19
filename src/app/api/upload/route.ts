@@ -34,15 +34,17 @@ export async function POST(request: Request) {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
+    const isBanner = formData.get("isBanner") === "true";
+
     // Proses upload ke Cloudinary dengan optimasi memori
     const result = await new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         { 
           folder: "masjid-ar-rahman",
-          format: "webp", // Ubah ke WEBP agar ukurannya sangat kecil
-          quality: "auto", // Kompresi otomatis terbaik
-          width: 1200, // Batasi lebar maksimal untuk menghemat kuota
-          crop: "limit" // Jangan perbesar jika gambar aslinya kecil
+          format: isBanner ? "auto" : "webp", // Pertahankan format asli untuk banner
+          quality: isBanner ? "auto:best" : "auto", // Kualitas terbaik khusus banner
+          width: isBanner ? undefined : 1200, // Jangan ubah resolusi banner
+          crop: isBanner ? undefined : "limit"
         },
         (error, result) => {
           if (error) reject(error);
