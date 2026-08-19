@@ -18,9 +18,9 @@ export default function PopupManagerClient({ settings }: { settings: any }) {
 
     setIsUploading(true);
     try {
-      const compressedFile = await compressImage(file);
+      // Lewati kompresi sepenuhnya khusus untuk popup banner agar kualitas 100% terjaga seperti aslinya
       const formData = new FormData();
-      formData.append("file", compressedFile);
+      formData.append("file", file);
       const res = await axios.post("/api/upload", formData);
       setPopupImagePreview(res.data.data.secure_url);
     } catch (error) {
