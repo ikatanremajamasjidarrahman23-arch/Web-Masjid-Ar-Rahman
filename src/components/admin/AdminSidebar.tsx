@@ -34,12 +34,13 @@ export default function AdminSidebar({ logoutAction }: { logoutAction: (payload:
   return (
     <>
       {/* Mobile Header & Toggle */}
-      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-30 flex items-center justify-between px-4">
-        <h1 className="text-xl font-bold text-gray-900">Admin Panel</h1>
+      <div className="md:hidden fixed top-16 left-0 right-0 h-16 bg-white border-b border-gray-200 z-40 flex items-center justify-between px-4 shadow-sm">
+        <h1 className="text-xl font-bold text-gray-900">Menu Admin</h1>
         <button 
           onClick={() => setIsOpen(!isOpen)} 
-          className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+          className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg flex items-center gap-2"
         >
+          <span className="text-sm font-medium">Menu</span>
           {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>

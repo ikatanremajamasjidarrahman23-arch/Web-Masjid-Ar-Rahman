@@ -11,7 +11,7 @@ export default function AdminLayout({
       <AdminSidebar logoutAction={logoutAction} />
 
       {/* Main Content Area */}
-      <main className="flex-1 md:ml-64 p-4 pt-20 md:pt-8 md:p-8 w-full max-w-[100vw]">
+      <main className="flex-1 md:ml-64 p-4 pt-36 md:pt-8 md:p-8 w-full max-w-[100vw]">
         {children}
       </main>
     </div>
