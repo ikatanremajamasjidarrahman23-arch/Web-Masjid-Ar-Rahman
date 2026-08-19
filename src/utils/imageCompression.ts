@@ -1,13 +1,13 @@
 import imageCompression from 'browser-image-compression';
 
-export const compressImage = async (file: File): Promise<File> => {
+export const compressImage = async (file: File, customMaxSizeMB?: number): Promise<File> => {
   // Hanya kompres jika file adalah gambar
   if (!file.type.startsWith('image/')) {
     return file;
   }
 
   const options = {
-    maxSizeMB: 0.3, // 300KB
+    maxSizeMB: customMaxSizeMB || 0.5, // 500KB default
     maxWidthOrHeight: 1920,
     useWebWorker: true,
     fileType: file.type,

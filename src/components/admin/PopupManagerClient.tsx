@@ -18,7 +18,7 @@ export default function PopupManagerClient({ settings }: { settings: any }) {
 
     setIsUploading(true);
     try {
-      const compressedFile = await compressImage(file);
+      const compressedFile = await compressImage(file, 0.5); // 0.5MB untuk kompresi, namun tetap menjaga resolusi
       const formData = new FormData();
       formData.append("file", compressedFile);
       const res = await axios.post("/api/upload", formData);
