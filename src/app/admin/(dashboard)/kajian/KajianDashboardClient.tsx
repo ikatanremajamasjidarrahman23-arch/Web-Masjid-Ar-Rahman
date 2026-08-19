@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, Image as ImageIcon, BookOpen, Clock, User, MapPin } from "lucide-react";
 import axios from "axios";
+import { compressImage } from "@/utils/imageCompression";
 
 type Schedule = {
   id: string;
@@ -43,8 +44,9 @@ export default function KajianDashboardClient({ initialSchedules }: { initialSch
       let imageUrl = null;
 
       if (file) {
+        const compressedFile = await compressImage(file);
         const fileData = new FormData();
-        fileData.append("file", file);
+        fileData.append("file", compressedFile);
         const uploadRes = await axios.post("/api/upload", fileData);
         if (uploadRes.data.success) {
           imageUrl = uploadRes.data.data.secure_url;

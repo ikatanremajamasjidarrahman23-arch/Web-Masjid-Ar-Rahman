@@ -6,6 +6,7 @@ import { id } from "date-fns/locale";
 import { Calendar, Trash2, Plus, Upload, Loader2, Video, Edit, X, Save, PlayCircle, Image as ImageIcon } from "lucide-react";
 import { createPhbiEvent, deletePhbiEvent, addPhbiMedia, deletePhbiMedia, updatePhbiEvent } from "@/app/actions/phbi";
 import axios from "axios";
+import { compressImage } from "@/utils/imageCompression";
 
 export default function PhbiClientManager({ initialEvents }: { initialEvents: any[] }) {
   const [isUploading, setIsUploading] = useState<{ [key: string]: boolean }>({});
@@ -33,8 +34,9 @@ export default function PhbiClientManager({ initialEvents }: { initialEvents: an
     
     try {
       for (const file of filesToUpload) {
+        const compressedFile = await compressImage(file);
         const formData = new FormData();
-        formData.append("file", file);
+        formData.append("file", compressedFile);
         
         const res = await axios.post("/api/upload", formData);
         const imageUrl = res.data.data.secure_url;

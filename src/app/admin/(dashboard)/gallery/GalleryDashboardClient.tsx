@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, Image as ImageIcon } from "lucide-react";
 import axios from "axios";
+import { compressImage } from "@/utils/imageCompression";
 
 type Gallery = {
   id: string;
@@ -37,8 +38,9 @@ export default function GalleryDashboardClient({ initialGalleries }: { initialGa
     setLoading(true);
 
     try {
+      const compressedFile = await compressImage(file);
       const fileData = new FormData();
-      fileData.append("file", file);
+      fileData.append("file", compressedFile);
       const uploadRes = await axios.post("/api/upload", fileData);
       
       if (!uploadRes.data.success) throw new Error("Gagal upload gambar");

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, Image as ImageIcon, Users, Newspaper, Phone } from "lucide-react";
 import axios from "axios";
+import { compressImage } from "@/utils/imageCompression";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 
@@ -51,8 +52,9 @@ export default function IrmasDashboardClient({
 
       // Upload gambar jika ada
       if (file) {
+        const compressedFile = await compressImage(file);
         const formData = new FormData();
-        formData.append("file", file);
+        formData.append("file", compressedFile);
         const uploadRes = await axios.post("/api/upload", formData);
         if (uploadRes.data.success) {
           imageUrl = uploadRes.data.data.secure_url;

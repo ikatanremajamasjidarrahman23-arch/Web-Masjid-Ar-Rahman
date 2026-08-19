@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { compressImage } from "@/utils/imageCompression";
 import { Plus, Trash2, Edit, X, ImagePlus, Check, Search, Filter } from "lucide-react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
@@ -119,8 +120,9 @@ export default function UkmDashboardClient() {
 
       // Upload image if file is selected
       if (file) {
+        const compressedFile = await compressImage(file);
         const uploadData = new FormData();
-        uploadData.append("file", file);
+        uploadData.append("file", compressedFile);
         const uploadRes = await axios.post("/api/upload", uploadData);
         if (uploadRes.data.success) {
           finalImageUrl = uploadRes.data.data.secure_url;
@@ -131,8 +133,9 @@ export default function UkmDashboardClient() {
       let finalGalleryImages = [...formData.galleryImages];
       if (galleryFiles.length > 0) {
         for (const gFile of galleryFiles) {
+          const compressedGFile = await compressImage(gFile);
           const uploadData = new FormData();
-          uploadData.append("file", gFile);
+          uploadData.append("file", compressedGFile);
           const uploadRes = await axios.post("/api/upload", uploadData);
           if (uploadRes.data.success) {
             finalGalleryImages.push(uploadRes.data.data.secure_url);

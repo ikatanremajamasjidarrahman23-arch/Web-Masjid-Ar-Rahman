@@ -4,6 +4,7 @@ import { useState } from "react";
 import { savePopupSettings } from "@/app/actions/popup";
 import { Save, Upload, Loader2, Image as ImageIcon, Power, Clock } from "lucide-react";
 import axios from "axios";
+import { compressImage } from "@/utils/imageCompression";
 
 export default function PopupManagerClient({ settings }: { settings: any }) {
   const [isUploading, setIsUploading] = useState(false);
@@ -17,8 +18,9 @@ export default function PopupManagerClient({ settings }: { settings: any }) {
 
     setIsUploading(true);
     try {
+      const compressedFile = await compressImage(file);
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", compressedFile);
       const res = await axios.post("/api/upload", formData);
       setPopupImagePreview(res.data.data.secure_url);
     } catch (error) {

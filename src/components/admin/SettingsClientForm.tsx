@@ -6,6 +6,7 @@ import { Save, Upload, Loader2, Image as ImageIcon, Check } from "lucide-react";
 import axios from "axios";
 import { fontOptions } from "@/lib/fonts";
 import { themeOptions, themes, ThemeColor } from "@/lib/themes";
+import { compressImage } from "@/utils/imageCompression";
 
 export default function SettingsClientForm({ settings }: { settings: any }) {
   const [isUploading, setIsUploading] = useState(false);
@@ -23,8 +24,9 @@ export default function SettingsClientForm({ settings }: { settings: any }) {
 
     setIsUploading(true);
     try {
+      const compressedFile = await compressImage(file);
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", compressedFile);
       const res = await axios.post("/api/upload", formData);
       setLogoPreview(res.data.data.secure_url);
     } catch (error) {
@@ -40,8 +42,9 @@ export default function SettingsClientForm({ settings }: { settings: any }) {
 
     setIsUploadingIrmas(true);
     try {
+      const compressedFile = await compressImage(file);
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", compressedFile);
       const res = await axios.post("/api/upload", formData);
       setIrmasLogoPreview(res.data.data.secure_url);
     } catch (error) {
