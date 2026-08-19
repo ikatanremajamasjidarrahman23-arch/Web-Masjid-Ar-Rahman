@@ -8,7 +8,7 @@ export const compressImage = async (file: File, customMaxSizeMB?: number): Promi
 
   const options = {
     maxSizeMB: customMaxSizeMB || 0.5, // 500KB default
-    maxWidthOrHeight: 3840, // Increased max width/height to avoid resolution downscaling
+    maxWidthOrHeight: 1920,
     useWebWorker: true,
     fileType: file.type,
   };
