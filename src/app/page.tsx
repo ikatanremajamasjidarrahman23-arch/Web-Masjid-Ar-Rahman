@@ -5,7 +5,6 @@ import { prisma } from "@/lib/prisma";
 import BulletinBoard from "@/components/BulletinBoard";
 import FiturCepat from "@/components/FiturCepat";
 import SelayangPandang from "@/components/SelayangPandang";
-import UkmClient from "@/app/ukm/UkmClient";
 
 export const revalidate = 60;
 
@@ -25,13 +24,6 @@ export default async function Home() {
     },
     orderBy: { createdAt: "desc" }
   });
-
-  const ukms = await prisma.ukm.findMany({
-    where: { isActive: true },
-    orderBy: { createdAt: "desc" },
-    take: 6
-  });
-
   const settings = await prisma.settings.findFirst();
   const runningText = settings?.runningText || "Selamat datang di Website Resmi Masjid Jami' Ar-Rahman Cempaka, Plumbon. | Mari ramaikan kajian bakda Subuh setiap hari Ahad. | Salurkan infaq dan shodaqoh terbaik Anda melalui QRIS resmi masjid.";
 
@@ -112,31 +104,6 @@ export default async function Home() {
         title={settings?.selayangPandangTitle || "Selayang Pandang"}
         description={settings?.selayangPandangDescription || "Menengok sekilas keindahan arsitektur dan suasana nyaman di Masjid Jami' Ar-Rahman. Tempat ibadah yang menenangkan jiwa."}
       />
-
-      {/* UKM Section */}
-      {ukms.length > 0 && (
-        <section className="py-16 bg-gray-50 border-t border-gray-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-4">
-                {settings?.ukmTitle || "Unit Kegiatan Masjid (UKM)"}
-              </h2>
-              <div className="w-20 h-1.5 bg-primary-600 rounded-full mb-6 mx-auto"></div>
-              <p className="text-gray-600 max-w-2xl mx-auto text-lg whitespace-pre-wrap">
-                {settings?.ukmDescription || "Mengenal lebih dekat unit kegiatan dan organisasi yang bernaung di bawah Masjid Ar-Rahman."}
-              </p>
-            </div>
-            
-            <UkmClient initialData={ukms} variant="masonry" />
-            
-            <div className="text-center mt-12">
-              <Link href="/ukm" className="inline-flex items-center gap-2 bg-white border border-gray-200 text-gray-700 hover:text-primary-600 hover:border-primary-200 px-8 py-3 rounded-xl font-medium transition-all shadow-sm hover:shadow">
-                Lihat Semua UKM <ArrowRight className="w-5 h-5" />
-              </Link>
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Hubungi Kami Section */}
       <section className="py-16 bg-white relative">
