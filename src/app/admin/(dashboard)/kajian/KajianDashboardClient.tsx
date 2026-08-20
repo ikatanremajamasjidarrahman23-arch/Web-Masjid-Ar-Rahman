@@ -75,8 +75,9 @@ export default function KajianDashboardClient({ initialSchedules }: { initialSch
     try {
       await axios.delete(`/api/admin/kajian?id=${id}`);
       router.refresh();
-    } catch (error) {
-      alert("Gagal menghapus jadwal kajian.");
+    } catch (error: any) {
+      console.error(error);
+      alert(error.response?.data?.error || error.message || "Gagal menghapus jadwal kajian.");
     }
   };
 
