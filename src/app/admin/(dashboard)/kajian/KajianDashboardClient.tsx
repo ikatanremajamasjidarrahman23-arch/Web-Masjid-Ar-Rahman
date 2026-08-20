@@ -62,8 +62,9 @@ export default function KajianDashboardClient({ initialSchedules }: { initialSch
       setFile(null);
       router.refresh();
       
-    } catch (error) {
-      alert("Gagal menambahkan jadwal kajian.");
+    } catch (error: any) {
+      console.error(error);
+      alert(error.response?.data?.error || "Gagal menambahkan jadwal kajian.");
     } finally {
       setLoading(false);
     }
