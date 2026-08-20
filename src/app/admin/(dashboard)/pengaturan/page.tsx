@@ -3,6 +3,8 @@ import DatabaseSettingsForm from "@/components/admin/DatabaseSettingsForm";
 import CloudinarySettingsForm from "@/components/admin/CloudinarySettingsForm";
 import { getDatabaseUrl } from "@/app/actions/env";
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminPengaturanSistemPage() {
   const settings = await prisma.settings.findFirst();
   const dbUrl = await getDatabaseUrl();
@@ -16,7 +18,14 @@ export default async function AdminPengaturanSistemPage() {
         </div>
 
         <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 max-w-2xl">
-          <CloudinarySettingsForm settings={settings} />
+          <CloudinarySettingsForm 
+            settings={{
+              ...settings,
+              cloudinaryCloudName: settings?.cloudinaryCloudName || process.env.CLOUDINARY_CLOUD_NAME,
+              cloudinaryApiKey: settings?.cloudinaryApiKey || process.env.CLOUDINARY_API_KEY,
+              cloudinaryApiSecret: settings?.cloudinaryApiSecret || process.env.CLOUDINARY_API_SECRET,
+            }} 
+          />
         </div>
       </div>
 
