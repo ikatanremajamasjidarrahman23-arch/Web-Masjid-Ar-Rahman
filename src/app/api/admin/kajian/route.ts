@@ -80,3 +80,37 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+
+export async function PUT(request: NextRequest) {
+  try {
+    const data = await request.json();
+    const { id, title, speaker, schedule, location, description, imageUrl } = data;
+
+    if (!id || !title || !speaker || !schedule || !location) {
+      return NextResponse.json(
+        { error: "ID, Judul, Pemateri, Jadwal, dan Lokasi wajib diisi." },
+        { status: 400 }
+      );
+    }
+
+    const updatedKajian = await prisma.studySchedule.update({
+      where: { id },
+      data: {
+        title,
+        speaker,
+        schedule,
+        location,
+        description,
+        ...(imageUrl ? { imageUrl } : {}) // Update image URL only if provided
+      },
+    });
+
+    return NextResponse.json({ success: true, data: updatedKajian });
+  } catch (error: any) {
+    console.error("Update Kajian Error:", error);
+    return NextResponse.json(
+      { error: "Terjadi kesalahan pada server saat memperbarui jadwal." },
+      { status: 500 }
+    );
+  }
+}
