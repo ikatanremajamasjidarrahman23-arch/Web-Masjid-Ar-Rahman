@@ -397,42 +397,6 @@ export default function SettingsClientForm({ settings }: { settings: any }) {
         </div>
       </div>
 
-      <div className="pt-4 border-t border-gray-200">
-        <h3 className="text-lg font-bold text-gray-900 mb-4">Pengaturan API Cloudinary (Media Storage)</h3>
-        <p className="text-sm text-gray-600 mb-4">Pengaturan ini digunakan untuk menyimpan seluruh gambar. Kosongkan untuk menggunakan kunci dari .env bawaan.</p>
-        <div className="space-y-4 max-w-2xl">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Cloud Name</label>
-            <input 
-              type="text"
-              name="cloudinaryCloudName"
-              defaultValue={settings?.cloudinaryCloudName || ""}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
-              placeholder="Contoh: dhxyz..."
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">API Key</label>
-            <input 
-              type="text"
-              name="cloudinaryApiKey"
-              defaultValue={settings?.cloudinaryApiKey || ""}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
-              placeholder="Contoh: 1234567890..."
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">API Secret</label>
-            <input 
-              type="password"
-              name="cloudinaryApiSecret"
-              defaultValue={settings?.cloudinaryApiSecret || ""}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500"
-              placeholder="Contoh: aBcDeF..."
-            />
-          </div>
-        </div>
-      </div>
 
       <div className="pt-4 border-t border-gray-200">
         <button 
