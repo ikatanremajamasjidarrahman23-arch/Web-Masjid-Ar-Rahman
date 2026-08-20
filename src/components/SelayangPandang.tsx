@@ -44,14 +44,16 @@ export default function SelayangPandang({ photos: dbPhotos, title, description }
   return (
     <section className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-4">
-            {title || "Selayang Pandang"}
-          </h2>
-          <div className="w-20 h-1.5 bg-primary-600 rounded-full mx-auto mb-6"></div>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            {description || "Menengok sekilas keindahan arsitektur dan suasana nyaman di Masjid Jami' Ar-Rahman. Tempat ibadah yang menenangkan jiwa."}
-          </p>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div className="text-left">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-4">
+              {title || "Selayang Pandang"}
+            </h2>
+            <div className="w-20 h-1.5 bg-primary-600 rounded-full mb-6"></div>
+            <p className="text-lg text-gray-600 max-w-2xl">
+              {description || "Menengok sekilas keindahan arsitektur dan suasana nyaman di Masjid Jami' Ar-Rahman. Tempat ibadah yang menenangkan jiwa."}
+            </p>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 auto-rows-[150px] md:auto-rows-[200px]">
