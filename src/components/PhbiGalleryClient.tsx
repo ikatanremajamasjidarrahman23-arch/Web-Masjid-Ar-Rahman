@@ -1,10 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { PlayCircle, Image as ImageIcon, X, Download } from "lucide-react";
 
 export default function PhbiGalleryClient({ media }: { media: any[] }) {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleDownload = async (url: string) => {
     try {
@@ -69,9 +75,9 @@ export default function PhbiGalleryClient({ media }: { media: any[] }) {
       </div>
 
       {/* Lightbox Modal */}
-      {selectedImage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 animate-in fade-in duration-200">
-          <div className="relative max-w-5xl w-full max-h-[90vh] flex flex-col items-center">
+      {selectedImage && mounted && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 animate-in fade-in duration-200">
+          <div className="relative max-w-5xl w-full max-h-[100dvh] flex flex-col items-center justify-center p-4">
             {/* Top Bar with Close and Download */}
             <div className="absolute top-0 right-0 w-full flex justify-end gap-3 p-4 z-10 bg-gradient-to-b from-black/60 to-transparent">
               <button 
@@ -90,18 +96,21 @@ export default function PhbiGalleryClient({ media }: { media: any[] }) {
             </div>
             
             {/* Image */}
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img 
-              src={selectedImage} 
-              alt="Zoomed Photo" 
-              className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            />
+            <div className="relative w-full h-[85dvh] flex items-center justify-center mt-12">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img 
+                src={selectedImage} 
+                alt="Zoomed Photo" 
+                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
           </div>
           
           {/* Backdrop click to close */}
           <div className="absolute inset-0 z-[-1]" onClick={() => setSelectedImage(null)} />
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
