@@ -16,6 +16,7 @@ export default function Navbar({ logoUrl, logoSize = 48 }: { logoUrl?: string | 
   const navLinks = [
     { name: "Beranda", href: "/" },
     { name: "Buletin", href: "/buletin" },
+    { name: "Kajian", href: "/kajian" },
     { name: "Profil", href: "/profil" },
     { 
       name: "Galeri", 

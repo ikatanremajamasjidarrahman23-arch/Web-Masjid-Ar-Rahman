@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import BulletinBoard from "@/components/BulletinBoard";
 import FiturCepat from "@/components/FiturCepat";
 import SelayangPandang from "@/components/SelayangPandang";
+import AgendaKajianHome from "@/components/AgendaKajianHome";
 
 export const revalidate = 60;
 
@@ -15,6 +16,11 @@ export default async function Home() {
     where: { category: "Selayang Pandang" },
     orderBy: { createdAt: "asc" },
     take: 5
+  });
+
+  const schedules = await prisma.studySchedule.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 3
   });
 
   const activeBulletins = await prisma.bulletin.findMany({
@@ -97,6 +103,9 @@ export default async function Home() {
       )}
       {/* Fitur Cepat Section */}
       <FiturCepat />
+
+      {/* Agenda Kajian Section */}
+      <AgendaKajianHome schedules={schedules} />
 
       {/* Selayang Pandang Section */}
       <SelayangPandang 
