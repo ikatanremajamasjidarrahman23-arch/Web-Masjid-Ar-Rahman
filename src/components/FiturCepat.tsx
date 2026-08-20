@@ -40,9 +40,16 @@ export default function FiturCepat() {
   return (
     <section className="py-12 bg-white border-t border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Fitur Cepat</h2>
-          <div className="w-16 h-1 bg-primary-500 rounded-full"></div>
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+          <div className="text-left">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-4">
+              Fitur Cepat
+            </h2>
+            <div className="w-20 h-1.5 bg-primary-600 rounded-full mb-6"></div>
+            <p className="text-lg text-gray-600 max-w-2xl">
+              Akses cepat ke berbagai layanan dan fitur islami pilihan yang bermanfaat untuk kelancaran ibadah Anda.
+            </p>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
