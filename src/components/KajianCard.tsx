@@ -86,40 +86,39 @@ export default function KajianCard({ kajian, variant = "page", index = 0 }: Kaji
   };
 
   if (variant === "home") {
-    const colorClasses = [
-      "bg-primary-100 text-primary-700",
-      "bg-green-100 text-green-700",
-      "bg-blue-100 text-blue-700",
-      "bg-amber-100 text-amber-700",
-      "bg-purple-100 text-purple-700"
-    ];
-    const badgeColor = colorClasses[index % colorClasses.length];
-
     return (
       <>
         <div 
           onClick={() => setIsOpen(true)}
-          className="bg-gray-50 rounded-2xl p-6 border border-gray-100 hover:border-primary-200 hover:shadow-md transition-all group cursor-pointer flex flex-col h-full"
+          className="relative rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all group cursor-pointer flex flex-col h-[320px]"
         >
-          <div className="flex justify-between items-start mb-4">
-            <span className={`px-3 py-1 text-xs font-bold rounded-full ${badgeColor}`}>
-              Kajian Rutin
-            </span>
-            <div className="flex items-center gap-1 text-gray-500 text-sm">
-              <Clock className="w-4 h-4" /> {kajian.schedule.length > 15 ? kajian.schedule.substring(0, 15) + '...' : kajian.schedule}
+          {kajian.imageUrl ? (
+            <img src={kajian.imageUrl} alt={kajian.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-primary-700 to-primary-900 group-hover:scale-105 transition-transform duration-700 flex items-center justify-center">
+              <BookOpen className="w-16 h-16 text-white/20" />
             </div>
-          </div>
-          <h4 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors line-clamp-2">{kajian.title}</h4>
-          <div className="space-y-2 text-sm text-gray-600 mb-4 flex-1">
-            <div className="flex items-center gap-2">
-              <User className="w-4 h-4 text-gray-400 shrink-0" /> <span className="line-clamp-1">{kajian.speaker}</span>
+          )}
+          
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/95 via-gray-900/40 to-transparent transition-opacity duration-300" />
+          
+          <div className="absolute inset-0 p-6 flex flex-col justify-end text-white z-10">
+            <div className="flex justify-between items-start mb-3">
+              <span className="px-3 py-1 text-xs font-bold rounded-full bg-primary-500/80 backdrop-blur-md text-white border border-primary-400/30">
+                Kajian Rutin
+              </span>
             </div>
-            <div className="flex items-center gap-2">
-              <BookOpen className="w-4 h-4 text-gray-400 shrink-0" /> <span className="line-clamp-1">{kajian.schedule}</span>
+            <h4 className="text-xl md:text-2xl font-bold mb-2 group-hover:text-primary-300 transition-colors line-clamp-2 leading-tight drop-shadow-md">
+              {kajian.title}
+            </h4>
+            <div className="space-y-1.5 text-sm text-gray-200 mt-2">
+              <div className="flex items-center gap-2">
+                <User className="w-4 h-4 text-primary-400 shrink-0" /> <span className="line-clamp-1">{kajian.speaker}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4 text-primary-400 shrink-0" /> <span className="line-clamp-1">{kajian.schedule}</span>
+              </div>
             </div>
-          </div>
-          <div className="mt-2 text-primary-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-300">
-            Lihat detail &rarr;
           </div>
         </div>
         <Modal />
