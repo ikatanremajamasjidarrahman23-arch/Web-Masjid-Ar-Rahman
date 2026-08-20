@@ -77,7 +77,7 @@ export default function PhbiGalleryClient({ media }: { media: any[] }) {
       {/* Lightbox Modal */}
       {selectedImage && mounted && createPortal(
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4 animate-in fade-in duration-200">
-          <div className="relative max-w-5xl w-full max-h-[100dvh] flex flex-col items-center justify-center p-4">
+          <div className="relative max-w-5xl w-full h-[100vh] flex flex-col items-center justify-center p-4">
             {/* Top Bar with Close and Download */}
             <div className="absolute top-0 right-0 w-full flex justify-end gap-3 p-4 z-10 bg-gradient-to-b from-black/60 to-transparent">
               <button 
@@ -96,7 +96,7 @@ export default function PhbiGalleryClient({ media }: { media: any[] }) {
             </div>
             
             {/* Image */}
-            <div className="relative w-full h-[85dvh] flex items-center justify-center mt-12">
+            <div className="relative w-full h-[85vh] flex items-center justify-center mt-12">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img 
                 src={selectedImage} 
