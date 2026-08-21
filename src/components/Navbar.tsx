@@ -34,7 +34,7 @@ export default function Navbar({ logoUrl, logoSize = 48 }: { logoUrl?: string | 
   return (
     <nav className="bg-primary-700 text-white sticky top-0 z-50 shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between min-h-[4rem] py-2">
+        <div className="flex items-center justify-between min-h-[5rem] py-2">
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0 flex items-center">
               {logoUrl ? (
@@ -44,7 +44,7 @@ export default function Navbar({ logoUrl, logoSize = 48 }: { logoUrl?: string | 
                   alt="Logo Masjid" 
                   className="w-auto object-contain transition-all drop-shadow-sm" 
                   style={{ 
-                    height: logoSize ? `${logoSize}px` : '48px'
+                    height: logoSize ? `${logoSize}px` : '72px'
                   }} 
                 />
               ) : (
