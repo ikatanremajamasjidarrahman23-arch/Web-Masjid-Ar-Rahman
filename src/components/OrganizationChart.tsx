@@ -58,8 +58,10 @@ export default function OrganizationChart({ members }: { members: Member[] }) {
   }
 
   return (
-    <div className="overflow-x-auto pb-8 pt-4 custom-scrollbar">
-      <div className="min-w-max flex justify-center px-4">
+    <div className="overflow-x-auto pb-8 pt-8 custom-scrollbar bg-[#0f5132] rounded-2xl p-4 relative border-[6px] border-[#ffd700]">
+      {/* Background decoration - optional subtle pattern */}
+      <div className="absolute inset-0 opacity-10 bg-[url('/islamic-pattern.png')] bg-repeat rounded-xl pointer-events-none"></div>
+      <div className="min-w-max flex justify-center px-4 relative z-10">
         {tree.map(root => (
           <OrgNode key={root.id} node={root} />
         ))}
@@ -72,17 +74,22 @@ function OrgNode({ node }: { node: TreeNode }) {
   return (
     <div className="flex flex-col items-center">
       {/* Node Card */}
-      <div className="w-48 sm:w-56 bg-white border-2 border-primary-100 rounded-xl shadow-sm p-4 text-center z-10 relative transition-transform transform hover:-translate-y-1 hover:shadow-md hover:border-primary-300">
-        <div className="w-12 h-12 bg-primary-50 rounded-full flex items-center justify-center mx-auto mb-3 text-primary-600">
-          <UserCircle className="w-8 h-8" />
+      <div className="w-56 sm:w-64 flex flex-col shadow-md z-10 relative transition-transform transform hover:-translate-y-1 hover:shadow-lg border border-gray-300 bg-white">
+        {/* Header - Yellow */}
+        <div className="bg-[#ffcc00] py-2 px-3 flex items-center justify-center border-b border-gray-400 min-h-[3rem]">
+          <h3 className="font-bold text-gray-900 text-sm leading-snug uppercase text-center">{node.position}</h3>
         </div>
-        <h3 className="font-bold text-gray-900 text-sm mb-1 leading-snug">{node.position}</h3>
-        <p className="text-gray-600 text-xs sm:text-sm font-medium">{node.name}</p>
+        {/* Body - White */}
+        <div className="p-3 text-center flex items-center justify-center min-h-[4rem]">
+          <p className="text-gray-800 text-xs sm:text-sm font-medium whitespace-pre-line leading-relaxed">
+            {node.name.replace(/\\n/g, '\n')}
+          </p>
+        </div>
       </div>
       
       {/* Connector line down to children */}
       {node.children.length > 0 && (
-        <div className="w-px h-6 bg-primary-300"></div>
+        <div className="w-0.5 h-8 bg-white"></div>
       )}
 
       {/* Children Container */}
@@ -99,19 +106,20 @@ function OrgNode({ node }: { node: TreeNode }) {
                 {!isOnly && (
                   <>
                     {!isFirst && (
-                      <div className="absolute top-0 left-0 w-1/2 h-px bg-primary-300"></div>
+                      <div className="absolute top-0 left-0 w-1/2 h-0.5 bg-white"></div>
                     )}
                     {!isLast && (
-                      <div className="absolute top-0 right-0 w-1/2 h-px bg-primary-300"></div>
+                      <div className="absolute top-0 right-0 w-1/2 h-0.5 bg-white"></div>
                     )}
                   </>
                 )}
 
                 {/* Top vertical connector from horizontal line to the node */}
-                <div className="w-px h-6 bg-primary-300"></div>
+                <div className="w-0.5 h-8 bg-white"></div>
 
                 <OrgNode node={child} />
               </div>
+
             );
           })}
         </div>
