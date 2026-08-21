@@ -3,6 +3,7 @@ import { Moon, MapPin, Phone, Mail } from "lucide-react";
 import { prisma } from "@/lib/prisma";
 
 import HijriCalendarWidget from "./HijriCalendarWidget";
+import TextSizeAdjuster from "./TextSizeAdjuster";
 
 export default async function Footer() {
   const settings = await prisma.settings.findFirst();
@@ -36,6 +37,7 @@ export default async function Footer() {
               <Link href="/irmas" className="hover:text-white transition-colors hover:underline w-fit">Kegiatan Remaja</Link>
               <Link href="/donasi" className="hover:text-white transition-colors hover:underline w-fit">Infaq & Shodaqoh</Link>
               <Link href="/admin" className="hover:text-primary-400 transition-colors hover:underline mt-4 w-fit text-xs opacity-70">Login Admin</Link>
+              <TextSizeAdjuster />
             </ul>
           </div>
 
