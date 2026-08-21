@@ -3,12 +3,18 @@
 import { useState, useEffect } from "react";
 import { LayoutDashboard, LogOut, Settings, Calendar, Users, Wallet, BookOpen, Image as ImageIcon, Menu, X, ImagePlus, Megaphone, Network, Globe, StickyNote, Library } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import axios from "axios";
 import VercelStatusLight from "./VercelStatusLight";
 
 export default function AdminSidebar({ logoutAction }: { logoutAction: (payload: FormData) => void }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [password, setPassword] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
+  
   const pathname = usePathname();
+  const router = useRouter();
 
   // Close sidebar on navigation (mobile)
   useEffect(() => {
@@ -31,6 +37,29 @@ export default function AdminSidebar({ logoutAction }: { logoutAction: (payload:
     { name: "Popup Banner", href: "/admin/popup", icon: ImagePlus },
     { name: "Kas & Donasi", href: "/admin/donasi", icon: Wallet },
   ];
+
+  const handleSettingsClick = (e: React.MouseEvent, href: string) => {
+    e.preventDefault();
+    if (pathname === href) return;
+    setShowPasswordModal(true);
+  };
+
+  const handleVerifyPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsVerifying(true);
+    try {
+      const res = await axios.post("/api/auth/verify-password", { password });
+      if (res.data.success) {
+        setShowPasswordModal(false);
+        setPassword("");
+        router.push("/admin/pengaturan");
+      }
+    } catch (error: any) {
+      alert(error.response?.data?.error || "Password salah atau terjadi kesalahan");
+    } finally {
+      setIsVerifying(false);
+    }
+  };
 
   return (
     <>
@@ -70,6 +99,22 @@ export default function AdminSidebar({ logoutAction }: { logoutAction: (payload:
           {navLinks.map((link) => {
             const Icon = link.icon;
             const isActive = pathname === link.href;
+            
+            if (link.name === "Pengaturan Sistem") {
+              return (
+                <button 
+                  key={link.name} 
+                  onClick={(e) => handleSettingsClick(e, link.href)}
+                  className={`flex items-center w-full gap-3 px-3 py-2 rounded-lg transition-colors ${
+                    isActive ? "bg-primary-50 text-primary-700" : "text-gray-700 hover:bg-gray-100"
+                  }`}
+                >
+                  <Icon className={`w-5 h-5 ${isActive ? "text-primary-600" : "text-gray-500"}`} />
+                  <span className="font-medium text-left flex-1">{link.name}</span>
+                </button>
+              )
+            }
+
             return (
               <Link 
                 key={link.name} 
@@ -102,6 +147,58 @@ export default function AdminSidebar({ logoutAction }: { logoutAction: (payload:
           </div>
         </nav>
       </aside>
+
+      {/* Password Modal */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="flex justify-between items-center p-6 border-b border-gray-100 bg-gray-50">
+              <h2 className="text-xl font-bold text-gray-800">Verifikasi Keamanan</h2>
+              <button 
+                onClick={() => setShowPasswordModal(false)} 
+                className="text-gray-400 hover:text-gray-600 bg-white p-2 rounded-full shadow-sm transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleVerifyPassword} className="p-6 space-y-6">
+              <div>
+                <p className="text-gray-600 text-sm mb-4">
+                  Untuk mengakses <strong>Pengaturan Sistem</strong>, silakan masukkan password akun admin Anda.
+                </p>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Password</label>
+                <input
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full border-gray-300 rounded-xl shadow-sm focus:ring-primary-500 focus:border-primary-500 px-4 py-2.5"
+                  placeholder="Masukkan password admin..."
+                  autoFocus
+                />
+              </div>
+
+              <div className="flex justify-end pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowPasswordModal(false)}
+                  className="mr-3 px-5 py-2 text-gray-600 hover:bg-gray-100 font-medium rounded-xl transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isVerifying}
+                  className="bg-primary-600 hover:bg-primary-700 disabled:bg-primary-400 text-white px-6 py-2 rounded-xl font-medium transition-colors shadow-sm"
+                >
+                  {isVerifying ? "Memeriksa..." : "Lanjutkan"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </>
   );
 }
