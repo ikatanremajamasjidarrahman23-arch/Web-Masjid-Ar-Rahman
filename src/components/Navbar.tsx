@@ -44,7 +44,7 @@ export default function Navbar({ logoUrl, logoSize = 48 }: { logoUrl?: string | 
                   alt="Logo Masjid" 
                   className="w-auto object-contain transition-all drop-shadow-sm" 
                   style={{ 
-                    height: logoSize ? `${logoSize}px` : '72px'
+                    height: logoSize ? `${logoSize / 16}rem` : '4.5rem'
                   }} 
                 />
               ) : (
