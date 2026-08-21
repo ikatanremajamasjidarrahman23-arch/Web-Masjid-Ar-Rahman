@@ -42,11 +42,9 @@ export default function Navbar({ logoUrl, logoSize = 48 }: { logoUrl?: string | 
                 <img 
                   src={logoUrl} 
                   alt="Logo Masjid" 
-                  className="w-auto object-contain transition-all" 
+                  className="w-auto object-contain transition-all drop-shadow-sm max-h-12 sm:max-h-14" 
                   style={{ 
-                    height: `${Math.max(logoSize || 48, 72)}px`,
-                    transform: 'scale(1.15) translateY(4px)',
-                    transformOrigin: 'left center'
+                    height: logoSize ? `${logoSize}px` : 'auto'
                   }} 
                 />
               ) : (
