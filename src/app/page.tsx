@@ -123,8 +123,8 @@ export default async function Home() {
               <div>
                 <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-4">Hubungi Kami</h2>
                 <div className="w-20 h-1.5 bg-primary-600 rounded-full mb-6"></div>
-                <p className="text-gray-600 leading-relaxed">
-                  Punya pertanyaan, masukan, atau ingin mengetahui lebih lanjut mengenai kegiatan di Masjid Jami' Ar-Rahman? Jangan ragu untuk menghubungi kami.
+                <p className="text-gray-600 leading-relaxed text-lg mb-8">
+                  Layanan informasi, aspirasi jamaah, dan kemitraan program Masjid Jami' Ar-Rahman. Hubungi kami melalui telepon, WhatsApp, atau email resmi DKM.
                 </p>
               </div>
               
