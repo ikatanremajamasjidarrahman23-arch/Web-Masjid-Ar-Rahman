@@ -69,17 +69,14 @@ export default function OrganizationChart({ members }: { members: Member[] }) {
 
         {/* Mobile Card View */}
         <div className="md:hidden flex flex-col divide-y divide-gray-200 bg-white">
-          {members.map((member, index) => (
+          {members.map((member) => (
             <div key={member.id} className="p-4 hover:bg-gray-50 transition-colors duration-150">
-               <div className="flex justify-between items-start mb-3 border-b border-gray-100 pb-3 gap-2">
-                 <span className="text-xs font-bold bg-[#0f5132] text-white px-2.5 py-1 rounded-md shrink-0">
-                   No. {index + 1}
-                 </span>
-                 <span className="text-sm font-bold text-[#0f5132] text-right break-words">
+               <div className="flex items-start mb-3 border-b border-gray-100 pb-3">
+                 <span className="text-xs font-bold bg-[#0f5132] text-white px-2.5 py-1 rounded-md shrink-0 uppercase tracking-wide">
                    {member.position}
                  </span>
                </div>
-               <div className="text-sm text-gray-800 whitespace-pre-line leading-relaxed pl-1 font-medium">
+               <div className="text-sm text-gray-800 whitespace-pre-line leading-relaxed font-medium">
                  {member.name.replace(/\\n/g, '\n')}
                </div>
             </div>
