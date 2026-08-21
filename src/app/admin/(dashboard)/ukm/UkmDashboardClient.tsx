@@ -118,6 +118,11 @@ export default function UkmDashboardClient() {
     try {
       let finalImageUrl = formData.imageUrl;
 
+      // Prevent saving blob urls to DB if somehow file is missing
+      if (!file && finalImageUrl?.startsWith("blob:")) {
+        finalImageUrl = "";
+      }
+
       // Upload image if file is selected
       if (file) {
         const compressedFile = await compressImage(file);
@@ -164,9 +169,10 @@ export default function UkmDashboardClient() {
       setShowForm(false);
       setEditingId(null);
       fetchData();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Gagal menyimpan data", error);
-      alert("Terjadi kesalahan saat menyimpan data.");
+      const errorMessage = error?.response?.data?.error || "Terjadi kesalahan saat menyimpan data.";
+      alert(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
