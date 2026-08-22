@@ -211,7 +211,7 @@ export default function OrganizationClient({ initialMembers }: { initialMembers:
                     </td>
                     <td className="px-6 py-4 text-gray-500 text-sm font-medium">{member.order}</td>
                     <td className="px-6 py-4">
-                      <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex justify-end gap-2 transition-opacity">
                         <button 
                           onClick={() => editMember(member)}
                           className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"

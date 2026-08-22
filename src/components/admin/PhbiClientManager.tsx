@@ -245,7 +245,7 @@ export default function PhbiClientManager({ initialEvents }: { initialEvents: an
                               <span className="text-xs break-all line-clamp-2">{item.url}</span>
                             </div>
                           )}
-                          <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <div className="absolute inset-0 bg-black/50 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity flex items-center justify-center">
                             <button onClick={() => deletePhbiMedia(item.id)} className="bg-red-600 text-white p-2 rounded-full hover:scale-110 transition-transform">
                               <Trash2 className="w-4 h-4" />
                             </button>

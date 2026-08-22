@@ -209,7 +209,7 @@ export default function SelayangPandangDashboardClient({
                     <img src={item.imageUrl} alt={item.title} className="absolute inset-0 w-full h-full object-cover" />
                     
                     {/* Overlay Action */}
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 gap-3 z-20">
+                    <div className="absolute inset-0 bg-black/50 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center p-4 gap-3 z-20">
                       <p className="text-white font-semibold text-sm text-center bg-black/50 px-3 py-1 rounded-lg backdrop-blur-sm shadow-sm">{slot.label}</p>
                       <div className="flex gap-2 w-full max-w-[200px]">
                         <button 

@@ -397,7 +397,7 @@ export default function UkmDashboardClient() {
                             const newUrls = [...formData.galleryImages];
                             newUrls.splice(idx, 1);
                             setFormData({...formData, galleryImages: newUrls});
-                          }} className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-4 h-4" /></button>
+                          }} className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-sm transition-opacity"><X className="w-4 h-4" /></button>
                         </div>
                       ))}
                       {galleryFiles.map((gf, idx) => (
@@ -408,7 +408,7 @@ export default function UkmDashboardClient() {
                             const newFiles = [...galleryFiles];
                             newFiles.splice(idx, 1);
                             setGalleryFiles(newFiles);
-                          }} className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity"><X className="w-4 h-4" /></button>
+                          }} className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 shadow-sm transition-opacity"><X className="w-4 h-4" /></button>
                         </div>
                       ))}
                     </div>

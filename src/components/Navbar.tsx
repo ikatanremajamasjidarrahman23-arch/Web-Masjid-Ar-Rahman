@@ -10,6 +10,7 @@ export default function Navbar({ logoUrl, logoSize = 48 }: { logoUrl?: string | 
   const [isOpen, setIsOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false);
+  const [isDonasiPopupOpen, setIsDonasiPopupOpen] = useState(false);
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
 
@@ -98,6 +99,18 @@ export default function Navbar({ logoUrl, logoSize = 48 }: { logoUrl?: string | 
                     );
                   }
 
+                  if (link.name === "Kas & Donasi") {
+                    return (
+                      <button
+                        key={link.name}
+                        onClick={() => setIsDonasiPopupOpen(true)}
+                        className="hover:bg-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                      >
+                        {link.name}
+                      </button>
+                    );
+                  }
+
                   return (
                     <Link
                       key={link.name}
@@ -164,6 +177,21 @@ export default function Navbar({ logoUrl, logoSize = 48 }: { logoUrl?: string | 
                 );
               }
 
+              if (link.name === "Kas & Donasi") {
+                return (
+                  <button
+                    key={link.name}
+                    onClick={() => {
+                      setIsOpen(false);
+                      setIsDonasiPopupOpen(true);
+                    }}
+                    className="w-full text-left hover:bg-primary-600 block px-3 py-2 rounded-md text-base font-medium transition-colors"
+                  >
+                    {link.name}
+                  </button>
+                );
+              }
+
               return (
                 <Link
                   key={link.name}
@@ -175,6 +203,32 @@ export default function Navbar({ logoUrl, logoSize = 48 }: { logoUrl?: string | 
                 </Link>
               );
             })}
+          </div>
+        </div>
+      )}
+
+      {/* Donasi Popup */}
+      {isDonasiPopupOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white text-gray-800 rounded-xl shadow-xl p-6 max-w-sm w-full relative">
+            <button 
+              onClick={() => setIsDonasiPopupOpen(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="text-center mt-2">
+              <h3 className="text-lg font-bold text-primary-700 mb-2">Informasi</h3>
+              <p className="text-gray-600">
+                Fitur ini masih dalam tahap pengembangan.
+              </p>
+              <button 
+                onClick={() => setIsDonasiPopupOpen(false)}
+                className="mt-6 w-full bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+              >
+                Tutup
+              </button>
+            </div>
           </div>
         </div>
       )}

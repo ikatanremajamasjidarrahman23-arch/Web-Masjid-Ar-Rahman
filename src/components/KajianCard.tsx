@@ -174,7 +174,7 @@ export default function KajianCard({ kajian, variant = "page", index = 0 }: Kaji
             <div className="flex-1" />
           )}
           
-          <div className="pt-4 border-t border-gray-50 text-primary-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-all text-center mt-auto transform translate-y-2 group-hover:translate-y-0">
+          <div className="pt-4 border-t border-gray-50 text-primary-600 text-sm font-medium transition-all text-center mt-auto">
             Lihat detail kajian
           </div>
         </div>
