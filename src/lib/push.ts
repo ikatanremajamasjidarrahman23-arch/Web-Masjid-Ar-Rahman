@@ -11,7 +11,11 @@ if (getApps().length === 0) {
     let serviceAccount;
     
     if (serviceAccountStr) {
-      serviceAccount = JSON.parse(serviceAccountStr)
+      try {
+        serviceAccount = JSON.parse(serviceAccountStr)
+      } catch (e) {
+        console.error("Failed to parse FIREBASE_SERVICE_ACCOUNT. Is it valid JSON?", e)
+      }
     } else {
       const serviceAccountPath = path.join(process.cwd(), 'firebase-admin.json')
       if (fs.existsSync(serviceAccountPath)) {
@@ -61,6 +65,13 @@ export async function sendNotificationToAll(title: string, body: string, url: st
           notification: {
             title,
             body
+          },
+          android: {
+            priority: 'high',
+            notification: {
+              sound: 'default',
+              channelId: 'default'
+            }
           },
           data: {
             url
