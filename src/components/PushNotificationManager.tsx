@@ -82,6 +82,11 @@ export default function PushNotificationManager() {
         console.error('Push registration error:', error)
       })
 
+      PushNotifications.addListener('pushNotificationReceived', (notification) => {
+        // Tampilkan alert saat notifikasi masuk dan posisi app sedang dibuka (foreground)
+        alert(notification.title + '\n\n' + notification.body)
+      })
+
       await PushNotifications.register()
     } catch (error) {
       console.error('Native Push setup failed:', error)
