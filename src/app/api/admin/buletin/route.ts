@@ -58,7 +58,8 @@ export async function POST(request: Request) {
       sendNotificationToAll(
         title,
         description,
-        "/"
+        "/",
+        imageUrl || null
       ).catch(console.error);
     });
 

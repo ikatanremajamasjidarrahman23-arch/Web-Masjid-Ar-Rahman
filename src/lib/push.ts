@@ -35,7 +35,7 @@ if (getApps().length === 0) {
   }
 }
 
-export async function sendNotificationToAll(title: string, body: string, url: string = '/') {
+export async function sendNotificationToAll(title: string, body: string, url: string = '/', imageUrl?: string | null) {
   try {
     webpush.setVapidDetails(
       'mailto:admin@example.com',
@@ -48,11 +48,15 @@ export async function sendNotificationToAll(title: string, body: string, url: st
 
     const subscriptions = await prisma.pushSubscription.findMany()
     
-    const notificationPayload = {
+    const notificationPayload: any = {
       title,
       body,
       url,
       icon: iconUrl
+    }
+    
+    if (imageUrl) {
+      notificationPayload.image = imageUrl;
     }
     
     const promises = subscriptions.map(sub => {
@@ -60,7 +64,7 @@ export async function sendNotificationToAll(title: string, body: string, url: st
       if (!sub.p256dh) {
         if (getApps().length === 0) return Promise.resolve()
         
-        return getMessaging().send({
+        const fcmPayload: any = {
           token: sub.endpoint,
           notification: {
             title,
@@ -76,7 +80,13 @@ export async function sendNotificationToAll(title: string, body: string, url: st
           data: {
             url
           }
-        }).catch(err => {
+        };
+
+        if (imageUrl) {
+          fcmPayload.notification.imageUrl = imageUrl;
+        }
+
+        return getMessaging().send(fcmPayload).catch(err => {
           console.error('FCM Error:', err)
           if (err.code === 'messaging/invalid-registration-token' || err.code === 'messaging/registration-token-not-registered') {
             return prisma.pushSubscription.delete({ where: { id: sub.id } })

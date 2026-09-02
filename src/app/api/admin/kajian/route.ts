@@ -34,7 +34,8 @@ export async function POST(request: NextRequest) {
         sendNotificationToAll(
           title,
           "Pemateri: " + speaker + " | Jadwal: " + schedule,
-          "/"
+          "/",
+          imageUrl || null
         ).catch(console.error);
       });
     } catch (e) {
@@ -42,7 +43,8 @@ export async function POST(request: NextRequest) {
       sendNotificationToAll(
         title,
         "Pemateri: " + speaker + " | Jadwal: " + schedule,
-        "/"
+        "/",
+        imageUrl || null
       ).catch(console.error);
     }
 
