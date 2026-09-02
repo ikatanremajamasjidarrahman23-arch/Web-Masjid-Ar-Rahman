@@ -7,8 +7,10 @@ import { Calendar, Trash2, Plus, Upload, Loader2, Video, Edit, X, Save, PlayCirc
 import { createPhbiEvent, deletePhbiEvent, addPhbiMedia, deletePhbiMedia, updatePhbiEvent } from "@/app/actions/phbi";
 import axios from "axios";
 import { compressImage } from "@/utils/imageCompression";
+import { useRouter } from "next/navigation";
 
 export default function PhbiClientManager({ initialEvents }: { initialEvents: any[] }) {
+  const router = useRouter();
   const [isUploading, setIsUploading] = useState<{ [key: string]: boolean }>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -48,6 +50,7 @@ export default function PhbiClientManager({ initialEvents }: { initialEvents: an
         
         await addPhbiMedia(mediaData);
       }
+      router.refresh();
     } catch (error) {
       alert("Sebagian atau seluruh foto gagal diunggah.");
     } finally {
@@ -80,6 +83,7 @@ export default function PhbiClientManager({ initialEvents }: { initialEvents: an
         await handleUploadPhoto(result.id, files);
       }
       createFormRef.current?.reset();
+      router.refresh();
     } catch (error) {
       alert("Terjadi kesalahan saat menyimpan acara.");
     } finally {
@@ -97,6 +101,7 @@ export default function PhbiClientManager({ initialEvents }: { initialEvents: an
     mediaData.append("url", url);
     
     await addPhbiMedia(mediaData);
+    router.refresh();
   };
 
   return (
@@ -149,6 +154,7 @@ export default function PhbiClientManager({ initialEvents }: { initialEvents: an
                   <form action={async (formData) => {
                     await updatePhbiEvent(formData);
                     setEditingId(null);
+                    router.refresh();
                   }} className="p-6 border-b border-gray-100 grid md:grid-cols-2 gap-4 bg-gray-50/50">
                     <input type="hidden" name="id" value={event.id} />
                     <div className="md:col-span-2 flex justify-between items-center">
@@ -222,7 +228,10 @@ export default function PhbiClientManager({ initialEvents }: { initialEvents: an
                       <button onClick={() => handleAddVideo(event.id)} className="flex items-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                         <Video className="w-4 h-4" /> + YouTube
                       </button>
-                      <button onClick={() => deletePhbiEvent(event.id)} className="flex items-center gap-2 bg-gray-50 text-gray-600 hover:bg-red-50 hover:text-red-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                      <button onClick={async () => {
+                        await deletePhbiEvent(event.id);
+                        router.refresh();
+                      }} className="flex items-center gap-2 bg-gray-50 text-gray-600 hover:bg-red-50 hover:text-red-600 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                         <Trash2 className="w-4 h-4" /> Hapus
                       </button>
                     </div>
@@ -246,7 +255,10 @@ export default function PhbiClientManager({ initialEvents }: { initialEvents: an
                             </div>
                           )}
                           <div className="absolute inset-0 bg-black/50 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <button onClick={() => deletePhbiMedia(item.id)} className="bg-red-600 text-white p-2 rounded-full hover:scale-110 transition-transform">
+                            <button onClick={async () => {
+                              await deletePhbiMedia(item.id);
+                              router.refresh();
+                            }} className="bg-red-600 text-white p-2 rounded-full hover:scale-110 transition-transform">
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>

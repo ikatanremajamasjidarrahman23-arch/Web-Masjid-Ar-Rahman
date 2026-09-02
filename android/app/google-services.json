@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1042344977075",
+    "project_id": "masjid-ar-rahman-2d0e4",
+    "storage_bucket": "masjid-ar-rahman-2d0e4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1042344977075:android:5e87044b01a2d3a15bc6c6",
+        "android_client_info": {
+          "package_name": "com.mobile.masjid.arrahman"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgUhWBpuigc4Tm0dk4ipVTkr9Jf6fYVE8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

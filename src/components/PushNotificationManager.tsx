@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { BellRing, X } from 'lucide-react'
+import { Capacitor } from '@capacitor/core'
+import { PushNotifications } from '@capacitor/push-notifications'
 
 const urlBase64ToUint8Array = (base64String: string) => {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
@@ -28,27 +30,63 @@ export default function PushNotificationManager() {
     const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches
     
-    // Check if user has dismissed prompts before
     const hasDismissed = localStorage.getItem('pushPromptDismissed') === 'true'
-    if (hasDismissed) return
 
-    if ('serviceWorker' in navigator && 'PushManager' in window) {
+    if (Capacitor.isNativePlatform()) {
+      PushNotifications.requestPermissions().then((permStatus) => {
+        if (permStatus.receive === 'granted') {
+          subscribeToNativePush()
+        }
+      }).catch(e => console.error('Error requesting push permission:', e))
+    } else if ('serviceWorker' in navigator && 'PushManager' in window) {
       // Browser supports Push API (Android, Desktop, or iOS PWA)
       if (Notification.permission === 'default') {
-        const timer = setTimeout(() => setShowPrompt(true), 2000)
-        return () => clearTimeout(timer)
+        if (!hasDismissed) {
+          const timer = setTimeout(() => setShowPrompt(true), 2000)
+          return () => clearTimeout(timer)
+        }
       } else if (Notification.permission === 'granted') {
         subscribeToPush()
       }
     } else if (isIos && !isStandalone) {
       // iOS Safari but not added to home screen yet
-      const timer = setTimeout(() => {
-        setIsIosPrompt(true)
-        setShowPrompt(true)
-      }, 2000)
-      return () => clearTimeout(timer)
+      if (!hasDismissed) {
+        const timer = setTimeout(() => {
+          setIsIosPrompt(true)
+          setShowPrompt(true)
+        }, 2000)
+        return () => clearTimeout(timer)
+      }
     }
   }, [])
+
+  const subscribeToNativePush = async () => {
+    try {
+      PushNotifications.addListener('registration', async (token) => {
+        await fetch('/api/push/subscribe', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            endpoint: token.value,
+            keys: {
+              p256dh: '',
+              auth: ''
+            }
+          })
+        })
+      })
+
+      PushNotifications.addListener('registrationError', (error: any) => {
+        console.error('Push registration error:', error)
+      })
+
+      await PushNotifications.register()
+    } catch (error) {
+      console.error('Native Push setup failed:', error)
+    }
+  }
 
   const subscribeToPush = async () => {
     try {
@@ -89,6 +127,20 @@ export default function PushNotificationManager() {
       return
     }
     
+    if (Capacitor.isNativePlatform()) {
+      try {
+        const permStatus = await PushNotifications.requestPermissions()
+        if (permStatus.receive === 'granted') {
+          await subscribeToNativePush()
+        }
+      } catch (e) {
+        console.error(e)
+      } finally {
+        handleDismiss()
+      }
+      return
+    }
+
     // Request permission (This is now tied to a user gesture, so Android won't block it!)
     try {
       const permission = await Notification.requestPermission()

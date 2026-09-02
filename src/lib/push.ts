@@ -1,5 +1,23 @@
 import webpush from 'web-push'
 import { prisma } from './prisma'
+import { getApps, initializeApp, cert } from 'firebase-admin/app'
+import { getMessaging } from 'firebase-admin/messaging'
+import fs from 'fs'
+import path from 'path'
+
+if (getApps().length === 0) {
+  try {
+    const serviceAccountPath = path.join(process.cwd(), 'firebase-admin.json')
+    if (fs.existsSync(serviceAccountPath)) {
+      const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'))
+      initializeApp({
+        credential: cert(serviceAccount)
+      })
+    }
+  } catch (error) {
+    console.error('Firebase Admin initialization error:', error)
+  }
+}
 
 export async function sendNotificationToAll(title: string, body: string, url: string = '/') {
   try {
@@ -22,6 +40,28 @@ export async function sendNotificationToAll(title: string, body: string, url: st
     }
     
     const promises = subscriptions.map(sub => {
+      // Jika p256dh kosong, berarti ini token FCM dari APK Android
+      if (!sub.p256dh) {
+        if (getApps().length === 0) return Promise.resolve()
+        
+        return getMessaging().send({
+          token: sub.endpoint,
+          notification: {
+            title,
+            body
+          },
+          data: {
+            url
+          }
+        }).catch(err => {
+          console.error('FCM Error:', err)
+          if (err.code === 'messaging/invalid-registration-token' || err.code === 'messaging/registration-token-not-registered') {
+            return prisma.pushSubscription.delete({ where: { id: sub.id } })
+          }
+        })
+      }
+
+      // Jika p256dh ada, berarti ini Web Push biasa
       const pushSubscription = {
         endpoint: sub.endpoint,
         keys: {
