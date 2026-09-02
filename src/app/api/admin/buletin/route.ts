@@ -56,8 +56,8 @@ export async function POST(request: Request) {
     // tanpa membuat loading website menjadi lambat (Vercel akan menunggu ini selesai).
     after(() => {
       sendNotificationToAll(
-        "Buletin Baru: " + title,
-        description.length > 50 ? description.substring(0, 50) + "..." : description,
+        title,
+        description,
         "/"
       ).catch(console.error);
     });

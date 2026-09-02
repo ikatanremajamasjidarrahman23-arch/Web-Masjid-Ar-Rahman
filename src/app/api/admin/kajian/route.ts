@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
     try {
       after(() => {
         sendNotificationToAll(
-          "Kajian Baru: " + title,
+          title,
           "Pemateri: " + speaker + " | Jadwal: " + schedule,
           "/"
         ).catch(console.error);
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     } catch (e) {
       console.error("Failed to use after(), executing synchronously", e);
       sendNotificationToAll(
-        "Kajian Baru: " + title,
+        title,
         "Pemateri: " + speaker + " | Jadwal: " + schedule,
         "/"
       ).catch(console.error);
