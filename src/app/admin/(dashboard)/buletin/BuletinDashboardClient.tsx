@@ -23,6 +23,8 @@ export default function BuletinDashboardClient() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [isTestingPush, setIsTestingPush] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -51,8 +53,26 @@ export default function BuletinDashboardClient() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await axios.post("/api/admin/buletin", formData);
+      let finalImageUrl = formData.imageUrl;
+
+      if (selectedFile) {
+        const uploadData = new FormData();
+        uploadData.append("file", selectedFile);
+        uploadData.append("isBanner", "true");
+
+        const uploadRes = await axios.post("/api/upload", uploadData);
+        if (uploadRes.data?.success) {
+          finalImageUrl = uploadRes.data.data.secure_url;
+        } else {
+          throw new Error("Gagal upload gambar");
+        }
+      }
+
+      await axios.post("/api/admin/buletin", { ...formData, imageUrl: finalImageUrl });
+      
       setFormData({ title: "", description: "", imageUrl: "", expiryDate: "", imagePosition: "center" });
+      setSelectedFile(null);
+      setImagePreview(null);
       setShowForm(false);
       fetchBulletins();
     } catch (error) {
@@ -157,20 +177,33 @@ export default function BuletinDashboardClient() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">URL Gambar (Opsional)</label>
-                <div className="flex gap-2">
-                  <div className="relative flex-1">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <ImagePlus size={16} className="text-gray-400" />
+                <label className="block text-sm font-medium text-gray-700 mb-1">Upload Gambar (Opsional)</label>
+                <div className="flex flex-col gap-2">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setSelectedFile(e.target.files[0]);
+                        setImagePreview(URL.createObjectURL(e.target.files[0]));
+                      }
+                    }}
+                    className="w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 cursor-pointer"
+                  />
+                  {imagePreview && (
+                    <div className="mt-2 relative rounded-xl overflow-hidden h-32 border border-gray-200 bg-gray-100">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" style={{ objectPosition: formData.imagePosition }} />
+                      <button 
+                        type="button" 
+                        onClick={() => { setSelectedFile(null); setImagePreview(null); }} 
+                        className="absolute top-2 right-2 bg-white/90 p-1.5 rounded-full text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors shadow-sm"
+                        title="Hapus gambar"
+                      >
+                        <X size={16} />
+                      </button>
                     </div>
-                    <input
-                      type="url"
-                      value={formData.imageUrl}
-                      onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                      className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500"
-                      placeholder="https://..."
-                    />
-                  </div>
+                  )}
                 </div>
               </div>
 
