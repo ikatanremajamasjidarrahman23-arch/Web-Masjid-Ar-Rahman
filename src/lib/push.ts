@@ -7,12 +7,24 @@ import path from 'path'
 
 if (getApps().length === 0) {
   try {
-    const serviceAccountPath = path.join(process.cwd(), 'firebase-admin.json')
-    if (fs.existsSync(serviceAccountPath)) {
-      const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'))
+    const serviceAccountStr = process.env.FIREBASE_SERVICE_ACCOUNT
+    let serviceAccount;
+    
+    if (serviceAccountStr) {
+      serviceAccount = JSON.parse(serviceAccountStr)
+    } else {
+      const serviceAccountPath = path.join(process.cwd(), 'firebase-admin.json')
+      if (fs.existsSync(serviceAccountPath)) {
+        serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'))
+      }
+    }
+
+    if (serviceAccount) {
       initializeApp({
         credential: cert(serviceAccount)
       })
+    } else {
+      console.warn("Firebase Admin credentials not found! Push notifications via FCM will not work.")
     }
   } catch (error) {
     console.error('Firebase Admin initialization error:', error)
