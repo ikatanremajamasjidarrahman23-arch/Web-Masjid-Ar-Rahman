@@ -44,8 +44,8 @@ export async function POST(request: Request) {
       uploadOptions.quality = "auto:best";
     } else {
       uploadOptions.format = "webp";
-      uploadOptions.quality = "auto";
-      uploadOptions.width = 1200;
+      uploadOptions.quality = "auto:best"; // Increased quality to prevent blurriness
+      // removed width limitation to rely on client-side compression (1920px)
       uploadOptions.crop = "limit";
     }
 

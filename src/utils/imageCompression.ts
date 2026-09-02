@@ -7,7 +7,7 @@ export const compressImage = async (file: File, customMaxSizeMB?: number): Promi
   }
 
   const options = {
-    maxSizeMB: customMaxSizeMB || 0.6, // 600KB default
+    maxSizeMB: customMaxSizeMB || 1.5, // Ditingkatkan ke 1.5MB agar gambar/poster dengan teks tidak blur
     maxWidthOrHeight: 1920,
     useWebWorker: true,
     fileType: file.type,
