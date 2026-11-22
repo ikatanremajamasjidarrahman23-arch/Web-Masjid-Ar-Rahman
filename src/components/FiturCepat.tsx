@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen, Calendar, Heart, ShieldAlert, Video, Users, ArrowUpRight, BookMarked, Moon, Star, Mic2, Globe, Radio, Tv2 } from "lucide-react";
+import { BookOpen, Calendar, Heart, ShieldAlert, Video, Users, ArrowUpRight, BookMarked, Tv2, Building2 } from "lucide-react";
 
 const features = [
   {
@@ -9,7 +9,6 @@ const features = [
     icon: Calendar,
     color: "from-emerald-500 to-teal-600",
     badge: "Rutin",
-    external: false,
   },
   {
     title: "Infaq & Donasi",
@@ -18,7 +17,6 @@ const features = [
     icon: Heart,
     color: "from-amber-500 to-orange-500",
     badge: "Berkah",
-    external: false,
   },
   {
     title: "Galeri & PHBI",
@@ -27,7 +25,6 @@ const features = [
     icon: Video,
     color: "from-sky-500 to-blue-600",
     badge: "Dokumentasi",
-    external: false,
   },
   {
     title: "Remaja Masjid (IRMAS)",
@@ -36,7 +33,6 @@ const features = [
     icon: Users,
     color: "from-purple-500 to-indigo-600",
     badge: "Pemuda",
-    external: false,
   },
   {
     title: "Unit Kegiatan (UKM)",
@@ -45,7 +41,6 @@ const features = [
     icon: BookOpen,
     color: "from-rose-500 to-pink-600",
     badge: "Pendidikan",
-    external: false,
   },
   {
     title: "Papan Buletin",
@@ -54,63 +49,44 @@ const features = [
     icon: ShieldAlert,
     color: "from-primary-600 to-emerald-700",
     badge: "Warta",
-    external: false,
   },
 ];
 
 const islamicResources = [
   {
-    title: "Live Streaming Makkah & Madinah",
-    desc: "Saksikan siaran langsung 24 jam dari Masjidil Haram Makkah dan Masjid Nabawi Madinah.",
-    href: "/live",
-    icon: Tv2,
-    color: "from-red-600 to-rose-700",
-    badge: "🔴 LIVE",
-    external: false,
+    title: "Al-Qur'an Kemenag RI",
+    desc: "Baca Al-Qur'an digital resmi Kementerian Agama RI dengan teks ayat, terjemahan, dan tafsir.",
+    href: "https://quran.kemenag.go.id/",
+    icon: BookMarked,
+    color: "from-emerald-600 to-teal-700",
+    badge: "Kemenag RI",
+    external: true,
   },
   {
-    title: "Al-Qur'an Kemenag RI",
-    desc: "Baca Al-Qur'an digital resmi Kementerian Agama RI dengan terjemahan dan tafsir.",
-    href: "https://quran.kemenag.go.id",
-    icon: BookMarked,
-    color: "from-green-600 to-emerald-700",
-    badge: "Resmi Kemenag",
+    title: "Live Makkah & Madinah",
+    desc: "Siaran langsung 24 jam dari Masjidil Haram Makkah dan Masjid Nabawi Madinah.",
+    href: "https://makkahlive.net/",
+    icon: Tv2,
+    color: "from-rose-600 to-red-700",
+    badge: "🔴 LIVE 24 Jam",
     external: true,
   },
   {
     title: "Kitab Maulid Berzanji",
-    desc: "Baca dan pelajari Kitab Maulid Al-Barzanji secara digital — riwayat Nabi ﷺ dalam bait-bait indah.",
-    href: "https://islamicbook.ws/id/al-barzanji",
-    icon: Star,
-    color: "from-yellow-500 to-amber-600",
-    badge: "Sirah Nabawi",
+    desc: "Buku / naskah Kitab Maulid Al-Barzanji lengkap dalam format dokumen digital PDF.",
+    href: "https://drive.google.com/file/d/1EKHNRMzyQ4J4IJiunSUPAIXS7euqabAs/view?usp=sharing",
+    icon: BookOpen,
+    color: "from-amber-500 to-yellow-600",
+    badge: "PDF Dokumen",
     external: true,
   },
   {
-    title: "Jadwal Sholat Online",
-    desc: "Waktu sholat akurat untuk seluruh wilayah Indonesia dari Kemenag RI.",
-    href: "https://bimasislam.kemenag.go.id/jadwalsholat",
-    icon: Moon,
-    color: "from-indigo-500 to-purple-600",
-    badge: "Kemenag",
-    external: true,
-  },
-  {
-    title: "Khutbah & Ceramah",
-    desc: "Koleksi khutbah Jumat dan ceramah islamiah dari ulama terpercaya.",
-    href: "https://bimasislam.kemenag.go.id/khutbah",
-    icon: Mic2,
-    color: "from-teal-500 to-cyan-600",
-    badge: "Ceramah",
-    external: true,
-  },
-  {
-    title: "Portal Islam Indonesia",
-    desc: "Referensi islami terpercaya: fatwa, artikel, berita, dan informasi keislaman.",
-    href: "https://mui.or.id",
-    icon: Globe,
-    color: "from-primary-600 to-teal-700",
-    badge: "MUI",
+    title: "Kemenag Kab. Cirebon",
+    desc: "Portal resmi Kantor Kementerian Agama Kabupaten Cirebon untuk informasi keagamaan daerah.",
+    href: "https://cirebon.kemenag.go.id/",
+    icon: Building2,
+    color: "from-sky-600 to-blue-700",
+    badge: "Resmi Pemkab",
     external: true,
   },
 ];
@@ -180,46 +156,44 @@ export default function FiturCepat() {
               Referensi &amp; Fitur Islam
             </h2>
             <p className="text-gray-500 max-w-lg mx-auto text-sm leading-relaxed">
-              Tautan langsung ke sumber-sumber Islam terpercaya — Al-Qur'an Kemenag, kitab maulid, jadwal sholat, dan lainnya.
+              Tautan langsung ke sumber-sumber Islam dan keagamaan terpercaya pilihan DKM.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {islamicResources.map((res) => {
               const Icon = res.icon;
-              const cardClass = "group bg-white rounded-2xl p-6 border border-gray-100 hover:border-amber-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 flex gap-4 items-start";
-              const inner = (
-                <>
-                  <div className={`flex-shrink-0 w-11 h-11 rounded-xl bg-gradient-to-tr ${res.color} flex items-center justify-center text-white shadow group-hover:scale-110 transition-transform duration-300`}>
-                    <Icon className="w-5 h-5" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="text-sm font-bold text-gray-900 group-hover:text-amber-700 transition-colors leading-tight">
-                        {res.title}
-                      </h3>
-                      <span className="flex-shrink-0 text-[10px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">
+              return (
+                <a
+                  key={res.title}
+                  href={res.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group bg-white rounded-2xl p-6 border border-gray-100 hover:border-amber-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className={`w-11 h-11 rounded-xl bg-gradient-to-tr ${res.color} flex items-center justify-center text-white shadow group-hover:scale-110 transition-transform duration-300`}>
+                        <Icon className="w-5 h-5" />
+                      </div>
+                      <span className="text-[10px] font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-100">
                         {res.badge}
                       </span>
                     </div>
-                    <p className="text-gray-500 text-xs leading-relaxed line-clamp-2">
+
+                    <h3 className="text-base font-bold text-gray-900 group-hover:text-amber-700 transition-colors leading-snug mb-1.5">
+                      {res.title}
+                    </h3>
+                    <p className="text-gray-500 text-xs leading-relaxed">
                       {res.desc}
                     </p>
-                    <div className="mt-2 flex items-center gap-1 text-[11px] font-semibold text-amber-600">
-                      <span>{res.external ? "Kunjungi" : "Buka"}</span>
-                      <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                    </div>
                   </div>
-                </>
-              );
-              return res.external ? (
-                <a key={res.title} href={res.href} target="_blank" rel="noopener noreferrer" className={cardClass}>
-                  {inner}
+
+                  <div className="mt-5 pt-3 border-t border-gray-50 flex items-center justify-between text-xs font-semibold text-amber-600 group-hover:text-amber-700">
+                    <span>Kunjungi Tautan</span>
+                    <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  </div>
                 </a>
-              ) : (
-                <Link key={res.title} href={res.href} className={cardClass}>
-                  {inner}
-                </Link>
               );
             })}
           </div>

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { 
   Menu, X, Moon, ChevronDown, Heart, ChevronRight,
   Image as ImageIcon, Users, BookOpen,
-  Calendar, Layers, MessageSquare, Phone, Radio
+  Calendar, Layers, MessageSquare, Phone
 } from "lucide-react";
 import NavbarDateWidget from "./NavbarDateWidget";
 
@@ -49,7 +49,6 @@ const navLinks: NavItem[] = [
     ],
   },
   { id: "donasi", name: "Kas & Donasi", href: "/donasi" },
-  { id: "live", name: "🕋 Live Makkah", href: "/live" },
 ];
 
 export default function Navbar({
