@@ -1,57 +1,62 @@
 import Link from "next/link";
-import { BookOpen, Calendar, Heart, ShieldAlert, Video, Users, ArrowUpRight, BookMarked, Tv2, Building2 } from "lucide-react";
+import { 
+  BookOpen, Calendar, Users, ArrowUpRight, 
+  Image as ImageIcon, Music, Building2, Tv2, BookMarked, Sparkles 
+} from "lucide-react";
 
+// ── 1. FITUR & LAYANAN UTAMA (Sesuai Urutan Permintaan) ──
 const features = [
   {
+    title: "Profil Masjid",
+    desc: "Mengenal sejarah berdirinya, visi misi mulia, serta bagan struktur pengurus DKM Ar-Rahman.",
+    href: "/profil",
+    icon: Building2,
+    color: "from-blue-600 to-indigo-700",
+    badge: "Tentang DKM",
+  },
+  {
     title: "Jadwal Kajian",
-    desc: "Informasi jadwal majelis taklim dan kajian rutin mingguan.",
+    desc: "Informasi jadwal majelis taklim, kajian tafsir Al-Qur'an, dan sirah nabawiyah mingguan.",
     href: "/kajian",
     icon: Calendar,
     color: "from-emerald-500 to-teal-600",
-    badge: "Rutin",
+    badge: "Kajian Rutin",
   },
   {
-    title: "Infaq & Donasi",
-    desc: "Salurkan infaq pembangunan dan operasional masjid via QRIS resmi.",
-    href: "/donasi",
-    icon: Heart,
-    color: "from-amber-500 to-orange-500",
-    badge: "Berkah",
+    title: "Galeri Dokumentasi",
+    desc: "Dokumentasi visual terpadu kegiatan ibadah harian serta perayaan Hari Besar Islam (PHBI).",
+    href: "/galeri",
+    icon: ImageIcon,
+    color: "from-sky-500 to-cyan-600",
+    badge: "Foto & PHBI",
   },
   {
-    title: "Galeri & PHBI",
-    desc: "Dokumentasi perayaan hari besar islam dan kegiatan jamaah.",
-    href: "/phbi",
-    icon: Video,
-    color: "from-sky-500 to-blue-600",
-    badge: "Dokumentasi",
+    title: "Hadroh Ahbabul Wafa",
+    desc: "Unit seni hadroh & marhabanan maulid. Profil ketua, sejarah perjuangan, dan koleksi galeri.",
+    href: "/ukm#hadroh",
+    icon: Music,
+    color: "from-amber-500 to-orange-600",
+    badge: "Seni Hadroh",
+  },
+  {
+    title: "Majelis Ta'lim Jumhuriyah",
+    desc: "Wadah kajian, silaturahmi, dan pembinaan kerohanian jamaah muslimah/ibu-ibu Ar-Rahman.",
+    href: "/ukm#jumhuriyah",
+    icon: BookOpen,
+    color: "from-rose-500 to-pink-600",
+    badge: "Muslimah",
   },
   {
     title: "Remaja Masjid (IRMAS)",
-    desc: "Wadah kepemudaan dan kreativitas generasi muda Ar-Rahman.",
+    desc: "Wadah kepemudaan, kaderisasi, kepanitiaan PHBI, dan kreativitas generasi muda masjid.",
     href: "/irmas",
     icon: Users,
     color: "from-purple-500 to-indigo-600",
-    badge: "Pemuda",
-  },
-  {
-    title: "Unit Kegiatan (UKM)",
-    desc: "Lembaga otonom, TPA/TPQ, dan unit kemaslahatan umat.",
-    href: "/ukm",
-    icon: BookOpen,
-    color: "from-rose-500 to-pink-600",
-    badge: "Pendidikan",
-  },
-  {
-    title: "Papan Buletin",
-    desc: "Pengumuman resmi, warta jumat, dan laporan terkini DKM.",
-    href: "/buletin",
-    icon: ShieldAlert,
-    color: "from-primary-600 to-emerald-700",
-    badge: "Warta",
+    badge: "Generasi Muda",
   },
 ];
 
+// ── 2. SUMBER & REFERENSI ISLAM TERPERCAYA (4 Kartu Khusus) ──
 const islamicResources = [
   {
     title: "Al-Qur'an Kemenag RI",
@@ -96,7 +101,7 @@ export default function FiturCepat() {
     <section className="py-20 bg-gradient-to-b from-gray-50 to-white relative overflow-hidden">
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {/* ── LAYANAN MASJID ── */}
+        {/* ── LAYANAN MASJID (6 Kartu Berurutan) ── */}
         <div className="text-center mb-14">
           <span className="inline-block text-xs font-bold text-primary-700 tracking-widest uppercase mb-3 bg-primary-100/70 px-4 py-1.5 rounded-full border border-primary-200">
             Layanan Jamaah
@@ -105,7 +110,7 @@ export default function FiturCepat() {
             Fitur &amp; Layanan Utama
           </h2>
           <p className="text-gray-600 max-w-xl mx-auto text-sm leading-relaxed">
-            Akses cepat ke berbagai informasi kegiatan dan layanan umat di Masjid Jami' Ar-Rahman.
+            Akses cepat ke berbagai informasi kegiatan, lembaga, dan layanan umat di Masjid Jami' Ar-Rahman.
           </p>
         </div>
 
@@ -117,7 +122,7 @@ export default function FiturCepat() {
               <Link
                 key={feature.title}
                 href={feature.href}
-                className="group relative bg-white rounded-3xl p-7 border border-gray-100 hover:border-primary-200 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between"
+                className="group relative bg-white rounded-3xl p-7 border border-gray-100 hover:border-primary-200 shadow-xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-5">
@@ -146,7 +151,7 @@ export default function FiturCepat() {
           })}
         </div>
 
-        {/* ── SUMBER ISLAM TERPERCAYA ── */}
+        {/* ── SUMBER ISLAM TERPERCAYA (4 Kartu Khusus) ── */}
         <div className="mt-20">
           <div className="text-center mb-12">
             <span className="inline-block text-xs font-bold text-amber-700 tracking-widest uppercase mb-3 bg-amber-50 px-4 py-1.5 rounded-full border border-amber-200">
@@ -169,7 +174,7 @@ export default function FiturCepat() {
                   href={res.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group bg-white rounded-2xl p-6 border border-gray-100 hover:border-amber-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 flex flex-col justify-between"
+                  className="group bg-white rounded-2xl p-6 border border-gray-100 hover:border-amber-200 shadow-xs hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 flex flex-col justify-between"
                 >
                   <div>
                     <div className="flex items-center justify-between mb-4">

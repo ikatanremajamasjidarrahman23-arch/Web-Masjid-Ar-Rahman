@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { 
   Menu, X, Moon, ChevronDown, Heart, ChevronRight,
   Image as ImageIcon, Users, BookOpen,
-  Calendar, Layers, MessageSquare, Phone
+  Calendar, Layers, MessageSquare, Phone, Music
 } from "lucide-react";
 import NavbarDateWidget from "./NavbarDateWidget";
 
@@ -30,22 +30,16 @@ const navLinks: NavItem[] = [
   { id: "profil", name: "Profil", href: "/profil" },
   { id: "kajian", name: "Kajian", href: "/kajian" },
   { id: "buletin", name: "Buletin", href: "/buletin" },
-  {
-    id: "galeri",
-    name: "Galeri",
-    isDropdown: true,
-    sublinks: [
-      { name: "Galeri Kegiatan", href: "/galeri", desc: "Dokumentasi kegiatan jamaah", icon: ImageIcon },
-      { name: "Dokumentasi PHBI", href: "/phbi", desc: "Peringatan hari besar Islam", icon: Calendar },
-    ],
-  },
+  { id: "galeri", name: "Galeri", href: "/galeri" },
   {
     id: "kelembagaan",
     name: "Kelembagaan",
     isDropdown: true,
     sublinks: [
+      { name: "Hadroh Ahbabul Wafa", href: "/ukm#hadroh", desc: "Seni hadroh & marhabanan maulid", icon: Music },
+      { name: "Majelis Ta'lim Jumhuriyah", href: "/ukm#jumhuriyah", desc: "Kajian rutin kaum ibu muslimah", icon: BookOpen },
       { name: "Remaja Masjid (IRMAS)", href: "/irmas", desc: "Wadah kepemudaan & kreativitas", icon: Users },
-      { name: "Unit Kegiatan (UKM)", href: "/ukm", desc: "TPA, majelis taklim & badan otonom", icon: Layers },
+      { name: "Unit Kegiatan (UKM)", href: "/ukm", desc: "Seluruh badan otonom masjid", icon: Layers },
     ],
   },
   { id: "donasi", name: "Kas & Donasi", href: "/donasi" },
@@ -63,8 +57,7 @@ export default function Navbar({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [mobileExpanded, setMobileExpanded] = useState<Record<string, boolean>>({
-    galeri: true,
-    kelembagaan: false,
+    kelembagaan: true,
   });
   const [donasiOpen, setDonasiOpen] = useState(false);
   
