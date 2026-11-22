@@ -56,7 +56,7 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen">
 
       {/* Running Text */}
-      <div className="bg-primary-950 text-primary-100 py-2.5 overflow-hidden flex items-center border-b border-primary-800/60 relative z-30 mt-16 sm:mt-20 shadow-xs">
+      <div className="bg-primary-950 text-primary-100 py-2.5 overflow-hidden flex items-center border-b border-primary-800/60 relative z-30 mt-16 sm:mt-[72px] shadow-xs">
         <div className="max-w-7xl mx-auto px-4 w-full flex items-center gap-3">
           <span className="flex-shrink-0 flex items-center gap-1.5 text-xs font-bold text-amber-300 bg-amber-400/15 px-2.5 py-0.5 rounded-full border border-amber-400/30">
             <Megaphone className="w-3.5 h-3.5" />

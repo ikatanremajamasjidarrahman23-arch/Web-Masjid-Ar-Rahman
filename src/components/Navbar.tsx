@@ -1,27 +1,54 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X, Moon, ChevronDown, Heart, ChevronRight, ShieldCheck } from "lucide-react";
+import { 
+  Menu, X, Moon, ChevronDown, Heart, ChevronRight, 
+  ShieldCheck, Image as ImageIcon, Users, BookOpen, 
+  Calendar, Layers, MessageSquare, Phone
+} from "lucide-react";
 import NavbarDateWidget from "./NavbarDateWidget";
 
-const navLinks = [
-  { name: "Beranda", href: "/" },
-  { name: "Buletin", href: "/buletin" },
-  { name: "Kajian", href: "/kajian" },
-  { name: "Profil", href: "/profil" },
+interface Sublink {
+  name: string;
+  href: string;
+  desc?: string;
+  icon?: any;
+}
+
+interface NavItem {
+  id: string;
+  name: string;
+  href?: string;
+  isDropdown?: boolean;
+  sublinks?: Sublink[];
+}
+
+const navLinks: NavItem[] = [
+  { id: "beranda", name: "Beranda", href: "/" },
+  { id: "profil", name: "Profil", href: "/profil" },
+  { id: "kajian", name: "Kajian", href: "/kajian" },
+  { id: "buletin", name: "Buletin", href: "/buletin" },
   {
+    id: "galeri",
     name: "Galeri",
     isDropdown: true,
     sublinks: [
-      { name: "Galeri Kegiatan", href: "/galeri" },
-      { name: "Galeri PHBI", href: "/phbi" },
+      { name: "Galeri Kegiatan", href: "/galeri", desc: "Dokumentasi kegiatan jamaah", icon: ImageIcon },
+      { name: "Dokumentasi PHBI", href: "/phbi", desc: "Peringatan hari besar Islam", icon: Calendar },
     ],
   },
-  { name: "IRMAS", href: "/irmas" },
-  { name: "UKM", href: "/ukm" },
-  { name: "Kas & Donasi", href: "/donasi" },
+  {
+    id: "kelembagaan",
+    name: "Kelembagaan",
+    isDropdown: true,
+    sublinks: [
+      { name: "Remaja Masjid (IRMAS)", href: "/irmas", desc: "Wadah kepemudaan & kreativitas", icon: Users },
+      { name: "Unit Kegiatan (UKM)", href: "/ukm", desc: "TPA, majelis taklim & badan otonom", icon: Layers },
+    ],
+  },
+  { id: "donasi", name: "Kas & Donasi", href: "/donasi" },
 ];
 
 export default function Navbar({
@@ -34,41 +61,77 @@ export default function Navbar({
   const [scrolled, setScrolled] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [mobileExpanded, setMobileExpanded] = useState<Record<string, boolean>>({
+    galeri: true,
+    kelembagaan: false,
+  });
   const [donasiOpen, setDonasiOpen] = useState(false);
+  
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
+  const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Scroll listener for progress bar and shadow
   useEffect(() => {
     const onScroll = () => {
       const scrollY = window.scrollY;
-      setScrolled(scrollY > 40);
-      const totalHeight =
-        document.documentElement.scrollHeight - window.innerHeight;
+      setScrolled(scrollY > 20);
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
       setScrollProgress(totalHeight > 0 ? (scrollY / totalHeight) * 100 : 0);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Close menus on page route changes
   useEffect(() => {
     setMobileOpen(false);
+    setActiveDropdown(null);
   }, [pathname]);
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
     return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
 
-  const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname?.startsWith(href);
+  // Anti-flicker dropdown handlers with hover bridge
+  const handleMouseEnter = (id: string) => {
+    if (dropdownTimeoutRef.current) {
+      clearTimeout(dropdownTimeoutRef.current);
+    }
+    setActiveDropdown(id);
+  };
+
+  const handleMouseLeave = () => {
+    dropdownTimeoutRef.current = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 150);
+  };
+
+  const toggleMobileAccordion = (id: string) => {
+    setMobileExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const isLinkActive = (href?: string) => {
+    if (!href) return false;
+    return href === "/" ? pathname === "/" : pathname?.startsWith(href);
+  };
+
+  const isDropdownActive = (sublinks?: Sublink[]) => {
+    return sublinks?.some((sub) => pathname?.startsWith(sub.href)) ?? false;
+  };
 
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-primary-950/95 backdrop-blur-xl border-b border-primary-800/60 shadow-lg ${
-          scrolled ? "py-1.5 shadow-black/30" : "py-3"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-primary-950/98 backdrop-blur-xl border-b border-primary-800/60 h-16 sm:h-[72px] flex items-center ${
+          scrolled ? "shadow-xl shadow-black/30" : "shadow-md"
         }`}
       >
         {/* Scroll progress bar */}
@@ -79,33 +142,28 @@ export default function Navbar({
           />
         )}
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <div className="flex items-center justify-between h-full">
             
-            {/* Logo */}
-            <Link href="/" className="flex-shrink-0 flex items-center gap-3 group">
+            {/* Logo & Identitas */}
+            <Link href="/" className="flex-shrink-0 flex items-center gap-3 group py-1">
               {logoUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={logoUrl}
-                  alt="Logo Masjid"
-                  className="w-auto object-contain transition-all duration-300 drop-shadow-md brightness-110"
-                  style={{
-                    height: scrolled
-                      ? `${((logoSize * 1.0) / 16).toFixed(2)}rem`
-                      : `${((logoSize * 1.25) / 16).toFixed(2)}rem`,
-                  }}
+                  alt="Logo Masjid Jami' Ar-Rahman"
+                  className="w-auto object-contain transition-all duration-300 drop-shadow-md brightness-110 h-10 sm:h-12"
                 />
               ) : (
                 <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary-600 to-emerald-400 flex items-center justify-center text-white shadow-md">
+                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-primary-600 to-emerald-500 flex items-center justify-center text-white shadow-md ring-2 ring-white/10 group-hover:scale-105 transition-transform">
                     <Moon className="w-5 h-5 text-amber-300" />
                   </div>
                   <div>
-                    <span className="font-bold tracking-tight text-white text-base sm:text-lg block leading-tight">
+                    <span className="font-bold tracking-tight text-white text-sm sm:text-base block leading-tight group-hover:text-amber-200 transition-colors">
                       Masjid Ar-Rahman
                     </span>
-                    <span className="text-[10px] text-emerald-200/80 tracking-wider uppercase block">
+                    <span className="text-[10px] text-emerald-300/80 tracking-wider uppercase block">
                       Cempaka, Plumbon
                     </span>
                   </div>
@@ -113,92 +171,115 @@ export default function Navbar({
               )}
             </Link>
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-1">
+            {/* Desktop Navigation (Rapi, 7 Menu Utama, Bebas Sesak) */}
+            <div className="hidden lg:flex items-center gap-1 xl:gap-2">
               {isAdmin ? (
                 <NavbarDateWidget />
               ) : (
                 <>
-                  {navLinks.map((link) => {
-                    if (link.isDropdown) {
+                  {navLinks.map((item) => {
+                    if (item.isDropdown) {
+                      const isOpened = activeDropdown === item.id;
+                      const hasActiveChild = isDropdownActive(item.sublinks);
+
                       return (
                         <div
-                          key={link.name}
+                          key={item.id}
                           className="relative"
-                          onMouseEnter={() => setDropdownOpen(true)}
-                          onMouseLeave={() => setDropdownOpen(false)}
+                          onMouseEnter={() => handleMouseEnter(item.id)}
+                          onMouseLeave={handleMouseLeave}
                         >
                           <button
-                            className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-semibold transition-all ${
-                              link.sublinks?.some((s) => isActive(s.href))
-                                ? "bg-primary-800 text-amber-300 shadow-xs"
-                                : "text-white/90 hover:text-white hover:bg-white/10"
+                            type="button"
+                            className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs xl:text-sm font-semibold transition-all cursor-pointer ${
+                              hasActiveChild
+                                ? "bg-primary-800 text-amber-300 shadow-xs ring-1 ring-amber-400/30"
+                                : "text-white/85 hover:text-white hover:bg-white/10"
                             }`}
                           >
-                            <span>{link.name}</span>
+                            <span>{item.name}</span>
                             <ChevronDown
-                              className={`w-4 h-4 transition-transform duration-200 ${
-                                dropdownOpen ? "rotate-180 text-amber-400" : "text-white/60"
+                              className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                                isOpened ? "rotate-180 text-amber-400" : "text-white/60"
                               }`}
                             />
                           </button>
 
-                          {/* Dropdown Menu */}
-                          {dropdownOpen && (
-                            <div className="absolute top-full left-0 mt-1.5 w-52 bg-primary-900 border border-primary-700/80 rounded-2xl shadow-2xl py-2 z-50 backdrop-blur-xl animate-scale-in">
-                              {link.sublinks?.map((sub) => (
-                                <Link
-                                  key={sub.name}
-                                  href={sub.href}
-                                  className={`flex items-center justify-between px-4 py-2.5 text-sm transition-colors ${
-                                    isActive(sub.href)
-                                      ? "text-amber-300 bg-primary-800/80 font-bold"
-                                      : "text-white/80 hover:text-white hover:bg-white/10"
-                                  }`}
-                                >
-                                  <span>{sub.name}</span>
-                                  <ChevronRight className="w-3.5 h-3.5 text-primary-400" />
-                                </Link>
-                              ))}
+                          {/* Dropdown Card dengan Anti-Flicker Invisible Bridge */}
+                          {isOpened && (
+                            <div className="absolute top-full left-0 pt-2 w-64 z-50 animate-scale-in">
+                              {/* Invisible Hover Bridge */}
+                              <div className="absolute -top-2.5 left-0 w-full h-3" />
+
+                              <div className="bg-primary-950/98 backdrop-blur-2xl border border-primary-700/80 rounded-2xl shadow-2xl p-2 ring-1 ring-white/10">
+                                {item.sublinks?.map((sub) => {
+                                  const SubIcon = sub.icon || ChevronRight;
+                                  const isSubActive = isLinkActive(sub.href);
+
+                                  return (
+                                    <Link
+                                      key={sub.name}
+                                      href={sub.href}
+                                      className={`flex items-start gap-3 p-2.5 rounded-xl transition-all ${
+                                        isSubActive
+                                          ? "bg-primary-800/90 text-amber-300 font-bold"
+                                          : "text-white/85 hover:text-white hover:bg-white/10"
+                                      }`}
+                                    >
+                                      <div className={`mt-0.5 p-1.5 rounded-lg ${isSubActive ? "bg-amber-400/20 text-amber-300" : "bg-white/5 text-primary-300"}`}>
+                                        <SubIcon className="w-4 h-4" />
+                                      </div>
+                                      <div>
+                                        <p className="text-xs xl:text-sm font-semibold leading-tight">{sub.name}</p>
+                                        {sub.desc && (
+                                          <p className="text-[11px] text-primary-300/80 font-normal mt-0.5 leading-snug">
+                                            {sub.desc}
+                                          </p>
+                                        )}
+                                      </div>
+                                    </Link>
+                                  );
+                                })}
+                              </div>
                             </div>
                           )}
                         </div>
                       );
                     }
 
-                    const active = isActive(link.href!);
+                    const active = isLinkActive(item.href);
                     return (
                       <Link
-                        key={link.name}
-                        href={link.href!}
-                        className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-all relative ${
+                        key={item.id}
+                        href={item.href!}
+                        className={`px-3 py-2 rounded-xl text-xs xl:text-sm font-semibold transition-all relative ${
                           active
-                            ? "bg-primary-800 text-amber-300 shadow-xs"
-                            : "text-white/90 hover:text-white hover:bg-white/10"
+                            ? "bg-primary-800 text-amber-300 shadow-xs ring-1 ring-amber-400/30"
+                            : "text-white/85 hover:text-white hover:bg-white/10"
                         }`}
                       >
-                        {link.name}
+                        {item.name}
                         {active && (
-                          <span className="absolute bottom-0 left-2 right-2 h-0.5 bg-amber-400 rounded-full" />
+                          <span className="absolute bottom-1 left-3 right-3 h-0.5 bg-amber-400 rounded-full" />
                         )}
                       </Link>
                     );
                   })}
 
-                  {/* Tombol Donasi */}
+                  {/* Tombol Infaq Emas */}
                   <button
                     onClick={() => setDonasiOpen(true)}
-                    className="ml-2 flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold text-xs uppercase tracking-wider shadow-md hover:shadow-amber-500/30 transition-all active:scale-95 cursor-pointer"
+                    className="ml-2 xl:ml-3 flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold text-xs uppercase tracking-wider shadow-md hover:shadow-amber-500/30 transition-all active:scale-95 cursor-pointer"
                   >
                     <Heart className="w-3.5 h-3.5 fill-current" />
                     <span>Infaq</span>
                   </button>
 
-                  {/* Tombol Akses Admin */}
+                  {/* Pintasan Akses Admin */}
                   <Link
                     href="/admin"
-                    title="Portal Admin"
-                    className="ml-1 p-2 rounded-lg text-emerald-300/80 hover:text-white hover:bg-white/10 transition-colors"
+                    title="Portal Login Admin"
+                    className="ml-1 p-2 rounded-xl text-primary-300 hover:text-white hover:bg-white/10 transition-colors"
                   >
                     <ShieldCheck className="w-5 h-5" />
                   </Link>
@@ -206,22 +287,22 @@ export default function Navbar({
               )}
             </div>
 
-            {/* Mobile Actions & Hamburger */}
+            {/* Mobile Actions: Infaq Compact + Hamburger */}
             <div className="flex items-center gap-2 lg:hidden">
               {!isAdmin && (
                 <button
                   onClick={() => setDonasiOpen(true)}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold text-xs shadow-sm"
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold text-xs shadow-sm active:scale-95"
                 >
-                  <Heart className="w-3 h-3 fill-current" />
+                  <Heart className="w-3.5 h-3.5 fill-current" />
                   <span>Infaq</span>
                 </button>
               )}
 
               <button
                 onClick={() => setMobileOpen(!mobileOpen)}
-                className="p-2 rounded-xl bg-white/10 text-white hover:bg-white/20 transition-colors focus:outline-none"
-                aria-label="Toggle menu"
+                className="p-2.5 rounded-xl bg-white/10 text-white hover:bg-white/20 active:scale-95 transition-all focus:outline-none"
+                aria-label="Buka Menu Navigasi"
               >
                 {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
@@ -231,107 +312,133 @@ export default function Navbar({
         </div>
       </nav>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer (Spacious & Thumb-Friendly) */}
       <div
         className={`fixed inset-0 z-50 lg:hidden transition-all duration-300 ${
           mobileOpen ? "pointer-events-auto" : "pointer-events-none"
         }`}
       >
-        {/* Backdrop */}
+        {/* Backdrop dengan Blur */}
         <div
-          className={`absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity duration-300 ${
+          className={`absolute inset-0 bg-black/75 backdrop-blur-md transition-opacity duration-300 ${
             mobileOpen ? "opacity-100" : "opacity-0"
           }`}
           onClick={() => setMobileOpen(false)}
         />
 
-        {/* Drawer Panel */}
+        {/* Panel Drawer Sisi Kanan */}
         <div
-          className={`absolute top-0 right-0 h-full w-80 max-w-[85vw] bg-primary-950 border-l border-primary-800 shadow-2xl flex flex-col transition-transform duration-300 ${
+          className={`absolute top-0 right-0 h-full w-[320px] max-w-[85vw] bg-primary-950 border-l border-primary-800 shadow-2xl flex flex-col transition-transform duration-300 ease-out ${
             mobileOpen ? "translate-x-0" : "translate-x-full"
           }`}
         >
-          {/* Header */}
-          <div className="flex items-center justify-between p-5 border-b border-white/10">
+          {/* Header Drawer */}
+          <div className="flex items-center justify-between p-5 border-b border-primary-800/80 bg-primary-900/40">
             <div className="flex items-center gap-2.5">
-              <Moon className="w-6 h-6 text-amber-300" />
-              <span className="font-bold text-white text-base">Masjid Ar-Rahman</span>
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-primary-600 to-emerald-500 flex items-center justify-center text-white shadow-sm">
+                <Moon className="w-4 h-4 text-amber-300" />
+              </div>
+              <div>
+                <span className="font-bold text-white text-sm block leading-tight">Masjid Ar-Rahman</span>
+                <span className="text-[10px] text-emerald-300/80 tracking-wide block">Menu Utama</span>
+              </div>
             </div>
             <button
               onClick={() => setMobileOpen(false)}
-              className="p-2 rounded-lg hover:bg-white/10 text-white/70 hover:text-white transition-colors"
+              className="p-2 rounded-xl bg-white/10 text-white/70 hover:text-white hover:bg-white/20 transition-colors"
+              aria-label="Tutup Menu"
             >
               <X className="w-5 h-5" />
             </button>
           </div>
 
-          {/* Links */}
-          <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-            {navLinks.map((link) => {
-              if (link.isDropdown) {
+          {/* Navigasi Links (Accordion & Large Touch Target) */}
+          <nav className="flex-1 overflow-y-auto p-4 space-y-1.5">
+            {navLinks.map((item) => {
+              if (item.isDropdown) {
+                const isExpanded = mobileExpanded[item.id] ?? false;
+                const hasActiveChild = isDropdownActive(item.sublinks);
+
                 return (
-                  <div key={link.name} className="py-1">
-                    <p className="px-4 py-2 text-xs font-bold text-amber-400 uppercase tracking-widest">
-                      {link.name}
-                    </p>
-                    {link.sublinks?.map((sub) => (
-                      <Link
-                        key={sub.name}
-                        href={sub.href}
-                        className={`flex items-center justify-between px-6 py-2.5 rounded-xl text-sm transition-colors ${
-                          isActive(sub.href)
-                            ? "bg-primary-800 text-amber-300 font-bold"
-                            : "text-white/80 hover:text-white hover:bg-white/5"
+                  <div key={item.id} className="rounded-2xl overflow-hidden bg-white/5 border border-white/5">
+                    <button
+                      type="button"
+                      onClick={() => toggleMobileAccordion(item.id)}
+                      className="w-full flex items-center justify-between px-4 py-3.5 text-left text-sm font-semibold text-white/90 hover:text-white transition-colors"
+                    >
+                      <span className={hasActiveChild ? "text-amber-300 font-bold" : ""}>{item.name}</span>
+                      <ChevronDown
+                        className={`w-4 h-4 text-white/60 transition-transform duration-200 ${
+                          isExpanded ? "rotate-180 text-amber-400" : ""
                         }`}
-                      >
-                        <span>{sub.name}</span>
-                        <ChevronRight className="w-4 h-4 text-primary-400" />
-                      </Link>
-                    ))}
+                      />
+                    </button>
+
+                    {isExpanded && (
+                      <div className="px-3 pb-3 pt-1 space-y-1 bg-black/20 border-t border-white/5">
+                        {item.sublinks?.map((sub) => {
+                          const SubIcon = sub.icon || ChevronRight;
+                          const active = isLinkActive(sub.href);
+
+                          return (
+                            <Link
+                              key={sub.name}
+                              href={sub.href}
+                              className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm transition-all ${
+                                active
+                                  ? "bg-primary-800 text-amber-300 font-bold"
+                                  : "text-white/80 hover:text-white hover:bg-white/10"
+                              }`}
+                            >
+                              <SubIcon className={`w-4 h-4 ${active ? "text-amber-400" : "text-primary-400"}`} />
+                              <span>{sub.name}</span>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 );
               }
 
-              const active = isActive(link.href!);
+              const active = isLinkActive(item.href);
               return (
                 <Link
-                  key={link.name}
-                  href={link.href!}
-                  className={`flex items-center justify-between px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${
+                  key={item.id}
+                  href={item.href!}
+                  className={`flex items-center justify-between px-4 py-3.5 rounded-2xl text-sm font-semibold transition-all ${
                     active
-                      ? "bg-primary-800 text-amber-300 font-bold"
+                      ? "bg-primary-800 text-amber-300 font-bold ring-1 ring-amber-400/30"
                       : "text-white/85 hover:text-white hover:bg-white/5"
                   }`}
                 >
-                  <span>{link.name}</span>
-                  {active && <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />}
+                  <span>{item.name}</span>
+                  {active && <span className="w-2 h-2 rounded-full bg-amber-400" />}
                 </Link>
               );
             })}
-
-            {/* Link Admin di Mobile */}
-            <div className="pt-3 mt-3 border-t border-white/10">
-              <Link
-                href="/admin"
-                className="flex items-center gap-2.5 px-4 py-3 rounded-xl text-sm font-semibold text-emerald-300 bg-primary-900/60 hover:bg-primary-900 transition-colors"
-              >
-                <ShieldCheck className="w-5 h-5" />
-                <span>Portal Admin & Pengurus</span>
-              </Link>
-            </div>
           </nav>
 
-          {/* Drawer Footer */}
-          <div className="p-5 border-t border-white/10 space-y-3">
+          {/* Bottom Action Sheet (Ramah Jempol) */}
+          <div className="p-4 border-t border-primary-800/80 bg-primary-900/30 space-y-2.5">
             <button
               onClick={() => { setDonasiOpen(true); setMobileOpen(false); }}
-              className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold rounded-xl shadow-md text-sm cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-amber-400 to-amber-500 active:scale-98 text-slate-950 font-bold rounded-2xl shadow-lg text-sm cursor-pointer"
             >
               <Heart className="w-4 h-4 fill-current" />
-              Infaq & Donasi Masjid
+              <span>Infaq & Donasi Masjid</span>
             </button>
-            <p className="text-center text-[11px] text-white/40">
-              © {new Date().getFullYear()} DKM Masjid Ar-Rahman
+
+            <Link
+              href="/admin"
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold text-emerald-300 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
+            >
+              <ShieldCheck className="w-4 h-4" />
+              <span>Portal Login Admin DKM</span>
+            </Link>
+
+            <p className="text-center text-[10px] text-white/40 pt-1">
+              © {new Date().getFullYear()} DKM Masjid Jami' Ar-Rahman Cempaka
             </p>
           </div>
         </div>
@@ -340,7 +447,7 @@ export default function Navbar({
       {/* Donasi Quick Modal */}
       {donasiOpen && (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in"
+          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fade-in"
           onClick={() => setDonasiOpen(false)}
         >
           <div
