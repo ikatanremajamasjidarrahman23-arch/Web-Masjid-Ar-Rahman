@@ -97,7 +97,10 @@ export default function PrayerTimes() {
     const target = getRealTime().getTime() + nextPrayer.diffMs;
     const update = () => {
       const d = target - getRealTime().getTime();
-      if (d < 0) { setCountdown("Waktu sholat tiba! 🕌"); return; }
+      if (d < 0) { 
+        setCountdown("Waktu sholat tiba!"); 
+        return; 
+      }
       const h = Math.floor((d % 86400000) / 3600000);
       const m = Math.floor((d % 3600000) / 60000);
       const s = Math.floor((d % 60000) / 1000);
@@ -117,23 +120,23 @@ export default function PrayerTimes() {
   ];
 
   return (
-    <div className="rounded-3xl overflow-hidden shadow-2xl border border-white/20 backdrop-blur-xl bg-primary-950/80 text-white">
+    <div className="rounded-3xl overflow-hidden shadow-2xl border border-white/20 backdrop-blur-xl bg-primary-950/85 text-white">
       {/* Header */}
       <div className="relative px-6 pt-6 pb-4 text-center overflow-hidden">
         {/* Decorative arch */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-16 border-t-2 border-l-2 border-r-2 border-white/10 rounded-t-full" />
-        <h2 className="text-base font-bold text-white/90 mt-3">Jadwal Sholat</h2>
+        <h2 className="text-base font-bold text-white/95 mt-3">Jadwal Sholat</h2>
         <p className="text-primary-300 text-xs mt-0.5">Plumbon, Cirebon</p>
 
         {masehiDate && hijriDate && (
           <div className="mt-3 inline-flex flex-col items-center bg-white/5 rounded-2xl px-5 py-2.5 border border-white/10">
-            <span className="text-xs font-medium text-white/80">{masehiDate}</span>
+            <span className="text-xs font-medium text-white/90">{masehiDate}</span>
             <span className="text-xs text-primary-300 mt-0.5">{hijriDate}</span>
           </div>
         )}
 
         {/* Countdown */}
-        <div className="mt-4 bg-gradient-to-r from-primary-800/80 to-primary-700/80 rounded-2xl p-4 border border-primary-600/30">
+        <div className="mt-4 bg-gradient-to-r from-primary-900/90 to-primary-800/90 rounded-2xl p-4 border border-primary-700/40 shadow-inner">
           <p className="text-xs text-primary-300 mb-1">Menuju {nextPrayer?.name || "Sholat"}</p>
           <div className="flex items-center justify-center gap-2">
             <Clock className="w-5 h-5 text-amber-300" />
@@ -153,11 +156,11 @@ export default function PrayerTimes() {
               key={idx}
               className={`flex flex-col items-center py-4 px-1 transition-colors ${
                 isNext
-                  ? "bg-amber-400/15 border-t-2 border-amber-400"
+                  ? "bg-amber-400/20 border-t-2 border-amber-400"
                   : "hover:bg-white/5 border-t-2 border-transparent"
               } ${idx > 0 ? "border-l border-white/10" : ""}`}
             >
-              <span className={`text-[10px] font-medium mb-1.5 ${isNext ? "text-amber-300" : "text-primary-300"}`}>
+              <span className={`text-[10px] font-medium mb-1.5 ${isNext ? "text-amber-300 font-bold" : "text-primary-300"}`}>
                 {prayer.name}
               </span>
               <span className={`text-sm font-bold ${isNext ? "text-amber-200" : "text-white"}`}>

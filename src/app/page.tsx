@@ -64,10 +64,11 @@ export default async function Home() {
           </span>
           <div className="relative flex overflow-x-hidden w-full whitespace-nowrap">
             <div
-              className="animate-marquee inline-block text-xs sm:text-sm font-medium tracking-wide"
-              style={{ animationDuration: `${settings?.runningTextSpeed || 25}s` }}
+              className="animate-marquee text-xs sm:text-sm font-medium tracking-wide"
+              style={{ animationDuration: `${settings?.runningTextSpeed || 30}s` }}
             >
-              {runningText}
+              <span className="mr-12">{runningText}</span>
+              <span className="mr-12">{runningText}</span>
             </div>
           </div>
         </div>
@@ -222,13 +223,7 @@ export default async function Home() {
       />
 
       {/* Hubungi Kami */}
-      <section className="py-20 bg-white relative overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='%23064e3b'%3E%3Cpath d='M30 0 L38 12 L50 12 L42 20 L46 32 L30 24 L14 32 L18 20 L10 12 L22 12Z'/%3E%3C/g%3E%3C/svg%3E")`,
-            backgroundSize: "60px 60px",
-          }}
-        />
+      <section className="py-20 bg-white relative overflow-hidden border-t border-gray-100">
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-center gap-12 lg:gap-20">
             {/* Contact Info */}
