@@ -53,3 +53,4 @@ export default async function UkmDetailPage({ params }: { params: Promise<{ id: 
 
   return <UkmDetailPageClient ukm={ukm} otherUkms={otherUkms} />;
 }
+

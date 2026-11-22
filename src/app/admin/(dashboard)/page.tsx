@@ -66,9 +66,12 @@ export default async function AdminDashboard() {
           Panduan Singkat
         </h3>
         <ul className="space-y-3 text-gray-600 text-sm list-disc list-inside">
-          <li>Gunakan menu <b>Profil & Pengaturan</b> untuk mengubah Visi, Misi, Sejarah, dan QRIS donasi.</li>
+          <li>Gunakan menu <b>Profil Masjid</b> untuk mengubah Visi, Misi, Sejarah, dan QRIS donasi.</li>
           <li>Gunakan menu <b>Dokumentasi PHBI</b> untuk mengunggah foto kegiatan atau menautkan video YouTube.</li>
+          <li>Gunakan menu <b>Agenda Kegiatan</b> untuk menambah jadwal kajian rutin masjid.</li>
           <li>Gunakan menu <b>Kegiatan IRMAS</b> untuk mempublikasikan berita terbaru seputar remaja masjid.</li>
+          <li>Gunakan menu <b>Galeri Foto</b> untuk mengelola dokumentasi kegiatan dan galeri PHBI.</li>
+          <li>Gunakan menu <b>Kelembagaan (UKM)</b> untuk mengelola unit kegiatan masjid seperti Hadroh & Majelis Ta'lim.</li>
           <li>Gunakan menu <b>Kas & Donasi</b> untuk mencatat pemasukan dan pengeluaran secara rutin.</li>
         </ul>
       </div>

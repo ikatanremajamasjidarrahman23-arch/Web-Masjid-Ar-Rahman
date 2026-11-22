@@ -28,12 +28,12 @@ export default function AdminSidebar({ logoutAction }: { logoutAction: (payload:
     { name: "Profil Masjid", href: "/admin/profil", icon: Users },
     { name: "Pengaturan Sistem", href: "/admin/pengaturan", icon: Settings },
     { name: "Struktur Organisasi", href: "/admin/pengurus", icon: Network },
-    { name: "Unit Kegiatan Masjid", href: "/admin/ukm", icon: Library },
+    { name: "Kelembagaan (UKM)", href: "/admin/ukm", icon: Library },
     { name: "Selayang Pandang", href: "/admin/selayang-pandang", icon: ImageIcon },
+    { name: "Galeri & PHBI", href: "/admin/gallery", icon: ImageIcon },
     { name: "Dokumentasi PHBI", href: "/admin/phbi", icon: Calendar },
     { name: "Kegiatan IRMAS", href: "/admin/irmas", icon: Users },
-    { name: "Agenda Kegiatan", href: "/admin/kajian", icon: BookOpen },
-    { name: "Galeri Foto", href: "/admin/gallery", icon: ImageIcon },
+    { name: "Agenda Kajian", href: "/admin/kajian", icon: BookOpen },
     { name: "Hero Beranda", href: "/admin/hero", icon: ImagePlus },
     { name: "Popup Banner", href: "/admin/popup", icon: ImagePlus },
     { name: "Kas & Donasi", href: "/admin/donasi", icon: Wallet },
@@ -86,14 +86,13 @@ export default function AdminSidebar({ logoutAction }: { logoutAction: (payload:
 
       {/* Sidebar */}
       <aside className={`
-        fixed top-0 left-0 h-full w-64 bg-white border-r border-gray-200 flex flex-col z-30
+        fixed top-16 sm:top-[72px] left-0 h-[calc(100vh-4rem)] sm:h-[calc(100vh-72px)] w-64 bg-white border-r border-gray-200 flex flex-col z-30
         transition-transform duration-300 ease-in-out
         ${isOpen ? "translate-x-0" : "-translate-x-full"}
         md:translate-x-0
       `}>
-        <div className="h-16 flex items-center px-6 border-b border-gray-200 shrink-0">
-          <h1 className="text-xl font-bold text-gray-900 hidden md:block">Admin Panel</h1>
-          <h1 className="text-xl font-bold text-gray-900 md:hidden">Menu</h1>
+        <div className="h-12 hidden md:flex items-center px-6 border-b border-gray-100 shrink-0 bg-gray-50/50">
+          <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Navigasi Panel Admin</span>
         </div>
         
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">

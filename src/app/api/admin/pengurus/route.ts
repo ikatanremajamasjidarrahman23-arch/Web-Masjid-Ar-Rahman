@@ -2,59 +2,52 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
-import { jwtVerify } from "jose";
-
-const SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "arrahman_secret_auth_key_v2_2026_locked");
+import { verifyToken } from "@/lib/auth";
 
 async function verifyAuth() {
   const cookieStore = await cookies();
   const token = cookieStore.get("admin_token")?.value;
-  if (!token) return false;
-  try {
-    await jwtVerify(token, SECRET);
-    return true;
-  } catch {
-    return false;
-  }
+  return verifyToken(token);
 }
 
 export async function GET() {
   try {
     const members = await prisma.organizationMember.findMany({
-      orderBy: { order: "asc" }
+      orderBy: { order: "asc" },
     });
     return NextResponse.json(members);
   } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
+    return NextResponse.json({ error: "Gagal mengambil data pengurus" }, { status: 500 });
   }
 }
 
 export async function POST(request: Request) {
   if (!(await verifyAuth())) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Sesi admin berakhir, silakan login kembali." }, { status: 401 });
   }
 
   try {
     const data = await request.json();
     const { name, position, parentId, order } = data;
-    
-    if (!name || !position) {
-      return NextResponse.json({ error: "Name and position required" }, { status: 400 });
+
+    if (!name || !name.trim() || !position || !position.trim()) {
+      return NextResponse.json({ error: "Nama dan jabatan pengurus wajib diisi." }, { status: 400 });
     }
 
     const member = await prisma.organizationMember.create({
       data: {
-        name,
-        position,
-        parentId: parentId || null,
-        order: order || 0
-      }
+        name: name.trim(),
+        position: position.trim(),
+        parentId: parentId && typeof parentId === "string" && parentId.trim() !== "" ? parentId.trim() : null,
+        order: Number(order) || 0,
+      },
     });
 
     revalidatePath("/profil");
 
     return NextResponse.json(member, { status: 201 });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("POST Pengurus Error:", error);
+    return NextResponse.json({ error: error.message || "Gagal menambahkan pengurus" }, { status: 500 });
   }
 }

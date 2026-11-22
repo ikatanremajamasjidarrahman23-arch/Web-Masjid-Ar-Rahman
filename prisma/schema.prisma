@@ -103,6 +103,7 @@ model Finance {
   amount      Float
   description String
   date        DateTime      @default(now())
+  category    String?
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 }
@@ -194,3 +195,5 @@ model HeroImage {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+

@@ -42,7 +42,6 @@ const navLinks: NavItem[] = [
       { name: "Unit Kegiatan (UKM)", href: "/ukm", desc: "Seluruh badan otonom masjid", icon: Layers },
     ],
   },
-  { id: "donasi", name: "Kas & Donasi", href: "/donasi" },
 ];
 
 export default function Navbar({
@@ -59,8 +58,6 @@ export default function Navbar({
   const [mobileExpanded, setMobileExpanded] = useState<Record<string, boolean>>({
     kelembagaan: true,
   });
-  const [donasiOpen, setDonasiOpen] = useState(false);
-  
   const pathname = usePathname();
   const isAdmin = pathname?.startsWith("/admin");
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -259,29 +256,29 @@ export default function Navbar({
                     );
                   })}
 
-                  {/* Tombol Infaq Emas */}
-                  <button
-                    onClick={() => setDonasiOpen(true)}
+                  {/* Tombol Kas & Donasi Emas */}
+                  <Link
+                    href="/donasi"
                     className="ml-2 xl:ml-3 flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold text-xs uppercase tracking-wider shadow-md hover:shadow-amber-500/30 transition-all active:scale-95 cursor-pointer"
                   >
                     <Heart className="w-3.5 h-3.5 fill-current" />
-                    <span>Infaq</span>
-                  </button>
+                    <span>Kas & Donasi</span>
+                  </Link>
 
                 </>
               )}
             </div>
 
-            {/* Mobile Actions: Infaq Compact + Hamburger */}
+            {/* Mobile Actions: Kas & Donasi Compact + Hamburger */}
             <div className="flex items-center gap-2 lg:hidden">
               {!isAdmin && (
-                <button
-                  onClick={() => setDonasiOpen(true)}
+                <Link
+                  href="/donasi"
                   className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-500 text-slate-950 font-bold text-xs shadow-sm active:scale-95"
                 >
                   <Heart className="w-3.5 h-3.5 fill-current" />
-                  <span>Infaq</span>
-                </button>
+                  <span>Kas & Donasi</span>
+                </Link>
               )}
 
               <button
@@ -406,13 +403,14 @@ export default function Navbar({
 
           {/* Bottom Action Sheet (Ramah Jempol) */}
           <div className="p-4 border-t border-primary-800/80 bg-primary-900/30 space-y-2.5">
-            <button
-              onClick={() => { setDonasiOpen(true); setMobileOpen(false); }}
+            <Link
+              href="/donasi"
+              onClick={() => setMobileOpen(false)}
               className="w-full flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r from-amber-400 to-amber-500 active:scale-98 text-slate-950 font-bold rounded-2xl shadow-lg text-sm cursor-pointer"
             >
               <Heart className="w-4 h-4 fill-current" />
-              <span>Infaq & Donasi Masjid</span>
-            </button>
+              <span>Kas & Donasi Masjid</span>
+            </Link>
 
             <p className="text-center text-[10px] text-white/40 pt-1">
               © {new Date().getFullYear()} DKM Masjid Jami' Ar-Rahman Cempaka
@@ -421,39 +419,7 @@ export default function Navbar({
         </div>
       </div>
 
-      {/* Donasi Quick Modal */}
-      {donasiOpen && (
-        <div
-          className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fade-in"
-          onClick={() => setDonasiOpen(false)}
-        >
-          <div
-            className="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-7 text-center border border-gray-100"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Heart className="w-7 h-7 text-amber-600 fill-current" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-1">Infaq & Donasi</h3>
-            <p className="text-sm text-gray-500 mb-6">
-              Salurkan kebaikan melalui rekening bank dan QRIS resmi masjid
-            </p>
-            <Link
-              href="/donasi"
-              onClick={() => setDonasiOpen(false)}
-              className="block w-full py-3 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-all shadow-md text-sm"
-            >
-              Buka Halaman Donasi →
-            </Link>
-            <button
-              onClick={() => setDonasiOpen(false)}
-              className="mt-3.5 text-xs text-gray-400 hover:text-gray-600 transition-colors font-medium cursor-pointer"
-            >
-              Tutup
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Donasi Quick Modal — dihapus, tombol sudah langsung ke /donasi */}
     </>
   );
 }

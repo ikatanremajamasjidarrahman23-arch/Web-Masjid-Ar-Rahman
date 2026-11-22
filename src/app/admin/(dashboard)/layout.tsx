@@ -29,8 +29,8 @@ export default async function AdminLayout({
     <div className="min-h-screen bg-gray-50 flex">
       <AdminSidebar logoutAction={logoutAction} />
 
-      {/* Main Content Area */}
-      <main className="flex-1 md:ml-64 p-4 pt-36 md:pt-8 md:p-8 w-full max-w-[100vw]">
+      {/* Main Content Area — Beri padding atas yang lapang agar tidak tertabrak Navbar di mobile maupun desktop */}
+      <main className="flex-1 md:ml-64 p-4 pt-36 md:pt-28 md:p-8 w-full max-w-[100vw]">
         {children}
       </main>
     </div>

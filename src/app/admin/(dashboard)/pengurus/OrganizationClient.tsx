@@ -33,15 +33,17 @@ export default function OrganizationClient({ initialMembers }: { initialMembers:
         // Edit
         const res = await axios.put(`/api/admin/pengurus/${formData.id}`, formData);
         setMembers(members.map(m => m.id === formData.id ? res.data : m));
+        alert("Data pengurus berhasil diperbarui!");
       } else {
         // Add
         const res = await axios.post("/api/admin/pengurus", formData);
         setMembers([...members, res.data].sort((a, b) => a.order - b.order));
+        alert("Pengurus baru berhasil ditambahkan!");
       }
       resetForm();
     } catch (error: any) {
-      const errorMessage = error.response?.data?.error || error.message;
-      alert(`Terjadi kesalahan: ${errorMessage}\nPastikan database sudah diupdate (prisma db push).`);
+      const errorMessage = error.response?.data?.error || error.message || "Gagal menyimpan data pengurus";
+      alert(`Terjadi kesalahan: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }

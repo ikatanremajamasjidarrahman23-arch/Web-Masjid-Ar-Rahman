@@ -3,6 +3,16 @@ import jwt from "jsonwebtoken";
 
 export const JWT_SECRET = process.env.JWT_SECRET || "arrahman_secret_auth_key_v2_2026_locked";
 
+export function verifyToken(token?: string): boolean {
+  if (!token) return false;
+  try {
+    jwt.verify(token, JWT_SECRET);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export async function verifyAdminSession(): Promise<{ valid: boolean; username?: string }> {
   try {
     const cookieStore = await cookies();
@@ -15,3 +25,5 @@ export async function verifyAdminSession(): Promise<{ valid: boolean; username?:
     return { valid: false };
   }
 }
+
+

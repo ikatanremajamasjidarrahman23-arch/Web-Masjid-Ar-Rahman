@@ -58,7 +58,7 @@ export default function SelayangPandang({ photos = [], title, description }: Sel
           {displayPhotos.map((photo, index) => (
             <div
               key={photo.id || index}
-              className={`group relative rounded-3xl overflow-hidden bg-gray-200 shadow-sm hover:shadow-xl transition-all duration-500 cursor-pointer ${photo.className}`}
+              className={`group relative rounded-3xl overflow-hidden bg-gray-200 shadow-sm hover:shadow-xl transition-all duration-500 ${photo.className}`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -67,12 +67,6 @@ export default function SelayangPandang({ photos = [], title, description }: Sel
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 style={{ objectPosition: photo.imagePosition || "center" }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-6">
-                <div>
-                  <span className="text-xs text-primary-300 font-medium block mb-1">Masjid Jami' Ar-Rahman</span>
-                  <p className="text-white font-bold text-base md:text-lg leading-tight">{photo.title}</p>
-                </div>
-              </div>
             </div>
           ))}
         </div>

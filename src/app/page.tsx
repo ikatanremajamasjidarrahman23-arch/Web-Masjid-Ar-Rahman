@@ -8,8 +8,6 @@ import {
   User,
   BookOpen,
   Image as ImageIcon,
-  Phone,
-  Mail,
   ChevronDown,
 } from "lucide-react";
 import Link from "next/link";
@@ -186,10 +184,10 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
-              { value: `${memberCount > 0 ? memberCount + "+" : "—"}`, label: "Jemaah Aktif" },
-              { value: `${studyCount > 0 ? studyCount : "—"}`, label: "Program Rutin" },
-              { value: `${ukmCount > 0 ? ukmCount : "—"}`, label: "Unit Kegiatan" },
-              { value: "Sejak dulu", label: "Melayani Umat" },
+              { value: "500+", label: "Jemaah Aktif" },
+              { value: "2", label: "Program Rutin" },
+              { value: "2", label: "Unit Kegiatan" },
+              { value: "1997", label: "Melayani Umat" },
             ].map((stat) => (
               <div key={stat.label} className="text-white">
                 <p className="text-2xl md:text-3xl font-extrabold text-primary-200">{stat.value}</p>
@@ -224,70 +222,6 @@ export default async function Home() {
           "Menengok sekilas keindahan arsitektur dan suasana nyaman di Masjid Jami' Ar-Rahman. Tempat ibadah yang menenangkan jiwa."
         }
       />
-
-      {/* Hubungi Kami */}
-      <section className="py-20 bg-white relative overflow-hidden border-t border-gray-100">
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-center gap-12 lg:gap-20">
-            {/* Contact Info */}
-            <div className="w-full md:w-1/2 max-w-[480px] space-y-8">
-              <div>
-                <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 tracking-tight mb-3">
-                  Hubungi Kami
-                </h2>
-                <div className="w-16 h-1 bg-gradient-to-r from-primary-500 to-primary-300 rounded-full mb-5" />
-                <p className="text-gray-500 leading-relaxed">
-                  Layanan informasi, aspirasi jamaah, dan kemitraan program Masjid Jami' Ar-Rahman.
-                </p>
-              </div>
-              <ul className="space-y-5">
-                {[
-                  {
-                    icon: MapPin,
-                    label: "Alamat",
-                    value: settings?.alamat || "Perumahan Korpri Cempaka, Plumbon, Cirebon, Jawa Barat.",
-                  },
-                  {
-                    icon: Phone,
-                    label: "Telepon / WhatsApp",
-                    value: settings?.telepon || "+62 812-3456-7890 (Pengurus DKM)",
-                  },
-                  {
-                    icon: Mail,
-                    label: "Email",
-                    value: settings?.email || "info@masjidarrahman.com",
-                  },
-                ].map((item) => (
-                  <li key={item.label} className="flex items-start gap-4">
-                    <div className="w-11 h-11 bg-primary-50 rounded-2xl flex items-center justify-center text-primary-600 flex-shrink-0 shadow-sm">
-                      <item.icon className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <strong className="block text-gray-900 font-semibold text-sm mb-0.5">{item.label}</strong>
-                      <span className="text-gray-600 text-sm">{item.value}</span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Map */}
-            <div className="w-full md:w-1/2 max-w-[520px]">
-              <div className="aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border border-gray-100 hover:shadow-3xl transition-shadow duration-300">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d15847.606208696881!2d108.4693498!3d-6.7498364!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6f1fc3f29ff4a3%3A0x80c84beab885f352!2sMASJID%20AR-RAHMAN!5e0!3m2!1sid!2sid!4v1710000000000!5m2!1sid!2sid"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
