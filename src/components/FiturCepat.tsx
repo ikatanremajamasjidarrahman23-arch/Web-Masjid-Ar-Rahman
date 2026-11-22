@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { BookOpen, Calendar, Heart, ShieldAlert, Video, Users, ArrowUpRight, BookMarked, Moon, Star, Mic2, Globe } from "lucide-react";
+import { BookOpen, Calendar, Heart, ShieldAlert, Video, Users, ArrowUpRight, BookMarked, Moon, Star, Mic2, Globe, Radio, Tv2 } from "lucide-react";
 
 const features = [
   {
@@ -60,12 +60,22 @@ const features = [
 
 const islamicResources = [
   {
+    title: "Live Streaming Makkah & Madinah",
+    desc: "Saksikan siaran langsung 24 jam dari Masjidil Haram Makkah dan Masjid Nabawi Madinah.",
+    href: "/live",
+    icon: Tv2,
+    color: "from-red-600 to-rose-700",
+    badge: "🔴 LIVE",
+    external: false,
+  },
+  {
     title: "Al-Qur'an Kemenag RI",
     desc: "Baca Al-Qur'an digital resmi Kementerian Agama RI dengan terjemahan dan tafsir.",
     href: "https://quran.kemenag.go.id",
     icon: BookMarked,
     color: "from-green-600 to-emerald-700",
     badge: "Resmi Kemenag",
+    external: true,
   },
   {
     title: "Kitab Maulid Berzanji",
@@ -74,6 +84,7 @@ const islamicResources = [
     icon: Star,
     color: "from-yellow-500 to-amber-600",
     badge: "Sirah Nabawi",
+    external: true,
   },
   {
     title: "Jadwal Sholat Online",
@@ -82,6 +93,7 @@ const islamicResources = [
     icon: Moon,
     color: "from-indigo-500 to-purple-600",
     badge: "Kemenag",
+    external: true,
   },
   {
     title: "Khutbah & Ceramah",
@@ -90,6 +102,7 @@ const islamicResources = [
     icon: Mic2,
     color: "from-teal-500 to-cyan-600",
     badge: "Ceramah",
+    external: true,
   },
   {
     title: "Portal Islam Indonesia",
@@ -98,6 +111,7 @@ const islamicResources = [
     icon: Globe,
     color: "from-primary-600 to-teal-700",
     badge: "MUI",
+    external: true,
   },
 ];
 
@@ -173,14 +187,9 @@ export default function FiturCepat() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {islamicResources.map((res) => {
               const Icon = res.icon;
-              return (
-                <a
-                  key={res.title}
-                  href={res.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group bg-white rounded-2xl p-6 border border-gray-100 hover:border-amber-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 flex gap-4 items-start"
-                >
+              const cardClass = "group bg-white rounded-2xl p-6 border border-gray-100 hover:border-amber-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5 flex gap-4 items-start";
+              const inner = (
+                <>
                   <div className={`flex-shrink-0 w-11 h-11 rounded-xl bg-gradient-to-tr ${res.color} flex items-center justify-center text-white shadow group-hover:scale-110 transition-transform duration-300`}>
                     <Icon className="w-5 h-5" />
                   </div>
@@ -197,11 +206,20 @@ export default function FiturCepat() {
                       {res.desc}
                     </p>
                     <div className="mt-2 flex items-center gap-1 text-[11px] font-semibold text-amber-600">
-                      <span>Kunjungi</span>
+                      <span>{res.external ? "Kunjungi" : "Buka"}</span>
                       <ArrowUpRight className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                     </div>
                   </div>
+                </>
+              );
+              return res.external ? (
+                <a key={res.title} href={res.href} target="_blank" rel="noopener noreferrer" className={cardClass}>
+                  {inner}
                 </a>
+              ) : (
+                <Link key={res.title} href={res.href} className={cardClass}>
+                  {inner}
+                </Link>
               );
             })}
           </div>
