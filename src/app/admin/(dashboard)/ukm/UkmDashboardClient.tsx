@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { compressImage } from "@/utils/imageCompression";
-import { Plus, Trash2, Edit, X, ImagePlus, Check, Search, Filter } from "lucide-react";
+import { Plus, Trash2, Edit, X, ImagePlus, Check, Search, Filter, ExternalLink } from "lucide-react";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import ImageCropper from "@/components/admin/ImageCropper";
@@ -94,11 +94,9 @@ export default function UkmDashboardClient() {
         setFile(selectedFile);
         setFormData({ ...formData, imageUrl: URL.createObjectURL(selectedFile) });
       } else {
-        // Gallery images get cropped
-        const imageUrl = URL.createObjectURL(selectedFile);
-        setImageToCrop(imageUrl);
-        setCropTarget(target);
-        setCropperOpen(true);
+        // Dukung upload banyak foto galeri sekaligus
+        const newFiles = Array.from(e.target.files);
+        setGalleryFiles(prev => [...prev, ...newFiles]);
         e.target.value = '';
       }
     }
@@ -146,11 +144,6 @@ export default function UkmDashboardClient() {
             finalGalleryImages.push(uploadRes.data.data.secure_url);
           }
         }
-      }
-      
-      // Limit to 4 images
-      if (finalGalleryImages.length > 4) {
-        finalGalleryImages = finalGalleryImages.slice(finalGalleryImages.length - 4);
       }
 
       const payload = { ...formData, imageUrl: finalImageUrl, galleryImages: finalGalleryImages };
@@ -384,8 +377,9 @@ export default function UkmDashboardClient() {
                   <input
                     type="file"
                     accept="image/*"
+                    multiple
                     onChange={(e) => handleFileChange(e, 'gallery')}
-                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 transition-colors"
+                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 transition-colors cursor-pointer"
                   />
                   {(formData.galleryImages.length > 0 || galleryFiles.length > 0) && (
                     <div className="flex flex-wrap gap-3">
@@ -507,6 +501,15 @@ export default function UkmDashboardClient() {
                     </td>
                     <td className="py-4 px-6 text-right">
                       <div className="flex justify-end gap-2">
+                        <a
+                          href={`/ukm/${item.id}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                          title="Lihat Halaman Publik (Dedicated Page)"
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
                         <button
                           onClick={() => handleEdit(item)}
                           className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"

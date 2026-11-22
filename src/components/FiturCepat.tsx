@@ -33,7 +33,7 @@ const features = [
   {
     title: "Hadroh Ahbabul Wafa",
     desc: "Unit seni hadroh & marhabanan maulid. Profil ketua, sejarah perjuangan, dan koleksi galeri.",
-    href: "/ukm#hadroh",
+    href: "/ukm/cmsiloin60000jp04kal9rkrb",
     icon: Music,
     color: "from-amber-500 to-orange-600",
     badge: "Seni Hadroh",
@@ -41,7 +41,7 @@ const features = [
   {
     title: "Majelis Ta'lim Jumhuriyah",
     desc: "Wadah kajian, silaturahmi, dan pembinaan kerohanian jamaah muslimah/ibu-ibu Ar-Rahman.",
-    href: "/ukm#jumhuriyah",
+    href: "/ukm/cmt2ed0j80001kz04hyyhehkw",
     icon: BookOpen,
     color: "from-rose-500 to-pink-600",
     badge: "Muslimah",

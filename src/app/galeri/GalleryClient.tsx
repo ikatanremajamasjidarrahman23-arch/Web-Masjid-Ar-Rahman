@@ -3,18 +3,19 @@
 import { useState } from "react";
 import { 
   Camera, Filter, Download, X, ChevronLeft, ChevronRight, 
-  Sparkles, Calendar, Eye, ZoomIn, CheckCircle2 
+  Sparkles, Calendar, Eye, ZoomIn, CheckCircle2, ExternalLink, FolderOpen 
 } from "lucide-react";
 
 export interface GalleryItem {
   id: string;
   title: string;
   imageUrl: string;
-  category: string; // e.g. "PHBI", "Kegiatan Masjid", "Kajian & Edukasi"
+  category: string;
   badge: "PHBI" | "Kegiatan Masjid" | string;
   date?: string | null;
   description?: string | null;
   imagePosition?: string;
+  linkGdrive?: string | null;
 }
 
 export default function GalleryClient({ initialItems }: { initialItems: GalleryItem[] }) {
@@ -55,7 +56,6 @@ export default function GalleryClient({ initialItems }: { initialItems: GalleryI
     setDownloadingId(item.id);
 
     try {
-      // Jika dari Cloudinary, tambahkan fl_attachment & q_auto untuk kompresi maksimal tanpa merusak kualitas
       let downloadUrl = item.imageUrl;
       if (downloadUrl.includes("res.cloudinary.com") && downloadUrl.includes("/upload/")) {
         downloadUrl = downloadUrl.replace(
@@ -64,7 +64,6 @@ export default function GalleryClient({ initialItems }: { initialItems: GalleryI
         );
       }
 
-      // Fetch blob untuk memastikan browser men-download langsung bukan sekadar membuka tab
       const response = await fetch(downloadUrl);
       const blob = await response.blob();
       const blobUrl = window.URL.createObjectURL(blob);
@@ -81,7 +80,6 @@ export default function GalleryClient({ initialItems }: { initialItems: GalleryI
       document.body.removeChild(link);
       window.URL.revokeObjectURL(blobUrl);
     } catch {
-      // Fallback jika CORS memblokir blob
       window.open(item.imageUrl, "_blank");
     } finally {
       setTimeout(() => setDownloadingId(null), 800);
@@ -184,11 +182,29 @@ export default function GalleryClient({ initialItems }: { initialItems: GalleryI
                     </span>
                   </div>
 
+                  {/* Google Drive Link Badge (Jika disematkan link) */}
+                  {item.linkGdrive && (
+                    <div className="absolute top-3 right-3 z-10">
+                      <a
+                        href={item.linkGdrive}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        title="Buka seluruh album di Google Drive"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-600/95 hover:bg-blue-500 text-white text-[11px] font-bold shadow-lg backdrop-blur-md border border-white/20 transition-all hover:scale-105 active:scale-95"
+                      >
+                        <FolderOpen className="w-3.5 h-3.5" />
+                        <span>Google Drive</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
+                  )}
+
                   {/* Quick Action Overlay (Download & Zoom) */}
                   <div className="absolute bottom-3 right-3 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
                     <button
                       onClick={(e) => handleDownload(item, e)}
-                      title="Unduh Foto (Ukuran Pas & Kualitas Tinggi)"
+                      title="Unduh Foto (Kualitas Asli & Ringan)"
                       className="p-2 rounded-xl bg-white/90 hover:bg-white text-gray-800 shadow-md transition-transform hover:scale-110 active:scale-95"
                     >
                       {downloadingId === item.id ? (
@@ -221,9 +237,23 @@ export default function GalleryClient({ initialItems }: { initialItems: GalleryI
                       <Calendar className="w-3 h-3 text-primary-500" />
                       {item.date ? new Date(item.date).toLocaleDateString("id-ID", { month: "short", year: "numeric" }) : "Masjid Ar-Rahman"}
                     </span>
-                    <span className="text-primary-600 font-semibold group-hover:underline">
-                      Perbesar
-                    </span>
+
+                    {item.linkGdrive ? (
+                      <a
+                        href={item.linkGdrive}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-blue-600 font-bold hover:underline flex items-center gap-0.5"
+                      >
+                        <span>Lihat Selengkapnya</span>
+                        <ExternalLink className="w-2.5 h-2.5" />
+                      </a>
+                    ) : (
+                      <span className="text-primary-600 font-semibold group-hover:underline">
+                        Perbesar
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -306,11 +336,24 @@ export default function GalleryClient({ initialItems }: { initialItems: GalleryI
                 )}
               </div>
 
-              {/* Action: Unduh Foto */}
-              <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto">
+              {/* Actions: Google Drive & Unduh Foto */}
+              <div className="flex flex-wrap items-center gap-2.5 shrink-0 w-full sm:w-auto">
+                {activePhoto.linkGdrive && (
+                  <a
+                    href={activePhoto.linkGdrive}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
+                  >
+                    <FolderOpen className="w-4 h-4" />
+                    <span>Lihat Foto Selengkapnya (Google Drive)</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
+
                 <button
                   onClick={() => handleDownload(activePhoto)}
-                  className="w-full sm:w-auto flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
+                  className="flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold text-xs shadow-md transition-all active:scale-95 cursor-pointer"
                 >
                   {downloadingId === activePhoto.id ? (
                     <>
@@ -320,7 +363,7 @@ export default function GalleryClient({ initialItems }: { initialItems: GalleryI
                   ) : (
                     <>
                       <Download className="w-4 h-4" />
-                      <span>Unduh Foto (Kualitas Asli)</span>
+                      <span>Unduh Foto (Kualitas HD)</span>
                     </>
                   )}
                 </button>

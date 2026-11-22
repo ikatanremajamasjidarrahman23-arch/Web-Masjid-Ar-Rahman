@@ -125,6 +125,7 @@ model Gallery {
   category      String
   imageUrl      String
   imagePosition String   @default("center")
+  linkGdrive    String?  // Tautan opsional ke Google Drive / album lengkap
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }

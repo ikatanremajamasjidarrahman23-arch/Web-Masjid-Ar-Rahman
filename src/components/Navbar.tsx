@@ -36,8 +36,8 @@ const navLinks: NavItem[] = [
     name: "Kelembagaan",
     isDropdown: true,
     sublinks: [
-      { name: "Hadroh Ahbabul Wafa", href: "/ukm#hadroh", desc: "Seni hadroh & marhabanan maulid", icon: Music },
-      { name: "Majelis Ta'lim Jumhuriyah", href: "/ukm#jumhuriyah", desc: "Kajian rutin kaum ibu muslimah", icon: BookOpen },
+      { name: "Hadroh Ahbabul Wafa", href: "/ukm/cmsiloin60000jp04kal9rkrb", desc: "Seni hadroh & marhabanan maulid", icon: Music },
+      { name: "Majelis Ta'lim Jumhuriyah", href: "/ukm/cmt2ed0j80001kz04hyyhehkw", desc: "Kajian rutin kaum ibu muslimah", icon: BookOpen },
       { name: "Remaja Masjid (IRMAS)", href: "/irmas", desc: "Wadah kepemudaan & kreativitas", icon: Users },
       { name: "Unit Kegiatan (UKM)", href: "/ukm", desc: "Seluruh badan otonom masjid", icon: Layers },
     ],

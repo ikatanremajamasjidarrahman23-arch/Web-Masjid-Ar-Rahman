@@ -40,13 +40,14 @@ export default async function GalleryPublicPage() {
       badge: isPhbi ? "PHBI" : "Kegiatan Masjid",
       date: g.createdAt.toISOString(),
       imagePosition: g.imagePosition || "center",
+      linkGdrive: g.linkGdrive || null,
     };
   });
 
   // 4. Normalisasi media PHBI menjadi item galeri
   const phbiItems: GalleryItem[] = [];
   rawPhbiEvents.forEach((event) => {
-    event.media.forEach((m) => {
+    event.media.forEach((m, idx) => {
       if (m.type === "IMAGE" || !m.type) {
         phbiItems.push({
           id: m.id,
@@ -56,6 +57,8 @@ export default async function GalleryPublicPage() {
           badge: "PHBI",
           date: event.date ? event.date.toISOString() : null,
           description: event.description,
+          // Sematkan link GDrive pada setiap foto acara ini (khususnya foto pertama)
+          linkGdrive: event.linkMore || null,
         });
       }
     });

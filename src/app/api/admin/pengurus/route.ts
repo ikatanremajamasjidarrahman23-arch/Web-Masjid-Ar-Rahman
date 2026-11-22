@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 
-const SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "rahasia_masjid_cempaka_2026");
+const SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "arrahman_secret_auth_key_v2_2026_locked");
 
 async function verifyAuth() {
   const cookieStore = await cookies();

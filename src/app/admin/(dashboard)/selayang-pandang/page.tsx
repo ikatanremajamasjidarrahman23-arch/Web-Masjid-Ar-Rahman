@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import jwt from "jsonwebtoken";
 import SelayangPandangDashboardClient from "./SelayangPandangDashboardClient";
 
-const JWT_SECRET = process.env.JWT_SECRET || "rahasia_masjid_cempaka_2026";
+import { JWT_SECRET } from "@/lib/auth";
 
 export const revalidate = 0;
 
