@@ -1,6 +1,6 @@
 "use client";
 
-import { Megaphone, X, Calendar as CalendarIcon, Clock } from "lucide-react";
+import { Megaphone, X, Calendar as CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { id as idLocale } from "date-fns/locale";
 import { useState } from "react";
@@ -22,50 +22,54 @@ export default function BulletinBoard({ bulletins }: { bulletins: Bulletin[] }) 
 
   return (
     <>
-      <div className="bg-white rounded-2xl shadow-sm border border-orange-100 overflow-hidden mb-12">
-        <div className="bg-orange-50 border-b border-orange-100 px-6 py-4 flex items-center gap-3">
-          <div className="w-10 h-10 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600">
-            <Megaphone className="w-5 h-5" />
+      <div className="rounded-3xl overflow-hidden border border-primary-100/50 shadow-sm bg-white">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-primary-800 to-primary-700 px-6 py-5 flex items-center gap-4">
+          <div className="w-11 h-11 bg-white/15 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/20">
+            <Megaphone className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-gray-900">Papan Buletin</h2>
-            <p className="text-sm text-gray-600">Informasi dan berita terkini dari DKM Masjid Ar-Rahman.</p>
+            <h2 className="text-lg font-bold text-white">Papan Buletin</h2>
+            <p className="text-xs text-primary-200">Informasi dan pengumuman terkini dari DKM</p>
           </div>
+          <span className="ml-auto px-3 py-1 bg-white/20 text-white text-xs font-bold rounded-full border border-white/20">
+            {bulletins.length} Aktif
+          </span>
         </div>
 
+        {/* Grid */}
         <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {bulletins.map((bulletin) => (
-              <div 
-                key={bulletin.id} 
-                className="group relative bg-gray-50 rounded-xl overflow-hidden border border-gray-100 hover:border-orange-200 transition-all cursor-pointer hover:shadow-md"
+              <div
+                key={bulletin.id}
+                className="group relative bg-white rounded-2xl overflow-hidden border border-gray-100 hover:border-primary-200 transition-all duration-300 cursor-pointer hover:shadow-lg hover:-translate-y-0.5"
                 onClick={() => setActiveBulletin(bulletin)}
               >
                 {bulletin.imageUrl && (
-                  <div className="h-48 w-full overflow-hidden">
+                  <div className="h-44 w-full overflow-hidden bg-gray-100">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img 
-                      src={bulletin.imageUrl} 
-                      alt={bulletin.title} 
+                    <img
+                      src={bulletin.imageUrl}
+                      alt={bulletin.title}
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      style={{ objectPosition: bulletin.imagePosition || 'center' }}
+                      style={{ objectPosition: bulletin.imagePosition || "center" }}
                     />
                   </div>
                 )}
                 <div className="p-5">
-                  <div className="flex items-center gap-2 text-xs font-medium text-orange-600 mb-3">
-                    <CalendarIcon size={14} />
+                  <div className="flex items-center gap-2 text-xs font-medium text-primary-600 mb-2.5">
+                    <CalendarIcon size={12} />
                     {format(new Date(bulletin.createdAt), "dd MMM yyyy", { locale: idLocale })}
                   </div>
-                  <h3 className="font-bold text-gray-900 text-lg mb-2 line-clamp-2 group-hover:text-orange-600 transition-colors">
+                  <h3 className="font-bold text-gray-900 text-base mb-2 line-clamp-2 group-hover:text-primary-700 transition-colors leading-snug">
                     {bulletin.title}
                   </h3>
-                  <p className="text-sm text-gray-600 line-clamp-2 mb-4">
+                  <p className="text-gray-500 text-sm line-clamp-2 leading-relaxed">
                     {bulletin.description}
                   </p>
-                  
-                  <div className="inline-flex items-center text-sm font-semibold text-primary-600">
-                    Baca selengkapnya
+                  <div className="mt-3 text-xs font-semibold text-primary-600 opacity-0 group-hover:opacity-100 transition-opacity">
+                    Baca selengkapnya →
                   </div>
                 </div>
               </div>
@@ -74,54 +78,50 @@ export default function BulletinBoard({ bulletins }: { bulletins: Bulletin[] }) 
         </div>
       </div>
 
-      {/* Modal Detail Buletin */}
+      {/* Detail Modal */}
       {activeBulletin && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in" onClick={() => setActiveBulletin(null)}>
-          <div 
-            className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl relative animate-scale-up"
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in"
+          onClick={() => setActiveBulletin(null)}
+        >
+          <div
+            className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <button 
-              onClick={() => setActiveBulletin(null)}
-              className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/10 hover:bg-black/20 text-white rounded-full flex items-center justify-center backdrop-blur-md transition-colors"
-            >
-              <X size={20} />
-            </button>
-
-            <div className="overflow-y-auto overflow-x-hidden flex-1 p-0">
-              {activeBulletin.imageUrl && (
-                <div className="w-full relative bg-gray-100 border-b border-gray-200">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={activeBulletin.imageUrl} alt={activeBulletin.title} className="w-full max-h-[60vh] object-contain mx-auto bg-gray-900/5" />
-                </div>
-              )}
-              
-              <div className="p-6 sm:p-8">
-                <div className="flex items-center gap-4 mb-4 text-sm font-medium text-gray-500">
-                  <div className="flex items-center gap-1">
-                    <Clock size={16} className="text-orange-500" />
-                    Dipublikasi: {format(new Date(activeBulletin.createdAt), "dd MMMM yyyy", { locale: idLocale })}
-                  </div>
-                </div>
-                
-                <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6">
-                  {activeBulletin.title}
-                </h2>
-                
-                <div className="prose prose-orange max-w-none">
-                  {activeBulletin.description.split('\n').map((paragraph, i) => (
-                    <p key={i} className="text-gray-700 leading-relaxed mb-4">
-                      {paragraph}
-                    </p>
-                  ))}
-                </div>
-              </div>
+            <div className="sticky top-0 bg-white/90 backdrop-blur-sm border-b border-gray-100 px-6 py-4 flex justify-between items-center rounded-t-3xl">
+              <span className="flex items-center gap-2 text-sm font-semibold text-primary-700">
+                <Megaphone className="w-4 h-4" /> Buletin
+              </span>
+              <button
+                onClick={() => setActiveBulletin(null)}
+                className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+              >
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
             </div>
-            
-            <div className="p-4 border-t border-gray-100 bg-gray-50 text-center">
-              <p className="text-xs text-gray-500">
-                Informasi ini berlaku hingga {format(new Date(activeBulletin.expiryDate), "dd MMMM yyyy, HH:mm", { locale: idLocale })}
-              </p>
+
+            {activeBulletin.imageUrl && (
+              <div className="w-full bg-gray-50">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={activeBulletin.imageUrl}
+                  alt={activeBulletin.title}
+                  className="w-full max-h-[400px] object-contain"
+                  style={{ objectPosition: activeBulletin.imagePosition || "center" }}
+                />
+              </div>
+            )}
+
+            <div className="p-6 space-y-4">
+              <div className="flex items-center gap-2 text-xs text-gray-400">
+                <CalendarIcon size={12} />
+                {format(new Date(activeBulletin.createdAt), "EEEE, dd MMMM yyyy", { locale: idLocale })}
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 leading-tight">{activeBulletin.title}</h2>
+              <p className="text-gray-600 leading-relaxed whitespace-pre-wrap">{activeBulletin.description}</p>
+              <div className="pt-4 border-t border-gray-100 text-xs text-gray-400">
+                Berlaku hingga: {format(new Date(activeBulletin.expiryDate), "dd MMMM yyyy", { locale: idLocale })}
+              </div>
             </div>
           </div>
         </div>

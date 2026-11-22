@@ -34,6 +34,7 @@ export default function AdminSidebar({ logoutAction }: { logoutAction: (payload:
     { name: "Kegiatan IRMAS", href: "/admin/irmas", icon: Users },
     { name: "Agenda Kegiatan", href: "/admin/kajian", icon: BookOpen },
     { name: "Galeri Foto", href: "/admin/gallery", icon: ImageIcon },
+    { name: "Hero Beranda", href: "/admin/hero", icon: ImagePlus },
     { name: "Popup Banner", href: "/admin/popup", icon: ImagePlus },
     { name: "Kas & Donasi", href: "/admin/donasi", icon: Wallet },
   ];

@@ -19,10 +19,8 @@ export default function PrayerTimes() {
   const [hijriDate, setHijriDate] = useState<string>("");
   const [masehiDate, setMasehiDate] = useState<string>("");
 
-  // Coordinate for Plumbon, Cirebon
   const latitude = -6.6975;
   const longitude = 108.4735;
-  
   const timeOffsetRef = useRef<number>(0);
 
   useEffect(() => {
@@ -32,61 +30,37 @@ export default function PrayerTimes() {
         const res = await axios.get("/api/time");
         const t2 = Date.now();
         const serverTime = res.data.time || Date.now();
-        const networkDelay = (t2 - t1) / 2;
-        timeOffsetRef.current = (serverTime + networkDelay) - Date.now();
-      } catch (err) {
-        console.error("Gagal sinkronisasi waktu:", err);
-      }
+        timeOffsetRef.current = (serverTime + (t2 - t1) / 2) - Date.now();
+      } catch {}
     };
     syncTime();
   }, []);
 
-  const getRealTime = () => {
-    return new Date(Date.now() + timeOffsetRef.current);
-  };
+  const getRealTime = () => new Date(Date.now() + timeOffsetRef.current);
 
   useEffect(() => {
     const fetchPrayerTimes = async () => {
       try {
         const date = getRealTime();
-        // Menggunakan method=20 (Kemenag RI) untuk standar Indonesia
         const response = await axios.get(
           `https://api.aladhan.com/v1/timings/${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}?latitude=${latitude}&longitude=${longitude}&method=20`
         );
         const data = response.data.data;
-        const timingsData = data.timings;
+        const t = data.timings;
         const hijri = data.date.hijri;
-
-        setTimings({
-          Fajr: timingsData.Fajr,
-          Dhuhr: timingsData.Dhuhr,
-          Asr: timingsData.Asr,
-          Maghrib: timingsData.Maghrib,
-          Isha: timingsData.Isha,
-        });
-
-        // Format Hijri
+        setTimings({ Fajr: t.Fajr, Dhuhr: t.Dhuhr, Asr: t.Asr, Maghrib: t.Maghrib, Isha: t.Isha });
         setHijriDate(`${hijri.day} ${hijri.month.en} ${hijri.year} H`);
-        
-        // Format Masehi
-        const masehiOptions: Intl.DateTimeFormatOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-        setMasehiDate(date.toLocaleDateString('id-ID', masehiOptions));
-      } catch (error) {
-        console.error("Gagal mengambil jadwal sholat", error);
-      }
+        setMasehiDate(date.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" }));
+      } catch {}
     };
     fetchPrayerTimes();
   }, []);
 
   useEffect(() => {
     if (!timings) return;
-
-    const calculateNextPrayer = () => {
+    const calc = () => {
       const now = getRealTime();
-      const currentHours = now.getHours();
-      const currentMinutes = now.getMinutes();
-      const currentTotalMinutes = currentHours * 60 + currentMinutes;
-
+      const cur = now.getHours() * 60 + now.getMinutes();
       const prayers = [
         { name: "Subuh", time: timings.Fajr },
         { name: "Dzuhur", time: timings.Dhuhr },
@@ -94,111 +68,107 @@ export default function PrayerTimes() {
         { name: "Maghrib", time: timings.Maghrib },
         { name: "Isya", time: timings.Isha },
       ];
-
-      let foundNext = false;
-
-      for (const prayer of prayers) {
-        const [pHours, pMinutes] = prayer.time.split(":").map(Number);
-        const pTotalMinutes = pHours * 60 + pMinutes;
-
-        if (pTotalMinutes > currentTotalMinutes) {
-          const prayerTimeDate = getRealTime();
-          prayerTimeDate.setHours(pHours, pMinutes, 0, 0);
-          setNextPrayer({ name: prayer.name, time: prayer.time, diffMs: prayerTimeDate.getTime() - now.getTime() });
-          foundNext = true;
+      let found = false;
+      for (const p of prayers) {
+        const [ph, pm] = p.time.split(":").map(Number);
+        if (ph * 60 + pm > cur) {
+          const target = getRealTime();
+          target.setHours(ph, pm, 0, 0);
+          setNextPrayer({ name: p.name, time: p.time, diffMs: target.getTime() - now.getTime() });
+          found = true;
           break;
         }
       }
-
-      // Jika waktu sekarang melewati Isya, next prayer adalah Subuh besok
-      if (!foundNext) {
-        const [pHours, pMinutes] = timings.Fajr.split(":").map(Number);
-        const tomorrow = getRealTime();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(pHours, pMinutes, 0, 0);
-        setNextPrayer({ name: "Subuh", time: timings.Fajr, diffMs: tomorrow.getTime() - now.getTime() });
+      if (!found) {
+        const [ph, pm] = timings.Fajr.split(":").map(Number);
+        const tom = getRealTime();
+        tom.setDate(tom.getDate() + 1);
+        tom.setHours(ph, pm, 0, 0);
+        setNextPrayer({ name: "Subuh", time: timings.Fajr, diffMs: tom.getTime() - now.getTime() });
       }
     };
-
-    calculateNextPrayer();
-    const interval = setInterval(calculateNextPrayer, 60000); // Check every minute to update next prayer if just passed
-
-    return () => clearInterval(interval);
+    calc();
+    const iv = setInterval(calc, 60000);
+    return () => clearInterval(iv);
   }, [timings]);
 
   useEffect(() => {
     if (!nextPrayer) return;
-
-    const targetTime = getRealTime().getTime() + nextPrayer.diffMs;
-
-    const updateCountdown = () => {
-      const now = getRealTime().getTime();
-      const distance = targetTime - now;
-
-      if (distance < 0) {
-        setCountdown("Waktu sholat telah tiba!");
-        return;
-      }
-
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      setCountdown(
-        `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
-      );
+    const target = getRealTime().getTime() + nextPrayer.diffMs;
+    const update = () => {
+      const d = target - getRealTime().getTime();
+      if (d < 0) { setCountdown("Waktu sholat tiba! 🕌"); return; }
+      const h = Math.floor((d % 86400000) / 3600000);
+      const m = Math.floor((d % 3600000) / 60000);
+      const s = Math.floor((d % 60000) / 1000);
+      setCountdown(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`);
     };
-
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
-
-    return () => clearInterval(interval);
+    update();
+    const iv = setInterval(update, 1000);
+    return () => clearInterval(iv);
   }, [nextPrayer]);
 
+  const prayers = [
+    { name: "Subuh", time: timings?.Fajr },
+    { name: "Dzuhur", time: timings?.Dhuhr },
+    { name: "Ashar", time: timings?.Asr },
+    { name: "Maghrib", time: timings?.Maghrib },
+    { name: "Isya", time: timings?.Isha },
+  ];
+
   return (
-    <div className="bg-white shadow-xl rounded-2xl overflow-hidden animate-fade-in border border-gray-100">
-      <div className="bg-primary-600 text-white p-6 text-center">
-        <h2 className="text-xl font-semibold mb-2">Jadwal Sholat Hari Ini</h2>
-        <p className="text-primary-100 text-sm mb-3">Plumbon, Cirebon & Sekitarnya</p>
-        
+    <div className="rounded-3xl overflow-hidden shadow-2xl border border-white/20 backdrop-blur-xl bg-primary-950/80 text-white">
+      {/* Header */}
+      <div className="relative px-6 pt-6 pb-4 text-center overflow-hidden">
+        {/* Decorative arch */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-16 border-t-2 border-l-2 border-r-2 border-white/10 rounded-t-full" />
+        <h2 className="text-base font-bold text-white/90 mt-3">Jadwal Sholat</h2>
+        <p className="text-primary-300 text-xs mt-0.5">Plumbon, Cirebon</p>
+
         {masehiDate && hijriDate && (
-          <div className="inline-flex flex-col items-center bg-primary-700/50 rounded-lg px-4 py-2 border border-primary-500/30">
-            <span className="text-sm font-medium">{masehiDate}</span>
-            <span className="text-xs text-primary-200">{hijriDate}</span>
+          <div className="mt-3 inline-flex flex-col items-center bg-white/5 rounded-2xl px-5 py-2.5 border border-white/10">
+            <span className="text-xs font-medium text-white/80">{masehiDate}</span>
+            <span className="text-xs text-primary-300 mt-0.5">{hijriDate}</span>
           </div>
         )}
-        
-        <div className="mt-5 flex flex-col items-center justify-center bg-primary-700 rounded-xl p-4 shadow-inner">
-          <span className="text-sm text-primary-200 mb-1">Menuju {nextPrayer?.name || "Sholat"}</span>
-          <div className="flex items-center gap-2">
-            <Clock className="w-6 h-6 text-primary-300" />
-            <span className="text-3xl font-mono font-bold tracking-widest">{countdown}</span>
+
+        {/* Countdown */}
+        <div className="mt-4 bg-gradient-to-r from-primary-800/80 to-primary-700/80 rounded-2xl p-4 border border-primary-600/30">
+          <p className="text-xs text-primary-300 mb-1">Menuju {nextPrayer?.name || "Sholat"}</p>
+          <div className="flex items-center justify-center gap-2">
+            <Clock className="w-5 h-5 text-amber-300" />
+            <span className="text-3xl font-mono font-bold tracking-widest text-amber-300">
+              {countdown}
+            </span>
           </div>
         </div>
       </div>
-      
-      <div className="p-2 grid grid-cols-5 divide-x divide-gray-100">
-        {[
-          { name: "Subuh", time: timings?.Fajr },
-          { name: "Dzuhur", time: timings?.Dhuhr },
-          { name: "Ashar", time: timings?.Asr },
-          { name: "Maghrib", time: timings?.Maghrib },
-          { name: "Isya", time: timings?.Isha },
-        ].map((prayer, idx) => (
-          <div 
-            key={idx} 
-            className={`p-4 flex flex-col items-center justify-center transition-colors
-              ${nextPrayer?.name === prayer.name ? "bg-primary-50 ring-2 ring-primary-500 rounded-lg" : "hover:bg-gray-50"}
-            `}
-          >
-            <span className={`text-sm font-medium ${nextPrayer?.name === prayer.name ? "text-primary-700" : "text-gray-500"}`}>
-              {prayer.name}
-            </span>
-            <span className={`text-lg font-bold mt-1 ${nextPrayer?.name === prayer.name ? "text-primary-900" : "text-gray-900"}`}>
-              {prayer.time || "--:--"}
-            </span>
-          </div>
-        ))}
+
+      {/* Prayer Times Grid */}
+      <div className="grid grid-cols-5 border-t border-white/10">
+        {prayers.map((prayer, idx) => {
+          const isNext = nextPrayer?.name === prayer.name;
+          return (
+            <div
+              key={idx}
+              className={`flex flex-col items-center py-4 px-1 transition-colors ${
+                isNext
+                  ? "bg-amber-400/15 border-t-2 border-amber-400"
+                  : "hover:bg-white/5 border-t-2 border-transparent"
+              } ${idx > 0 ? "border-l border-white/10" : ""}`}
+            >
+              <span className={`text-[10px] font-medium mb-1.5 ${isNext ? "text-amber-300" : "text-primary-300"}`}>
+                {prayer.name}
+              </span>
+              <span className={`text-sm font-bold ${isNext ? "text-amber-200" : "text-white"}`}>
+                {prayer.time || "--:--"}
+              </span>
+              {isNext && (
+                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
