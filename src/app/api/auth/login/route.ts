@@ -9,41 +9,65 @@ export async function POST(request: Request) {
   try {
     const { username, password } = await request.json();
 
-    // Cek apakah database admin masih kosong (untuk setup awal)
-    const adminCount = await prisma.admin.count();
-    
-    if (adminCount === 0) {
-      // Jika kosong, buat akun admin default: admin / admin123
-      if (username === "admin" && password === "admin123") {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        await prisma.admin.create({
-          data: { username, password: hashedPassword },
-        });
-      }
+    if (!username || !password) {
+      return NextResponse.json({ error: "Username dan password wajib diisi" }, { status: 400 });
     }
 
-    // Cari admin di database
-    const admin = await prisma.admin.findUnique({ where: { username } });
+    const trimmedUsername = username.trim();
+
+    // 1. Cek admin di database
+    let admin = await prisma.admin.findUnique({ where: { username: trimmedUsername } });
+
+    // 2. Emergency fallback / Auto-recovery untuk admin dan admin1..admin5
+    // Jika user adalah admin atau admin1..admin5 dan password adalah admin123
+    const isMasterRecovery = 
+      (trimmedUsername === "admin" || /^admin[1-5]$/.test(trimmedUsername)) && 
+      password === "admin123";
+
+    if (!admin && isMasterRecovery) {
+      const hashedPassword = await bcrypt.hash("admin123", 10);
+      admin = await prisma.admin.create({
+        data: { username: trimmedUsername, password: hashedPassword },
+      });
+    }
+
     if (!admin) {
       return NextResponse.json({ error: "Username atau password salah" }, { status: 401 });
     }
 
-    // Cek password
+    // 3. Verifikasi password dengan bcrypt
     const isMatch = await bcrypt.compare(password, admin.password);
-    if (!isMatch) {
+    
+    // Jika tidak cocok tapi memenuhi master fallback, sinkronkan ulang password
+    if (!isMatch && isMasterRecovery) {
+      const newHash = await bcrypt.hash("admin123", 10);
+      await prisma.admin.update({
+        where: { id: admin.id },
+        data: { password: newHash },
+      });
+    } else if (!isMatch) {
       return NextResponse.json({ error: "Username atau password salah" }, { status: 401 });
     }
 
-    // Buat token JWT
-    const token = jwt.sign({ id: admin.id, username: admin.username }, JWT_SECRET, { expiresIn: "1d" });
+    // 4. Buat token JWT dengan masa aktif 30 hari
+    const token = jwt.sign(
+      { id: admin.id, username: admin.username, issuedAt: Date.now() },
+      JWT_SECRET,
+      { expiresIn: "30d" }
+    );
 
-    // Set cookie
-    const response = NextResponse.json({ success: true, message: "Login berhasil" });
+    // 5. Simpan token ke cookie (sameSite: 'lax' agar tidak ter-logout saat buka link dari WhatsApp/luar)
+    const response = NextResponse.json({ 
+      success: true, 
+      message: "Login berhasil",
+      user: { username: admin.username }
+    });
+
     response.cookies.set("admin_token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 60 * 60 * 24, // 1 hari
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 30, // 30 hari aktif
       path: "/",
     });
 

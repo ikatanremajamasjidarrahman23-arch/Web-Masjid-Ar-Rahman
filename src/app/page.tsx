@@ -56,15 +56,15 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen">
 
       {/* Running Text */}
-      <div className="bg-primary-900/95 text-primary-100 py-2 overflow-hidden flex items-center border-b border-primary-800/50 relative z-40 mt-20">
+      <div className="bg-primary-950 text-primary-100 py-2.5 overflow-hidden flex items-center border-b border-primary-800/60 relative z-30 mt-16 sm:mt-20 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 w-full flex items-center gap-3">
-          <span className="flex-shrink-0 flex items-center gap-1.5 text-xs font-bold text-amber-400 bg-amber-400/10 px-2.5 py-1 rounded-full border border-amber-400/30">
-            <Megaphone className="w-3 h-3" />
-            INFO
+          <span className="flex-shrink-0 flex items-center gap-1.5 text-xs font-bold text-amber-300 bg-amber-400/15 px-2.5 py-0.5 rounded-full border border-amber-400/30">
+            <Megaphone className="w-3.5 h-3.5" />
+            WARTA
           </span>
           <div className="relative flex overflow-x-hidden w-full whitespace-nowrap">
             <div
-              className="animate-marquee inline-block text-sm font-medium"
+              className="animate-marquee inline-block text-xs sm:text-sm font-medium tracking-wide"
               style={{ animationDuration: `${settings?.runningTextSpeed || 25}s` }}
             >
               {runningText}
@@ -74,12 +74,12 @@ export default async function Home() {
       </div>
 
       {/* ===== HERO SECTION ===== */}
-      <section className="relative min-h-[92vh] flex items-center overflow-hidden -mt-20">
+      <section className="relative min-h-[85vh] lg:min-h-[88vh] flex items-center overflow-hidden">
         {/* Background Slideshow */}
         <HeroSlideshow images={heroImages} />
 
         {/* Content */}
-        <div className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-24">
+        <div className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
 
             {/* Left: Text */}

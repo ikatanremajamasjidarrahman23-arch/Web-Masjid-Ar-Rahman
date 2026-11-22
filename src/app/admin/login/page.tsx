@@ -1,16 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Moon, LogIn } from "lucide-react";
+import { Moon, LogIn, Eye, EyeOff, ShieldCheck, ArrowLeft, KeyRound } from "lucide-react";
+import Link from "next/link";
 import axios from "axios";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,83 +18,139 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const res = await axios.post("/api/auth/login", { username, password });
+      const res = await axios.post("/api/auth/login", { 
+        username: username.trim(), 
+        password 
+      });
       if (res.data.success) {
-        router.push("/admin");
-        router.refresh();
+        // Gunakan full page redirect agar cookie terkirim sempurna ke middleware
+        window.location.href = "/admin";
       }
     } catch (err: any) {
-      setError(err.response?.data?.error || "Gagal login. Silakan coba lagi.");
-    } finally {
+      setError(err.response?.data?.error || "Gagal login. Periksa username dan password Anda.");
       setLoading(false);
     }
   };
 
+  const handleQuickFill = (user: string) => {
+    setUsername(user);
+    setPassword("admin123");
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md animate-fade-in">
-        <div className="flex justify-center text-primary-600">
-          <Moon className="w-16 h-16" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-primary-950 to-slate-900 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Background Decorative Rings */}
+      <div className="absolute -top-40 -right-40 w-96 h-96 bg-primary-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center relative z-10">
+        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-primary-600 to-emerald-400 text-white shadow-xl shadow-primary-900/40 mb-4 ring-4 ring-white/10">
+          <Moon className="w-8 h-8" />
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Admin Dashboard</h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <h2 className="text-3xl font-extrabold text-white tracking-tight">Admin Portal</h2>
+        <p className="mt-2 text-sm text-emerald-200/80">
           Masjid Jami' Ar-Rahman Cempaka
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md animate-fade-in" style={{ animationDelay: "0.1s" }}>
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 border border-gray-100">
-          <form className="space-y-6" onSubmit={handleLogin}>
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
+        <div className="bg-white/95 backdrop-blur-xl py-8 px-6 shadow-2xl rounded-3xl sm:px-10 border border-white/20">
+          <form className="space-y-5" onSubmit={handleLogin}>
             
             {error && (
-              <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center font-medium border border-red-100">
-                {error}
+              <div className="bg-red-50 text-red-700 p-3.5 rounded-xl text-sm font-medium border border-red-200 flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-red-500 flex-shrink-0" />
+                <span>{error}</span>
               </div>
             )}
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Username</label>
-              <div className="mt-1">
-                <input
-                  type="text"
-                  required
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
-                />
-              </div>
+              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+                Username
+              </label>
+              <input
+                type="text"
+                required
+                autoFocus
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="cth: admin"
+                className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-xs placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm text-gray-900 transition-all"
+              />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Password</label>
-              <div className="mt-1">
+              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
+                Password
+              </label>
+              <div className="relative">
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm transition-colors"
+                  placeholder="Masukkan password..."
+                  className="appearance-none block w-full px-4 py-3 pr-11 border border-gray-300 rounded-xl shadow-xs placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm text-gray-900 transition-all"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
               </div>
             </div>
 
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full flex justify-center items-center gap-2 py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
-              >
-                {loading ? "Memproses..." : (
-                  <>
-                    <LogIn className="w-4 h-4" /> Masuk
-                  </>
-                )}
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex justify-center items-center gap-2 py-3 px-4 rounded-xl shadow-lg shadow-primary-600/30 text-sm font-bold text-white bg-gradient-to-r from-primary-600 to-emerald-600 hover:from-primary-700 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+            >
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span>Memverifikasi...</span>
+                </>
+              ) : (
+                <>
+                  <LogIn className="w-4 h-4" /> Masuk ke Dashboard
+                </>
+              )}
+            </button>
           </form>
-          
-          <div className="mt-6 text-center text-xs text-gray-500">
-            Kembali ke <a href="/" className="text-primary-600 hover:underline">Halaman Utama</a>
+
+          {/* Akun Akses Info */}
+          <div className="mt-6 pt-5 border-t border-gray-200">
+            <div className="flex items-center gap-2 mb-2 text-xs font-bold text-gray-700">
+              <KeyRound className="w-3.5 h-3.5 text-primary-600" />
+              <span>Pilihan Akun Tersedia (5 Akses Aktif):</span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {["admin", "admin1", "admin2", "admin3", "admin4", "admin5"].map((u) => (
+                <button
+                  key={u}
+                  type="button"
+                  onClick={() => handleQuickFill(u)}
+                  className="text-xs font-mono bg-gray-100 hover:bg-primary-50 hover:text-primary-700 text-gray-700 px-2.5 py-1 rounded-md border border-gray-200 transition-colors"
+                >
+                  {u}
+                </button>
+              ))}
+            </div>
+            <p className="mt-2 text-[11px] text-gray-500">
+              *Password default: <code className="font-semibold text-primary-700">admin123</code>. Anda dapat login bersamaan di perangkat berbeda dengan akun yang sama maupun akun di atas.
+            </p>
+          </div>
+
+          <div className="mt-5 text-center">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-primary-700 transition-colors font-medium"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              Kembali ke Halaman Beranda
+            </Link>
           </div>
         </div>
       </div>
