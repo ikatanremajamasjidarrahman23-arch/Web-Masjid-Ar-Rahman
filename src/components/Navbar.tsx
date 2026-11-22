@@ -4,8 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
-  Menu, X, Moon, ChevronDown, Heart, ChevronRight, 
-  ShieldCheck, Image as ImageIcon, Users, BookOpen, 
+  Menu, X, Moon, ChevronDown, Heart, ChevronRight,
+  ShieldCheck, Image as ImageIcon, Users, BookOpen,
   Calendar, Layers, MessageSquare, Phone
 } from "lucide-react";
 import NavbarDateWidget from "./NavbarDateWidget";
@@ -275,14 +275,6 @@ export default function Navbar({
                     <span>Infaq</span>
                   </button>
 
-                  {/* Pintasan Akses Admin */}
-                  <Link
-                    href="/admin"
-                    title="Portal Login Admin"
-                    className="ml-1 p-2 rounded-xl text-primary-300 hover:text-white hover:bg-white/10 transition-colors"
-                  >
-                    <ShieldCheck className="w-5 h-5" />
-                  </Link>
                 </>
               )}
             </div>

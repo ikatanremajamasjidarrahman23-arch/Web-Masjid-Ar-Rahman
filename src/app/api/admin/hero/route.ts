@@ -18,6 +18,9 @@ export async function POST(request: Request) {
     if (!imageUrl) return NextResponse.json({ error: "URL gambar wajib diisi." }, { status: 400 });
 
     const count = await prisma.heroImage.count();
+    if (count >= 40) {
+      return NextResponse.json({ error: "Maksimal 40 foto hero diperbolehkan." }, { status: 400 });
+    }
     const heroImage = await prisma.heroImage.create({
       data: { imageUrl, caption: caption || null, order: count },
     });

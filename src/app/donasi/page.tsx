@@ -25,7 +25,7 @@ export default async function DonasiPage() {
   };
 
   return (
-    <div className="bg-gray-50 min-h-screen py-16">
+    <div className="bg-gray-50 min-h-screen pt-28 sm:pt-32 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         
         {/* Header Title */}
@@ -34,6 +34,19 @@ export default async function DonasiPage() {
           <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
             Transparansi laporan keuangan Masjid Jami' Ar-Rahman dan saluran infaq digital.
           </p>
+        </div>
+
+        {/* Banner: Fitur Infaq Dalam Pengembangan */}
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 flex gap-4 items-start animate-fade-in">
+          <div className="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+            <QrCode className="w-5 h-5 text-amber-600" />
+          </div>
+          <div>
+            <p className="font-bold text-amber-800 text-sm mb-1">🚧 Fitur Infaq Digital — Dalam Pengembangan</p>
+            <p className="text-amber-700 text-xs leading-relaxed">
+              Layanan QRIS digital dan transfer online sedang dalam tahap pengembangan. Untuk infaq sementara, silakan menghubungi pengurus DKM secara langsung atau gunakan kotak infaq masjid. Laporan keuangan di bawah ini sudah tersedia dan realtime.
+            </p>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-8">

@@ -47,6 +47,9 @@ export default async function Home() {
     orderBy: { createdAt: "desc" },
   });
 
+  const studyCount = await prisma.studySchedule.count();
+  const ukmCount = await prisma.ukm.count({ where: { isActive: true } });
+  const memberCount = await prisma.irmasMemberRegistration.count();
   const settings = await prisma.settings.findFirst();
   const runningText =
     settings?.runningText ||
@@ -183,10 +186,10 @@ export default async function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
-              { value: "1990", label: "Tahun Berdiri" },
-              { value: "500+", label: "Jemaah Aktif" },
-              { value: "12+", label: "Program Rutin" },
-              { value: "4", label: "Unit Kegiatan" },
+              { value: `${memberCount > 0 ? memberCount + "+" : "—"}`, label: "Jemaah Aktif" },
+              { value: `${studyCount > 0 ? studyCount : "—"}`, label: "Program Rutin" },
+              { value: `${ukmCount > 0 ? ukmCount : "—"}`, label: "Unit Kegiatan" },
+              { value: "Sejak dulu", label: "Melayani Umat" },
             ].map((stat) => (
               <div key={stat.label} className="text-white">
                 <p className="text-2xl md:text-3xl font-extrabold text-primary-200">{stat.value}</p>

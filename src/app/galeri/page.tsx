@@ -14,7 +14,7 @@ export default async function GalleryPublicPage() {
   });
 
   return (
-    <div className="bg-gray-50 min-h-screen py-16 relative overflow-hidden">
+    <div className="bg-gray-50 min-h-screen pt-28 sm:pt-32 pb-16 relative overflow-hidden">
       {/* Decorative background element */}
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-primary-200/30 blur-3xl"></div>
       <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 rounded-full bg-primary-300/40 blur-3xl"></div>
