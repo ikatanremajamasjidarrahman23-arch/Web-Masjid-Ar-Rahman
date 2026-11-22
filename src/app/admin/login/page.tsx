@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Moon, LogIn, Eye, EyeOff, ShieldCheck, ArrowLeft, KeyRound } from "lucide-react";
+import { Moon, LogIn, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import axios from "axios";
 
@@ -23,18 +23,13 @@ export default function LoginPage() {
         password 
       });
       if (res.data.success) {
-        // Gunakan full page redirect agar cookie terkirim sempurna ke middleware
+        // Full page redirect agar cookie terkirim sempurna ke middleware
         window.location.href = "/admin";
       }
     } catch (err: any) {
-      setError(err.response?.data?.error || "Gagal login. Periksa username dan password Anda.");
+      setError(err.response?.data?.error || "Username atau password salah.");
       setLoading(false);
     }
-  };
-
-  const handleQuickFill = (user: string) => {
-    setUsername(user);
-    setPassword("admin123");
   };
 
   return (
@@ -47,7 +42,7 @@ export default function LoginPage() {
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-primary-600 to-emerald-400 text-white shadow-xl shadow-primary-900/40 mb-4 ring-4 ring-white/10">
           <Moon className="w-8 h-8" />
         </div>
-        <h2 className="text-3xl font-extrabold text-white tracking-tight">Admin Portal</h2>
+        <h2 className="text-3xl font-extrabold text-white tracking-tight">Portal Pengurus DKM</h2>
         <p className="mt-2 text-sm text-emerald-200/80">
           Masjid Jami' Ar-Rahman Cempaka
         </p>
@@ -74,7 +69,7 @@ export default function LoginPage() {
                 autoFocus
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="cth: admin"
+                placeholder="Masukkan username..."
                 className="appearance-none block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-xs placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm text-gray-900 transition-all"
               />
             </div>
@@ -120,36 +115,13 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Akun Akses Info */}
-          <div className="mt-6 pt-5 border-t border-gray-200">
-            <div className="flex items-center gap-2 mb-2 text-xs font-bold text-gray-700">
-              <KeyRound className="w-3.5 h-3.5 text-primary-600" />
-              <span>Pilihan Akun Tersedia (5 Akses Aktif):</span>
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {["admin", "admin1", "admin2", "admin3", "admin4", "admin5"].map((u) => (
-                <button
-                  key={u}
-                  type="button"
-                  onClick={() => handleQuickFill(u)}
-                  className="text-xs font-mono bg-gray-100 hover:bg-primary-50 hover:text-primary-700 text-gray-700 px-2.5 py-1 rounded-md border border-gray-200 transition-colors"
-                >
-                  {u}
-                </button>
-              ))}
-            </div>
-            <p className="mt-2 text-[11px] text-gray-500">
-              *Password default: <code className="font-semibold text-primary-700">admin123</code>. Anda dapat login bersamaan di perangkat berbeda dengan akun yang sama maupun akun di atas.
-            </p>
-          </div>
-
-          <div className="mt-5 text-center">
+          <div className="mt-6 text-center">
             <Link
               href="/"
               className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-primary-700 transition-colors font-medium"
             >
               <ArrowLeft className="w-3.5 h-3.5" />
-              Kembali ke Halaman Beranda
+              Kembali ke Beranda
             </Link>
           </div>
         </div>

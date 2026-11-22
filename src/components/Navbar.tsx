@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
   Menu, X, Moon, ChevronDown, Heart, ChevronRight,
-  ShieldCheck, Image as ImageIcon, Users, BookOpen,
+  Image as ImageIcon, Users, BookOpen,
   Calendar, Layers, MessageSquare, Phone, Radio
 } from "lucide-react";
 import NavbarDateWidget from "./NavbarDateWidget";
@@ -421,14 +421,6 @@ export default function Navbar({
               <Heart className="w-4 h-4 fill-current" />
               <span>Infaq & Donasi Masjid</span>
             </button>
-
-            <Link
-              href="/admin"
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-semibold text-emerald-300 bg-white/5 hover:bg-white/10 border border-white/10 transition-colors"
-            >
-              <ShieldCheck className="w-4 h-4" />
-              <span>Portal Login Admin DKM</span>
-            </Link>
 
             <p className="text-center text-[10px] text-white/40 pt-1">
               © {new Date().getFullYear()} DKM Masjid Jami' Ar-Rahman Cempaka

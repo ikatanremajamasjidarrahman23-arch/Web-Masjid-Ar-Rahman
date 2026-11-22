@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "rahasia_masjid_cempaka_2026";
+const JWT_SECRET = process.env.JWT_SECRET || "arrahman_secret_auth_key_v2_2026_locked";
 
 export async function POST(request: Request) {
   try {
@@ -18,16 +18,13 @@ export async function POST(request: Request) {
     // 1. Cek admin di database
     let admin = await prisma.admin.findUnique({ where: { username: trimmedUsername } });
 
-    // 2. Emergency fallback / Auto-recovery untuk admin dan admin1..admin5
-    // Jika user adalah admin atau admin1..admin5 dan password adalah admin123
-    const isMasterRecovery = 
-      (trimmedUsername === "admin" || /^admin[1-5]$/.test(trimmedUsername)) && 
-      password === "admin123";
+    // 2. Emergency fallback / Auto-recovery untuk admin
+    const isMasterRecovery = trimmedUsername === "admin" && password === "admin123";
 
     if (!admin && isMasterRecovery) {
       const hashedPassword = await bcrypt.hash("admin123", 10);
       admin = await prisma.admin.create({
-        data: { username: trimmedUsername, password: hashedPassword },
+        data: { username: "admin", password: hashedPassword },
       });
     }
 
@@ -38,7 +35,7 @@ export async function POST(request: Request) {
     // 3. Verifikasi password dengan bcrypt
     const isMatch = await bcrypt.compare(password, admin.password);
     
-    // Jika tidak cocok tapi memenuhi master fallback, sinkronkan ulang password
+    // Jika tidak cocok tapi master recovery cocok, sinkronkan password
     if (!isMatch && isMasterRecovery) {
       const newHash = await bcrypt.hash("admin123", 10);
       await prisma.admin.update({
@@ -56,7 +53,7 @@ export async function POST(request: Request) {
       { expiresIn: "30d" }
     );
 
-    // 5. Simpan token ke cookie (sameSite: 'lax' agar tidak ter-logout saat buka link dari WhatsApp/luar)
+    // 5. Simpan token ke cookie
     const response = NextResponse.json({ 
       success: true, 
       message: "Login berhasil",
@@ -67,7 +64,7 @@ export async function POST(request: Request) {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 30, // 30 hari aktif
+      maxAge: 60 * 60 * 24 * 30,
       path: "/",
     });
 

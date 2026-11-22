@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "rahasia_masjid_cempaka_2026";
+const JWT_SECRET = process.env.JWT_SECRET || "arrahman_secret_auth_key_v2_2026_locked";
 
 export async function POST(request: Request) {
   try {
