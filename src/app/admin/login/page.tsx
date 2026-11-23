@@ -24,7 +24,8 @@ export default function LoginPage() {
       });
       if (res.data.success) {
         // Full page redirect agar cookie terkirim sempurna ke middleware
-        window.location.href = "/admin";
+        const targetUrl = res.data.redirectTo || "/admin";
+        window.location.href = targetUrl;
       }
     } catch (err: any) {
       setError(err.response?.data?.error || "Username atau password salah.");
@@ -114,6 +115,13 @@ export default function LoginPage() {
               )}
             </button>
           </form>
+
+          {/* Info bantuan untuk Ibu Majelis Ta'lim */}
+          <div className="mt-5 p-3 rounded-2xl bg-emerald-50/90 border border-emerald-200/60 text-center">
+            <p className="text-xs text-emerald-800 font-medium">
+              🌸 Pengurus Majelis Ta'lim dapat masuk dengan akun majelis untuk langsung mengunggah foto kegiatan.
+            </p>
+          </div>
 
           <div className="mt-6 text-center">
             <Link

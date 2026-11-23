@@ -11,6 +11,7 @@ model Admin {
   id        String   @id @default(cuid())
   username  String   @unique
   password  String
+  role      String   @default("admin") // "admin" atau "majelis"
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

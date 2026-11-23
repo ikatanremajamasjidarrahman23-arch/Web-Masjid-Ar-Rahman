@@ -13,14 +13,14 @@ export function verifyToken(token?: string): boolean {
   }
 }
 
-export async function verifyAdminSession(): Promise<{ valid: boolean; username?: string }> {
+export async function verifyAdminSession(): Promise<{ valid: boolean; username?: string; role?: string; id?: string }> {
   try {
     const cookieStore = await cookies();
     const token = cookieStore.get("admin_token")?.value;
     if (!token) return { valid: false };
 
     const decoded: any = jwt.verify(token, JWT_SECRET);
-    return { valid: true, username: decoded.username };
+    return { valid: true, username: decoded.username, role: decoded.role || "admin", id: decoded.id };
   } catch {
     return { valid: false };
   }

@@ -7,7 +7,15 @@ import { usePathname, useRouter } from "next/navigation";
 import axios from "axios";
 import VercelStatusLight from "./VercelStatusLight";
 
-export default function AdminSidebar({ logoutAction }: { logoutAction: (payload: FormData) => void }) {
+export default function AdminSidebar({ 
+  logoutAction, 
+  role = "admin", 
+  username = "admin" 
+}: { 
+  logoutAction: (payload: FormData) => void;
+  role?: string;
+  username?: string;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [password, setPassword] = useState("");
@@ -15,13 +23,14 @@ export default function AdminSidebar({ logoutAction }: { logoutAction: (payload:
   
   const pathname = usePathname();
   const router = useRouter();
+  const isMajelisRole = role === "majelis";
 
   // Close sidebar on navigation (mobile)
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
 
-  const navLinks = [
+  const adminNavLinks = [
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { name: "Papan Buletin", href: "/admin/buletin", icon: Megaphone },
     { name: "Catatan Admin", href: "/admin/notepad", icon: StickyNote },
@@ -29,6 +38,7 @@ export default function AdminSidebar({ logoutAction }: { logoutAction: (payload:
     { name: "Pengaturan Sistem", href: "/admin/pengaturan", icon: Settings },
     { name: "Struktur Organisasi", href: "/admin/pengurus", icon: Network },
     { name: "Kelembagaan (UKM)", href: "/admin/ukm", icon: Library },
+    { name: "Upload Majelis Ta'lim", href: "/admin/majelis", icon: ImagePlus },
     { name: "Selayang Pandang", href: "/admin/selayang-pandang", icon: ImageIcon },
     { name: "Galeri & PHBI", href: "/admin/gallery", icon: ImageIcon },
     { name: "Dokumentasi PHBI", href: "/admin/phbi", icon: Calendar },
@@ -38,6 +48,14 @@ export default function AdminSidebar({ logoutAction }: { logoutAction: (payload:
     { name: "Popup Banner", href: "/admin/popup", icon: ImagePlus },
     { name: "Kas & Donasi", href: "/admin/donasi", icon: Wallet },
   ];
+
+  const majelisNavLinks = [
+    { name: "Upload Foto Kegiatan", href: "/admin/majelis", icon: ImageIcon },
+    { name: "Lihat Web Majelis", href: "/ukm/cmt2ed0j80001kz04hyyhehkw", icon: Globe },
+    { name: "Lihat Galeri Masjid", href: "/galeri", icon: Library },
+  ];
+
+  const navLinks = isMajelisRole ? majelisNavLinks : adminNavLinks;
 
   const handleSettingsClick = (e: React.MouseEvent, href: string) => {
     e.preventDefault();
@@ -66,7 +84,9 @@ export default function AdminSidebar({ logoutAction }: { logoutAction: (payload:
     <>
       {/* Mobile Header & Toggle */}
       <div className="md:hidden fixed top-16 left-0 right-0 h-16 bg-white border-b border-gray-200 z-40 flex items-center justify-between px-4 shadow-sm">
-        <h1 className="text-xl font-bold text-gray-900">Menu Admin</h1>
+        <h1 className="text-base font-bold text-gray-900">
+          {isMajelisRole ? "Portal Majelis Ta'lim" : "Menu Admin"}
+        </h1>
         <button 
           onClick={() => setIsOpen(!isOpen)} 
           className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg flex items-center gap-2"
@@ -92,7 +112,9 @@ export default function AdminSidebar({ logoutAction }: { logoutAction: (payload:
         md:translate-x-0
       `}>
         <div className="h-12 hidden md:flex items-center px-6 border-b border-gray-100 shrink-0 bg-gray-50/50">
-          <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Navigasi Panel Admin</span>
+          <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+            {isMajelisRole ? "Ibu Pengurus Majelis Ta'lim" : "Navigasi Panel Admin"}
+          </span>
         </div>
         
         <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
@@ -132,16 +154,16 @@ export default function AdminSidebar({ logoutAction }: { logoutAction: (payload:
           <div className="pt-4 mt-4 border-t border-gray-100">
             <Link 
               href="/" 
-              className="flex items-center gap-3 px-3 py-2 w-full text-primary-600 rounded-lg hover:bg-primary-50 transition-colors text-left mb-2"
+              className="flex items-center gap-3 px-3 py-2 w-full text-primary-600 rounded-lg hover:bg-primary-50 transition-colors text-left mb-2 text-sm"
             >
               <Globe className="w-5 h-5" />
-              <span className="font-medium">Kembali ke Publik</span>
+              <span className="font-medium">Ke Website Utama</span>
             </Link>
-            <VercelStatusLight />
+            {!isMajelisRole && <VercelStatusLight />}
             <form action={logoutAction}>
-              <button type="submit" className="flex items-center gap-3 px-3 py-2 w-full text-red-600 rounded-lg hover:bg-red-50 transition-colors text-left">
+              <button type="submit" className="flex items-center gap-3 px-3 py-2 w-full text-red-600 rounded-lg hover:bg-red-50 transition-colors text-left text-sm cursor-pointer">
                 <LogOut className="w-5 h-5" />
-                <span className="font-medium">Logout</span>
+                <span className="font-medium">Keluar (Logout)</span>
               </button>
             </form>
           </div>

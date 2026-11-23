@@ -18,13 +18,19 @@ export async function POST(request: Request) {
     // 1. Cek admin di database
     let admin = await prisma.admin.findUnique({ where: { username: trimmedUsername } });
 
-    // 2. Emergency fallback / Auto-recovery untuk admin
+    // 2. Emergency fallback / Auto-recovery untuk admin & majelis
     const isMasterRecovery = trimmedUsername === "admin" && password === "admin123";
+    const isMajelisRecovery = (trimmedUsername === "majelis" || trimmedUsername === "jumhuriyah") && password === "majelis123";
 
     if (!admin && isMasterRecovery) {
       const hashedPassword = await bcrypt.hash("admin123", 10);
       admin = await prisma.admin.create({
-        data: { username: "admin", password: hashedPassword },
+        data: { username: "admin", password: hashedPassword, role: "admin" },
+      });
+    } else if (!admin && isMajelisRecovery) {
+      const hashedPassword = await bcrypt.hash("majelis123", 10);
+      admin = await prisma.admin.create({
+        data: { username: "majelis", password: hashedPassword, role: "majelis" },
       });
     }
 
@@ -40,24 +46,34 @@ export async function POST(request: Request) {
       const newHash = await bcrypt.hash("admin123", 10);
       await prisma.admin.update({
         where: { id: admin.id },
-        data: { password: newHash },
+        data: { password: newHash, role: "admin" },
+      });
+    } else if (!isMatch && isMajelisRecovery) {
+      const newHash = await bcrypt.hash("majelis123", 10);
+      await prisma.admin.update({
+        where: { id: admin.id },
+        data: { password: newHash, role: "majelis" },
       });
     } else if (!isMatch) {
       return NextResponse.json({ error: "Username atau password salah" }, { status: 401 });
     }
 
-    // 4. Buat token JWT dengan masa aktif 30 hari
+    // 4. Buat token JWT dengan masa aktif 30 hari (sertakan role)
+    const userRole = admin.role || (admin.username === "majelis" ? "majelis" : "admin");
     const token = jwt.sign(
-      { id: admin.id, username: admin.username, issuedAt: Date.now() },
+      { id: admin.id, username: admin.username, role: userRole, issuedAt: Date.now() },
       JWT_SECRET,
       { expiresIn: "30d" }
     );
 
-    // 5. Simpan token ke cookie
+    // 5. Simpan token ke cookie & tentukan redirect URL
+    const redirectTo = userRole === "majelis" ? "/admin/majelis" : "/admin";
+
     const response = NextResponse.json({ 
       success: true, 
       message: "Login berhasil",
-      user: { username: admin.username }
+      redirectTo,
+      user: { username: admin.username, role: userRole }
     });
 
     response.cookies.set("admin_token", token, {

@@ -25,7 +25,15 @@ export async function middleware(request: NextRequest) {
 
     // Verifikasi keaslian token JWT menggunakan secret terbaru
     try {
-      await jwtVerify(token, JWT_SECRET);
+      const { payload } = await jwtVerify(token, JWT_SECRET);
+      
+      // Khusus pengguna Majelis Ta'lim: batasi akses hanya ke portal upload foto majelis
+      if (payload.role === 'majelis') {
+        if (!path.startsWith('/admin/majelis')) {
+          return NextResponse.redirect(new URL('/admin/majelis', request.url));
+        }
+      }
+
       return NextResponse.next();
     } catch {
       // Token tidak valid / sesi lama / palsu -> Hapus cookie dan paksa redirect ke /admin/login

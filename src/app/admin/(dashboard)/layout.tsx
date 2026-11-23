@@ -18,8 +18,13 @@ export default async function AdminLayout({
     redirect("/admin/login");
   }
 
+  let role = "admin";
+  let username = "admin";
+
   try {
-    jwt.verify(token, JWT_SECRET);
+    const decoded: any = jwt.verify(token, JWT_SECRET);
+    role = decoded.role || "admin";
+    username = decoded.username || "admin";
   } catch {
     // Sesi lama / token kedaluwarsa -> lempar langsung ke login
     redirect("/admin/login");
@@ -27,7 +32,7 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      <AdminSidebar logoutAction={logoutAction} />
+      <AdminSidebar logoutAction={logoutAction} role={role} username={username} />
 
       {/* Main Content Area — Beri padding atas yang lapang agar tidak tertabrak Navbar di mobile maupun desktop */}
       <main className="flex-1 md:ml-64 p-4 pt-36 md:pt-28 md:p-8 w-full max-w-[100vw]">
