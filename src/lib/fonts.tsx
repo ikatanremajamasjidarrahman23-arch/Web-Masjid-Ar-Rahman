@@ -1,58 +1,22 @@
-import { 
-  Inter, 
-  Cinzel, 
-  Playfair_Display, 
-  Merriweather, 
-  Roboto, 
-  Open_Sans, 
-  Montserrat, 
-  Lora, 
-  Nunito, 
-  Poppins 
-} from "next/font/google";
-
-export const fontInter = Inter({ subsets: ["latin"] });
-export const fontCinzel = Cinzel({ subsets: ["latin"] });
-export const fontPlayfair = Playfair_Display({ subsets: ["latin"] });
-export const fontMerriweather = Merriweather({ subsets: ["latin"], weight: ["300", "400", "700", "900"] });
-export const fontRoboto = Roboto({ subsets: ["latin"], weight: ["300", "400", "500", "700"] });
-export const fontOpenSans = Open_Sans({ subsets: ["latin"] });
-export const fontMontserrat = Montserrat({ subsets: ["latin"] });
-export const fontLora = Lora({ subsets: ["latin"] });
-export const fontNunito = Nunito({ subsets: ["latin"] });
-export const fontPoppins = Poppins({ subsets: ["latin"], weight: ["300", "400", "500", "600", "700"] });
-
+// Web Fonts Provider & Helpers
 export function FontProvider() {
-  return (
-    <div style={{ display: "none" }} aria-hidden="true">
-      <div className={fontInter.className}></div>
-      <div className={fontCinzel.className}></div>
-      <div className={fontPlayfair.className}></div>
-      <div className={fontMerriweather.className}></div>
-      <div className={fontRoboto.className}></div>
-      <div className={fontOpenSans.className}></div>
-      <div className={fontMontserrat.className}></div>
-      <div className={fontLora.className}></div>
-      <div className={fontNunito.className}></div>
-      <div className={fontPoppins.className}></div>
-    </div>
-  );
+  return null;
 }
 
 export function getFontClassName(fontFamilyName?: string | null) {
   switch (fontFamilyName?.toLowerCase()) {
-    case "cinzel": return fontCinzel.className;
-    case "playfair": return fontPlayfair.className;
-    case "merriweather": return fontMerriweather.className;
-    case "roboto": return fontRoboto.className;
-    case "opensans": return fontOpenSans.className;
-    case "montserrat": return fontMontserrat.className;
-    case "lora": return fontLora.className;
-    case "nunito": return fontNunito.className;
-    case "poppins": return fontPoppins.className;
+    case "cinzel": return "font-cinzel";
+    case "playfair": return "font-playfair";
+    case "merriweather": return "font-merriweather";
+    case "roboto": return "font-roboto";
+    case "opensans": return "font-opensans";
+    case "montserrat": return "font-montserrat";
+    case "lora": return "font-lora";
+    case "nunito": return "font-nunito";
+    case "poppins": return "font-poppins";
     case "inter":
     default:
-      return fontInter.className;
+      return "font-inter";
   }
 }
 

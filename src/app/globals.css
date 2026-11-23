@@ -1,4 +1,17 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600;700&family=Lora:ital,wght@0,400;0,700;1,400&family=Merriweather:wght@300;400;700&family=Montserrat:wght@400;600;700&family=Nunito:wght@400;600;700&family=Open+Sans:wght@400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
+
+/* Web Font Classes */
+.font-inter { font-family: 'Inter', sans-serif !important; }
+.font-cinzel { font-family: 'Cinzel', serif !important; }
+.font-playfair { font-family: 'Playfair Display', serif !important; }
+.font-merriweather { font-family: 'Merriweather', serif !important; }
+.font-roboto { font-family: 'Roboto', sans-serif !important; }
+.font-opensans { font-family: 'Open Sans', sans-serif !important; }
+.font-montserrat { font-family: 'Montserrat', sans-serif !important; }
+.font-lora { font-family: 'Lora', serif !important; }
+.font-nunito { font-family: 'Nunito', sans-serif !important; }
+.font-poppins { font-family: 'Poppins', sans-serif !important; }
 
 @theme {
   --color-primary-50: #effdf4;
