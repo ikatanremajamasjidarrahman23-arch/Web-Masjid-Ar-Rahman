@@ -5,13 +5,18 @@ import { Megaphone, Newspaper } from "lucide-react";
 export const revalidate = 60;
 
 export default async function BuletinPage() {
-  const activeBulletins = await prisma.bulletin.findMany({
-    where: {
-      isActive: true,
-      expiryDate: { gt: new Date() }
-    },
-    orderBy: { createdAt: "desc" }
-  });
+  let activeBulletins: any[] = [];
+  try {
+    activeBulletins = await prisma.bulletin.findMany({
+      where: {
+        isActive: true,
+        expiryDate: { gt: new Date() }
+      },
+      orderBy: { createdAt: "desc" }
+    });
+  } catch (error) {
+    console.warn("Database not available during buletin prerender");
+  }
 
   return (
     <div className="bg-islamic-pattern-rich min-h-screen pt-28 sm:pt-32 pb-16">

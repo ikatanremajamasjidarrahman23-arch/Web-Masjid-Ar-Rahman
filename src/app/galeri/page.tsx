@@ -11,34 +11,41 @@ export const metadata: Metadata = {
 export const revalidate = 60; // Cache 60 detik
 
 export default async function GalleryPublicPage() {
-  // 1. Ambil data galeri umum
-  const rawGalleries = await prisma.gallery.findMany({
-    where: {
-      category: {
-        not: "Selayang Pandang",
-      },
-    },
-    orderBy: { createdAt: "desc" },
-  });
+  let rawGalleries: any[] = [];
+  let rawPhbiEvents: any[] = [];
 
-  // 2. Ambil data event PHBI beserta seluruh medianya
-  const rawPhbiEvents = await prisma.phbiEvent.findMany({
-    include: {
-      media: true,
-    },
-    orderBy: { date: "desc" },
-  });
+  try {
+    // 1. Ambil data galeri umum
+    rawGalleries = await prisma.gallery.findMany({
+      where: {
+        category: {
+          not: "Selayang Pandang",
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    // 2. Ambil data event PHBI beserta seluruh medianya
+    rawPhbiEvents = await prisma.phbiEvent.findMany({
+      include: {
+        media: true,
+      },
+      orderBy: { date: "desc" },
+    });
+  } catch (error) {
+    console.warn("Database not available during galeri prerender");
+  }
 
   // 3. Normalisasi data galeri umum
-  const galleryItems: GalleryItem[] = rawGalleries.map((g) => {
-    const isPhbi = g.category.toUpperCase().includes("PHBI");
+  const galleryItems: GalleryItem[] = rawGalleries.map((g: any) => {
+    const isPhbi = g.category && g.category.toUpperCase().includes("PHBI");
     return {
       id: g.id,
       title: g.title === "-" || !g.title ? "Dokumentasi Kegiatan" : g.title,
       imageUrl: g.imageUrl,
       category: isPhbi ? "PHBI" : g.category || "Kegiatan Masjid",
       badge: isPhbi ? "PHBI" : "Kegiatan Masjid",
-      date: g.createdAt.toISOString(),
+      date: g.createdAt ? (typeof g.createdAt === "string" ? g.createdAt : g.createdAt.toISOString()) : new Date().toISOString(),
       imagePosition: g.imagePosition || "center",
       linkGdrive: g.linkGdrive || null,
     };
@@ -46,22 +53,24 @@ export default async function GalleryPublicPage() {
 
   // 4. Normalisasi media PHBI menjadi item galeri
   const phbiItems: GalleryItem[] = [];
-  rawPhbiEvents.forEach((event) => {
-    event.media.forEach((m, idx) => {
-      if (m.type === "IMAGE" || !m.type) {
-        phbiItems.push({
-          id: m.id,
-          title: event.title,
-          imageUrl: m.url,
-          category: "PHBI",
-          badge: "PHBI",
-          date: event.date ? event.date.toISOString() : null,
-          description: event.description,
-          // Sematkan link GDrive pada setiap foto acara ini (khususnya foto pertama)
-          linkGdrive: event.linkMore || null,
-        });
-      }
-    });
+  rawPhbiEvents.forEach((event: any) => {
+    if (Array.isArray(event.media)) {
+      event.media.forEach((m: any, idx: number) => {
+        if (m.type === "IMAGE" || !m.type) {
+          phbiItems.push({
+            id: m.id,
+            title: event.title,
+            imageUrl: m.url,
+            category: "PHBI",
+            badge: "PHBI",
+            date: event.date ? (typeof event.date === "string" ? event.date : event.date.toISOString()) : null,
+            description: event.description,
+            // Sematkan link GDrive pada setiap foto acara ini (khususnya foto pertama)
+            linkGdrive: event.linkMore || null,
+          });
+        }
+      });
+    }
   });
 
   // 5. Gabungkan seluruh foto dan urutkan

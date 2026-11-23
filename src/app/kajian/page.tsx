@@ -4,9 +4,14 @@ import KajianCard from "@/components/KajianCard";
 export const revalidate = 60; // Cache for 60 seconds
 
 export default async function KajianPage() {
-  const schedules = await prisma.studySchedule.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  let schedules: any[] = [];
+  try {
+    schedules = await prisma.studySchedule.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (error) {
+    console.warn("Database not available during kajian prerender");
+  }
 
   return (
     <div className="bg-islamic-pattern-rich min-h-screen pt-28 sm:pt-32 pb-16">

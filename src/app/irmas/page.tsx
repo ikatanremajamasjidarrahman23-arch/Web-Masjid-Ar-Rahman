@@ -7,15 +7,22 @@ import Link from "next/link";
 export const revalidate = 60;
 
 export default async function IrmasPage() {
-  const settings = await prisma.settings.findFirst();
-  const activities = await prisma.irmasActivity.findMany({
-    orderBy: {
-      date: 'desc'
-    }
-  });
+  let settings: any = null;
+  let activities: any[] = [];
+
+  try {
+    settings = await prisma.settings.findFirst();
+    activities = await prisma.irmasActivity.findMany({
+      orderBy: {
+        date: 'desc'
+      }
+    });
+  } catch (error) {
+    console.warn("Database not available during irmas prerender");
+  }
 
   return (
-    <div className="bg-gray-50 min-h-screen pt-28 sm:pt-32 pb-16">
+    <div className="bg-islamic-pattern-rich min-h-screen pt-28 sm:pt-32 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         
         {/* Header Title */}

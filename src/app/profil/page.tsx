@@ -6,11 +6,17 @@ import AdArtButton from "@/components/AdArtButton";
 export const revalidate = 60; // Revalidate every 60 seconds
 
 export default async function ProfilPage() {
-  // Ambil pengaturan profil dari database (jika belum ada, akan dirender teks dummy)
-  const settings = await prisma.settings.findFirst();
-  const members = await prisma.organizationMember.findMany({
-    orderBy: { order: "asc" }
-  });
+  let settings: any = null;
+  let members: any[] = [];
+
+  try {
+    settings = await prisma.settings.findFirst();
+    members = await prisma.organizationMember.findMany({
+      orderBy: { order: "asc" }
+    });
+  } catch (error) {
+    console.warn("Database not available during profil prerender");
+  }
 
   const dummyVisi = "Menjadi pusat ibadah, pendidikan, dan peradaban umat yang ramah, modern, dan menebarkan rahmat bagi seluruh alam (Rahmatan Lil 'Alamin) di lingkungan Perumahan Korpri Cempaka.";
   

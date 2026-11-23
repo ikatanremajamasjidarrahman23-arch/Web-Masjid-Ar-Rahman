@@ -3,7 +3,13 @@ import { FontProvider, getFontClassName } from "@/lib/fonts";
 import "./globals.css";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settings = await prisma.settings.findFirst();
+  let settings = null;
+  try {
+    settings = await prisma.settings.findFirst();
+  } catch (error) {
+    console.warn("Database not available during metadata generation");
+  }
+
   return {
     title: "Website Resmi Masjid Ar-Rahman",
     description: settings?.deskripsiSingkat || "Website Resmi Masjid Ar-Rahman",
@@ -28,7 +34,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const settings = await prisma.settings.findFirst();
+  let settings = null;
+  try {
+    settings = await prisma.settings.findFirst();
+  } catch (error) {
+    console.warn("Database not available during RootLayout render");
+  }
   const themeVars = getThemeVariables(settings?.themeColor);
 
   return (

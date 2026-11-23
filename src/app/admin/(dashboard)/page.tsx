@@ -1,15 +1,26 @@
 import { prisma } from "@/lib/prisma";
 import { Users, Calendar, Wallet, FileText } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboard() {
-  // Ambil summary dari database
-  const countPhbi = await prisma.phbiEvent.count();
-  const countIrmas = await prisma.irmasActivity.count();
-  
-  const finances = await prisma.finance.findMany();
-  const totalIn = finances.filter(f => f.type === "IN").reduce((acc, curr) => acc + curr.amount, 0);
-  const totalOut = finances.filter(f => f.type === "OUT").reduce((acc, curr) => acc + curr.amount, 0);
-  const saldo = totalIn - totalOut;
+  let countPhbi = 0;
+  let countIrmas = 0;
+  let totalIn = 0;
+  let totalOut = 0;
+  let saldo = 0;
+
+  try {
+    countPhbi = await prisma.phbiEvent.count();
+    countIrmas = await prisma.irmasActivity.count();
+    
+    const finances = await prisma.finance.findMany();
+    totalIn = finances.filter(f => f.type === "IN").reduce((acc, curr) => acc + curr.amount, 0);
+    totalOut = finances.filter(f => f.type === "OUT").reduce((acc, curr) => acc + curr.amount, 0);
+    saldo = totalIn - totalOut;
+  } catch (error) {
+    console.warn("Database not available during AdminDashboard load");
+  }
 
   const formatRupiah = (amount: number) => {
     return new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(amount);

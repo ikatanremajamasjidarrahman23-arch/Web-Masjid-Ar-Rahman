@@ -21,34 +21,55 @@ import HeroSlideshow from "@/components/HeroSlideshow";
 export const revalidate = 60;
 
 export default async function Home() {
-  const heroImages = await prisma.heroImage.findMany({
-    where: { isActive: true },
-    orderBy: { order: "asc" },
-  });
+  let heroImages: any[] = [];
+  let selayangPandangPhotos: any[] = [];
+  let schedules: any[] = [];
+  let activeBulletins: any[] = [];
+  let studyCount = 0;
+  let ukmCount = 0;
+  let memberCount = 0;
+  let settings: any = null;
 
-  const selayangPandangPhotos = await prisma.gallery.findMany({
-    where: { category: "Selayang Pandang" },
-    orderBy: { createdAt: "asc" },
-    take: 5,
-  });
+  try {
+    const results = await Promise.all([
+      prisma.heroImage.findMany({
+        where: { isActive: true },
+        orderBy: { order: "asc" },
+      }),
+      prisma.gallery.findMany({
+        where: { category: "Selayang Pandang" },
+        orderBy: { createdAt: "asc" },
+        take: 5,
+      }),
+      prisma.studySchedule.findMany({
+        orderBy: { createdAt: "desc" },
+        take: 3,
+      }),
+      prisma.bulletin.findMany({
+        where: {
+          isActive: true,
+          expiryDate: { gt: new Date() },
+        },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.studySchedule.count(),
+      prisma.ukm.count({ where: { isActive: true } }),
+      prisma.irmasMemberRegistration.count(),
+      prisma.settings.findFirst(),
+    ]);
 
-  const schedules = await prisma.studySchedule.findMany({
-    orderBy: { createdAt: "desc" },
-    take: 3,
-  });
+    heroImages = results[0];
+    selayangPandangPhotos = results[1];
+    schedules = results[2];
+    activeBulletins = results[3];
+    studyCount = results[4];
+    ukmCount = results[5];
+    memberCount = results[6];
+    settings = results[7];
+  } catch (error) {
+    console.warn("Database not reachable during page prerender");
+  }
 
-  const activeBulletins = await prisma.bulletin.findMany({
-    where: {
-      isActive: true,
-      expiryDate: { gt: new Date() },
-    },
-    orderBy: { createdAt: "desc" },
-  });
-
-  const studyCount = await prisma.studySchedule.count();
-  const ukmCount = await prisma.ukm.count({ where: { isActive: true } });
-  const memberCount = await prisma.irmasMemberRegistration.count();
-  const settings = await prisma.settings.findFirst();
   const runningText =
     settings?.runningText ||
     "Selamat datang di Website Resmi Masjid Jami' Ar-Rahman Cempaka, Plumbon. | Mari ramaikan kajian bakda Subuh setiap hari Ahad. | Salurkan infaq dan shodaqoh terbaik Anda melalui QRIS resmi masjid.";

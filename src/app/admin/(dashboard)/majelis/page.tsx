@@ -7,18 +7,23 @@ export const metadata: Metadata = {
   description: "Halaman khusus ibu-ibu pengurus Majelis Ta'lim untuk mengunggah dokumentasi foto kegiatan.",
 };
 
-export const revalidate = 0;
+export const dynamic = "force-dynamic";
 
 export default async function MajelisAdminPage() {
-  const majelis = await prisma.ukm.findFirst({
-    where: {
-      OR: [
-        { id: "cmt2ed0j80001kz04hyyhehkw" },
-        { namaUkm: { contains: "Majelis", mode: "insensitive" } },
-        { namaUkm: { contains: "Jumhuriyah", mode: "insensitive" } },
-      ],
-    },
-  });
+  let majelis: any = null;
+  try {
+    majelis = await prisma.ukm.findFirst({
+      where: {
+        OR: [
+          { id: "cmt2ed0j80001kz04hyyhehkw" },
+          { namaUkm: { contains: "Majelis", mode: "insensitive" } },
+          { namaUkm: { contains: "Jumhuriyah", mode: "insensitive" } },
+        ],
+      },
+    });
+  } catch (error) {
+    console.warn("Database not available during MajelisAdminPage load");
+  }
 
   return (
     <MajelisUploadClient 
@@ -28,3 +33,4 @@ export default async function MajelisAdminPage() {
     />
   );
 }
+

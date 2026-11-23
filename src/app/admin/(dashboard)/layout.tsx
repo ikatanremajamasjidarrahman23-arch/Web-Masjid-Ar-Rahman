@@ -4,6 +4,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import jwt from "jsonwebtoken";
 
+export const dynamic = "force-dynamic";
+
 const JWT_SECRET = process.env.JWT_SECRET || "arrahman_secret_auth_key_v2_2026_locked";
 
 export default async function AdminLayout({

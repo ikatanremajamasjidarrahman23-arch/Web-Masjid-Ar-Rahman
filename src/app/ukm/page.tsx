@@ -10,10 +10,15 @@ export const metadata: Metadata = {
 export const revalidate = 60; // Cache for 1 minute
 
 export default async function UkmPage() {
-  const ukms = await prisma.ukm.findMany({
-    where: { isActive: true },
-    orderBy: { createdAt: "desc" },
-  });
+  let ukms: any[] = [];
+  try {
+    ukms = await prisma.ukm.findMany({
+      where: { isActive: true },
+      orderBy: { createdAt: "desc" },
+    });
+  } catch (error) {
+    console.warn("Database not available during ukm prerender");
+  }
 
   return (
     <div className="bg-islamic-pattern-rich min-h-screen pt-28 sm:pt-32 pb-16">

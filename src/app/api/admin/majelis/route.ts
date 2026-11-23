@@ -165,3 +165,4 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "Gagal menghapus foto." }, { status: 500 });
   }
 }
+
