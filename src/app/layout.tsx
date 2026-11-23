@@ -1,6 +1,15 @@
 import type { Metadata } from "next";
 import { FontProvider, getFontClassName } from "@/lib/fonts";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import FooterWrapper from "@/components/FooterWrapper";
+import WelcomePopup from "@/components/WelcomePopup";
+import PushNotificationManager from "@/components/PushNotificationManager";
+import { prisma } from "@/lib/prisma";
+import { getThemeVariables } from "@/lib/themes";
 import "./globals.css";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   let settings = null;
@@ -20,14 +29,6 @@ export async function generateMetadata(): Promise<Metadata> {
     },
   };
 }
-
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import FooterWrapper from "@/components/FooterWrapper";
-import WelcomePopup from "@/components/WelcomePopup";
-import PushNotificationManager from "@/components/PushNotificationManager";
-import { prisma } from "@/lib/prisma";
-import { getThemeVariables } from "@/lib/themes";
 
 export default async function RootLayout({
   children,

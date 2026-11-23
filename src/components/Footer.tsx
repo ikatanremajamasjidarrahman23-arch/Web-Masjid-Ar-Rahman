@@ -5,7 +5,12 @@ import HijriCalendarWidget from "./HijriCalendarWidget";
 import TextSizeAdjuster from "./TextSizeAdjuster";
 
 export default async function Footer() {
-  const settings = await prisma.settings.findFirst();
+  let settings: any = null;
+  try {
+    settings = await prisma.settings.findFirst();
+  } catch (error) {
+    console.warn("Database not available in Footer render");
+  }
 
   return (
     <footer className="relative bg-primary-950 text-primary-100 overflow-hidden border-t border-primary-900 bg-islamic-pattern-dark">

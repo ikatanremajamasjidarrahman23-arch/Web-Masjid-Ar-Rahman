@@ -14,15 +14,26 @@ export default async function DonasiPage() {
   // Flag konfigurasi status pengembangan fitur
   const isUnderDevelopment = true;
 
-  const settings = await prisma.settings.findFirst();
-  const qrisImage = settings?.qrisImage;
+  let settings: any = null;
+  let finances: any[] = [];
 
-  const finances = await prisma.finance.findMany({
-    orderBy: {
-      date: 'desc'
-    },
-    take: 50
-  });
+  try {
+    const [fetchedSettings, fetchedFinances] = await Promise.all([
+      prisma.settings.findFirst(),
+      prisma.finance.findMany({
+        orderBy: {
+          date: 'desc'
+        },
+        take: 50
+      })
+    ]);
+    settings = fetchedSettings;
+    finances = fetchedFinances || [];
+  } catch (error) {
+    console.warn("Database not available during DonasiPage render");
+  }
+
+  const qrisImage = settings?.qrisImage;
 
   const totalIn = finances.filter(f => f.type === "IN").reduce((acc, curr) => acc + curr.amount, 0);
   const totalOut = finances.filter(f => f.type === "OUT").reduce((acc, curr) => acc + curr.amount, 0);
