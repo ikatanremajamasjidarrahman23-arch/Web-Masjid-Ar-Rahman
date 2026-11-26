@@ -140,7 +140,7 @@ export default async function Home() {
                 className="text-lg md:text-xl text-white/75 max-w-xl mx-auto lg:mx-0 animate-fade-in leading-relaxed"
                 style={{ animationDelay: "0.2s" }}
               >
-                Pusat ibadah, pendidikan, dan peradaban umat yang ramah, modern, dan menebarkan rahmat bagi seluruh alam.
+                Pusat ibadah, kajian ilmu, dan silaturahmi umat yang ramah, sebagai sarana dalam menumbuhkan rasa cinta kepada Baginda Nabi Muhammad ﷺ serta meneruskan dakwahnya bagi masyarakat Perumahan Korpri dan sekitarnya.
               </p>
 
               {/* CTA Buttons */}
