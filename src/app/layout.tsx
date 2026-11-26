@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cache } from "react";
 import { FontProvider, getFontClassName } from "@/lib/fonts";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -11,13 +12,17 @@ import "./globals.css";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata(): Promise<Metadata> {
-  let settings = null;
+const getSettings = cache(async () => {
   try {
-    settings = await prisma.settings.findFirst();
-  } catch (error) {
-    console.warn("Database not available during metadata generation");
+    return await prisma.settings.findFirst();
+  } catch {
+    console.warn("Database not available during layout/metadata render");
+    return null;
   }
+});
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings();
 
   return {
     title: "Website Resmi Masjid Ar-Rahman",
@@ -35,12 +40,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  let settings = null;
-  try {
-    settings = await prisma.settings.findFirst();
-  } catch (error) {
-    console.warn("Database not available during RootLayout render");
-  }
+  const settings = await getSettings();
   const themeVars = getThemeVariables(settings?.themeColor);
 
   return (

@@ -182,14 +182,6 @@ export default async function Home() {
                 </Link>
               </div>
             </div>
-
-            {/* Right: Prayer Times Widget */}
-            <div
-              className="w-full max-w-sm lg:w-[400px] animate-fade-in flex-shrink-0"
-              style={{ animationDelay: "0.4s" }}
-            >
-              <PrayerTimes />
-            </div>
           </div>
 
           {/* Scroll Indicator */}
@@ -197,6 +189,13 @@ export default async function Home() {
             <span className="text-white/40 text-xs tracking-widest uppercase">Scroll</span>
             <ChevronDown className="w-5 h-5 text-white/40" />
           </div>
+        </div>
+      </section>
+
+      {/* Prayer Times Section */}
+      <section className="bg-primary-900 py-8 border-t border-white/10">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <PrayerTimes />
         </div>
       </section>
 
