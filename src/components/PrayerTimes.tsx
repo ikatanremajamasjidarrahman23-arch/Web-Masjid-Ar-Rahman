@@ -15,7 +15,8 @@ interface Timings {
 export default function PrayerTimes() {
   const [timings, setTimings] = useState<Timings | null>(null);
   const [nextPrayer, setNextPrayer] = useState<{ name: string; time: string; diffMs: number } | null>(null);
-  const [countdown, setCountdown] = useState<string>("Memuat...");
+  const [currentTime, setCurrentTime] = useState<string>("-- : -- : --");
+  const [countdown, setCountdown] = useState<string>("Memuat jadwal sholat...");
   const [hijriDate, setHijriDate] = useState<string>("");
   const [masehiDate, setMasehiDate] = useState<string>("");
 
@@ -39,21 +40,72 @@ export default function PrayerTimes() {
   const getRealTime = () => new Date(Date.now() + timeOffsetRef.current);
 
   useEffect(() => {
+    const updateClock = () => {
+      const now = getRealTime();
+      const h = String(now.getHours()).padStart(2, "0");
+      const m = String(now.getMinutes()).padStart(2, "0");
+      const s = String(now.getSeconds()).padStart(2, "0");
+      setCurrentTime(`${h} : ${m} : ${s}`);
+    };
+    updateClock();
+    const iv = setInterval(updateClock, 1000);
+    return () => clearInterval(iv);
+  }, []);
+
+  useEffect(() => {
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
     const fetchPrayerTimes = async () => {
+      const date = getRealTime();
+      setMasehiDate(
+        date.toLocaleDateString("id-ID", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })
+      );
+
       try {
-        const date = getRealTime();
         const response = await axios.get(
-          `https://api.aladhan.com/v1/timings/${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}?latitude=${latitude}&longitude=${longitude}&method=20`
+          `https://api.aladhan.com/v1/timings/${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}?latitude=${latitude}&longitude=${longitude}&method=20`,
+          { timeout: 8000 }
         );
         const data = response.data.data;
         const t = data.timings;
         const hijri = data.date.hijri;
         setTimings({ Fajr: t.Fajr, Dhuhr: t.Dhuhr, Asr: t.Asr, Maghrib: t.Maghrib, Isha: t.Isha });
         setHijriDate(`${hijri.day} ${hijri.month.en} ${hijri.year} H`);
-        setMasehiDate(date.toLocaleDateString("id-ID", { weekday: "long", day: "numeric", month: "long", year: "numeric" }));
+        return;
       } catch {}
+
+      try {
+        const yyyy = date.getFullYear();
+        const mm = String(date.getMonth() + 1).padStart(2, "0");
+        const dd = String(date.getDate()).padStart(2, "0");
+        // Fallback: Kemenag / MyQuran API for Kab. Cirebon (1208)
+        const res = await axios.get(
+          `https://api.myquran.com/v2/sholat/jadwal/1208/${yyyy}/${mm}/${dd}`,
+          { timeout: 8000 }
+        );
+        const j = res.data?.data?.jadwal;
+        if (j) {
+          setTimings({
+            Fajr: j.subuh,
+            Dhuhr: j.dzuhur,
+            Asr: j.ashar,
+            Maghrib: j.maghrib,
+            Isha: j.isya,
+          });
+          return;
+        }
+      } catch {}
+
+      retryTimer = setTimeout(fetchPrayerTimes, 5000);
     };
     fetchPrayerTimes();
+    return () => {
+      if (retryTimer) clearTimeout(retryTimer);
+    };
   }, []);
 
   useEffect(() => {
@@ -98,13 +150,19 @@ export default function PrayerTimes() {
     const update = () => {
       const d = target - getRealTime().getTime();
       if (d < 0) { 
-        setCountdown("Waktu sholat tiba!"); 
+        setCountdown(`Waktu sholat ${nextPrayer.name} tiba!`); 
         return; 
       }
       const h = Math.floor((d % 86400000) / 3600000);
       const m = Math.floor((d % 3600000) / 60000);
       const s = Math.floor((d % 60000) / 1000);
-      setCountdown(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`);
+      if (h > 0) {
+        setCountdown(`${h}j ${m}m ${s} detik menuju ${nextPrayer.name}`);
+      } else if (m > 0) {
+        setCountdown(`${m}m ${s} detik menuju ${nextPrayer.name}`);
+      } else {
+        setCountdown(`${s} detik menuju ${nextPrayer.name}`);
+      }
     };
     update();
     const iv = setInterval(update, 1000);
@@ -135,12 +193,17 @@ export default function PrayerTimes() {
           </div>
         )}
 
-        {/* Countdown */}
+        {/* Live Clock & Countdown */}
         <div className="mt-4 bg-gradient-to-r from-primary-900/90 to-primary-800/90 rounded-2xl p-4 border border-primary-700/40 shadow-inner">
-          <p className="text-xs text-primary-300 mb-1">Menuju {nextPrayer?.name || "Sholat"}</p>
-          <div className="flex items-center justify-center gap-2">
-            <Clock className="w-5 h-5 text-amber-300" />
-            <span className="text-3xl font-mono font-bold tracking-widest text-amber-300">
+          <div className="flex items-baseline justify-center gap-2">
+            <span className="text-3xl sm:text-4xl font-mono font-extrabold tracking-wider text-emerald-300">
+              {currentTime}
+            </span>
+            <span className="text-xs sm:text-sm font-bold text-emerald-400">WIB</span>
+          </div>
+          <div className="mt-2.5 inline-flex items-center justify-center gap-2 bg-amber-950/60 border border-amber-500/30 rounded-full px-4 py-1.5">
+            <Clock className="w-4 h-4 text-amber-400 flex-shrink-0" />
+            <span className="text-xs sm:text-sm font-semibold text-amber-400">
               {countdown}
             </span>
           </div>
