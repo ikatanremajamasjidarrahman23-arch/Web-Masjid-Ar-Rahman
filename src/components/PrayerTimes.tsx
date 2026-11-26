@@ -194,16 +194,16 @@ export default function PrayerTimes() {
         )}
 
         {/* Live Clock & Countdown */}
-        <div className="mt-4 bg-gradient-to-r from-primary-900/90 to-primary-800/90 rounded-2xl p-4 border border-primary-700/40 shadow-inner">
-          <div className="flex items-baseline justify-center gap-2">
-            <span className="text-3xl sm:text-4xl font-mono font-extrabold tracking-wider text-emerald-300">
+        <div className="mt-4 bg-gradient-to-r from-primary-900/90 to-primary-800/90 rounded-2xl px-4 py-3 border border-primary-700/40 shadow-inner">
+          <div className="flex items-baseline justify-center gap-1.5">
+            <span className="text-2xl sm:text-3xl font-mono font-extrabold tracking-wider text-emerald-300">
               {currentTime}
             </span>
-            <span className="text-xs sm:text-sm font-bold text-emerald-400">WIB</span>
+            <span className="text-xs font-bold text-emerald-400">WIB</span>
           </div>
-          <div className="mt-2.5 inline-flex items-center justify-center gap-2 bg-amber-950/60 border border-amber-500/30 rounded-full px-4 py-1.5">
-            <Clock className="w-4 h-4 text-amber-400 flex-shrink-0" />
-            <span className="text-xs sm:text-sm font-semibold text-amber-400">
+          <div className="mt-2 inline-flex items-center justify-center gap-1.5 bg-amber-950/60 border border-amber-500/30 rounded-full px-3 py-1">
+            <Clock className="w-3.5 h-3.5 text-amber-400 flex-shrink-0" />
+            <span className="text-xs font-semibold text-amber-400 whitespace-nowrap">
               {countdown}
             </span>
           </div>
