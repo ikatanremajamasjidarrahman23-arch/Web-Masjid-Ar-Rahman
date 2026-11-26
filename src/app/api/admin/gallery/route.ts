@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyAdminSession } from "@/lib/auth";
+import { sendNotificationToAll } from "@/lib/push";
 
 export const dynamic = 'force-dynamic';
 
@@ -42,6 +43,13 @@ export async function POST(request: Request) {
           });
           createdItems.push(created);
         }
+      }
+      if (createdItems.length > 0) {
+        sendNotificationToAll(
+          "Galeri Masjid Ar-Rahman",
+          "Pemberitahuan: Admin berhasil telah menambah foto, silahkan cek galeri DKM Masjid Arrahman ya...",
+          "/galeri"
+        ).catch((err) => console.error("Push error:", err));
       }
       return NextResponse.json({ success: true, data: createdItems, count: createdItems.length });
     }

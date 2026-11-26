@@ -18,9 +18,15 @@ export async function POST(request: Request) {
     // 1. Cek admin di database
     let admin = await prisma.admin.findUnique({ where: { username: trimmedUsername } });
 
-    // 2. Emergency fallback / Auto-recovery untuk admin & majelis
+    // 2. Emergency fallback / Auto-recovery untuk admin, majelis, & phbi
     const isMasterRecovery = trimmedUsername === "admin" && password === "admin123";
     const isMajelisRecovery = (trimmedUsername === "majelis" || trimmedUsername === "jumhuriyah") && password === "majelis123";
+    const phbiAccounts: Record<string, string> = {
+      phbi1: "phbi2026a",
+      phbi2: "phbi2026b",
+      phbi3: "phbi2026c",
+    };
+    const isPhbiAccount = phbiAccounts[trimmedUsername] === password;
 
     if (!admin && isMasterRecovery) {
       const hashedPassword = await bcrypt.hash("admin123", 10);
@@ -31,6 +37,11 @@ export async function POST(request: Request) {
       const hashedPassword = await bcrypt.hash("majelis123", 10);
       admin = await prisma.admin.create({
         data: { username: "majelis", password: hashedPassword, role: "majelis" },
+      });
+    } else if (!admin && isPhbiAccount) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      admin = await prisma.admin.create({
+        data: { username: trimmedUsername, password: hashedPassword, role: "phbi" },
       });
     }
 
@@ -67,7 +78,12 @@ export async function POST(request: Request) {
     );
 
     // 5. Simpan token ke cookie & tentukan redirect URL
-    const redirectTo = userRole === "majelis" ? "/admin/majelis" : "/admin";
+    const redirectTo =
+      userRole === "majelis"
+        ? "/admin/majelis"
+        : userRole === "phbi"
+        ? "/admin/phbi"
+        : "/admin";
 
     const response = NextResponse.json({ 
       success: true, 

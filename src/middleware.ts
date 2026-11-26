@@ -34,6 +34,13 @@ export async function middleware(request: NextRequest) {
         }
       }
 
+      // Khusus pengguna PHBI: batasi akses hanya ke portal dokumentasi PHBI
+      if (payload.role === 'phbi') {
+        if (!path.startsWith('/admin/phbi')) {
+          return NextResponse.redirect(new URL('/admin/phbi', request.url));
+        }
+      }
+
       return NextResponse.next();
     } catch {
       // Token tidak valid / sesi lama / palsu -> Hapus cookie dan paksa redirect ke /admin/login

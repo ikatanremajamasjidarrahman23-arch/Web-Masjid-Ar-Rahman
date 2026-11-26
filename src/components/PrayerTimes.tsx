@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import { Clock } from "lucide-react";
+import { Clock, Volume2, VolumeX, Upload } from "lucide-react";
 
 interface Timings {
   Fajr: string;
@@ -19,6 +19,44 @@ export default function PrayerTimes() {
   const [countdown, setCountdown] = useState<string>("Memuat jadwal sholat...");
   const [hijriDate, setHijriDate] = useState<string>("");
   const [masehiDate, setMasehiDate] = useState<string>("");
+  const [adzanEnabled, setAdzanEnabled] = useState<boolean>(false);
+  const [adzanFileName, setAdzanFileName] = useState<string>("");
+  const [adzanAudioSrc, setAdzanAudioSrc] = useState<string>("https://cdn.islamic.network/adhan/adhan-makkah.mp3");
+  const lastTriggeredRef = useRef<string>("");
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    try {
+      const savedSrc = localStorage.getItem("custom_adzan_audio");
+      const savedName = localStorage.getItem("custom_adzan_name");
+      if (savedSrc) setAdzanAudioSrc(savedSrc);
+      if (savedName) setAdzanFileName(savedName);
+    } catch {}
+  }, []);
+
+  const handleAdzanFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAdzanFileName(file.name);
+    const objectUrl = URL.createObjectURL(file);
+    setAdzanAudioSrc(objectUrl);
+    if (audioRef.current) {
+      audioRef.current.src = objectUrl;
+    }
+    if (file.size <= 4 * 1024 * 1024) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === "string") {
+          try {
+            localStorage.setItem("custom_adzan_audio", reader.result);
+            localStorage.setItem("custom_adzan_name", file.name);
+          } catch {}
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const latitude = -6.6975;
   const longitude = 108.4735;
@@ -149,8 +187,27 @@ export default function PrayerTimes() {
     const target = getRealTime().getTime() + nextPrayer.diffMs;
     const update = () => {
       const d = target - getRealTime().getTime();
-      if (d < 0) { 
-        setCountdown(`Waktu sholat ${nextPrayer.name} tiba!`); 
+      if (d <= 0) { 
+        setCountdown(`Waktu sholat ${nextPrayer.name} tiba!`);
+        const key = `${nextPrayer.name}-${nextPrayer.time}`;
+        if (lastTriggeredRef.current !== key) {
+          lastTriggeredRef.current = key;
+          if (adzanEnabled) {
+            if (!audioRef.current) {
+              audioRef.current = new Audio(adzanAudioSrc);
+            } else if (audioRef.current.src !== adzanAudioSrc) {
+              audioRef.current.src = adzanAudioSrc;
+            }
+            audioRef.current.currentTime = 0;
+            audioRef.current.play().catch(() => {});
+          }
+          if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+            new Notification(`Waktu ${nextPrayer.name}' ${nextPrayer.time}`, {
+              body: `Telah masuk waktu sholat ${nextPrayer.name} (${nextPrayer.time} WIB) untuk wilayah Plumbon, Cirebon.`,
+              icon: "/favicon.ico",
+            });
+          }
+        }
         return; 
       }
       const h = Math.floor((d % 86400000) / 3600000);
@@ -206,6 +263,42 @@ export default function PrayerTimes() {
             <span className="text-xs font-semibold text-amber-400 whitespace-nowrap">
               {countdown}
             </span>
+          </div>
+          <div className="mt-2.5 flex flex-wrap items-center justify-center gap-2">
+            <button
+              type="button"
+              onClick={async () => {
+                const next = !adzanEnabled;
+                setAdzanEnabled(next);
+                if (next && typeof window !== "undefined" && "Notification" in window && Notification.permission === "default") {
+                  await Notification.requestPermission().catch(() => {});
+                }
+              }}
+              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium transition-colors border ${
+                adzanEnabled
+                  ? "bg-emerald-500/20 text-emerald-300 border-emerald-400/40"
+                  : "bg-white/5 text-white/60 border-white/10 hover:bg-white/10"
+              }`}
+            >
+              {adzanEnabled ? <Volume2 className="w-3.5 h-3.5" /> : <VolumeX className="w-3.5 h-3.5" />}
+              {adzanEnabled ? "Suara Adzan Aktif" : "Aktifkan Suara Adzan"}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="audio/*"
+              onChange={handleAdzanFileChange}
+              className="hidden"
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-medium transition-colors border bg-white/5 text-white/75 border-white/15 hover:bg-white/10"
+              title={adzanFileName ? `File terpilih: ${adzanFileName}` : "Pilih file audio adzan (MP3/WAV)"}
+            >
+              <Upload className="w-3 h-3" />
+              {adzanFileName ? (adzanFileName.length > 16 ? `${adzanFileName.slice(0, 14)}...` : adzanFileName) : "Pilih File Adzan"}
+            </button>
           </div>
         </div>
       </div>
